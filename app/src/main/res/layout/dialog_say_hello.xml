@@ -1,0 +1,13 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:clipToPadding="false" android:overScrollMode="ifContentScrolls">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+    <TextView android:id="@+id/dialogTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/say_hello" android:textColor="@color/hello_text" android:textSize="20sp" android:textStyle="bold" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/say_hello_prompt" android:textColor="@color/hello_text_secondary" android:textSize="14sp" />
+    <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="@string/say_hello_hint">
+      <com.google.android.material.textfield.TextInputEditText android:id="@+id/messageInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="top|start" android:lines="3" android:maxLength="140" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:gravity="end" android:orientation="horizontal">
+      <com.google.android.material.button.MaterialButton android:id="@+id/cancelButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" />
+      <com.google.android.material.button.MaterialButton android:id="@+id/sendButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="@string/say_hello" />
+    </LinearLayout>
+  </LinearLayout>
+</androidx.core.widget.NestedScrollView>

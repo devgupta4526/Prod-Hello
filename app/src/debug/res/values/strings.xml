@@ -1,0 +1,32 @@
+<resources>
+    <string name="gallery_title">Design system</string>
+    <string name="gallery_description">Development-only component gallery. Uses the system theme and font size.</string>
+    <string name="gallery_primary">Primary action</string>
+    <string name="gallery_secondary">Secondary action</string>
+    <string name="gallery_disabled">Unavailable action</string>
+    <string name="gallery_input">Text field</string>
+    <string name="gallery_hint">Write a little hello</string>
+    <string name="gallery_error">This field needs your attention.</string>
+    <string name="gallery_status">Availability</string>
+    <string name="gallery_open">Open to meet</string>
+    <string name="gallery_browsing">Just browsing</string>
+    <string name="gallery_event">At an event</string>
+    <string name="gallery_off">Invisible</string>
+    <string name="gallery_empty">Nothing here yet</string>
+    <string name="gallery_empty_body">Useful empty-state copy belongs here, along with the next action.</string>
+    <string name="gallery_loading">Loading</string>
+    <string name="gallery_offline">You’re offline. Reconnect to refresh.</string>
+    <string name="gallery_avatar">Sample avatar</string>
+    <string name="gallery_user_card">User card</string>
+    <string name="gallery_pool_card">Pool card</string>
+    <string name="gallery_event_card">Event card</string>
+    <string name="gallery_ticket_card">Ticket card</string>
+    <string name="gallery_sample">Sample content for checking wrapping, spacing and accessibility at large font sizes.</string>
+    <string name="gallery_demo">Design sample</string>
+    <string name="gallery_incoming">A sample incoming message.</string>
+    <string name="gallery_outgoing">A sample outgoing message.</string>
+    <string name="gallery_sent">Sent · design sample</string>
+    <string name="gallery_snackbar">Show snackbar</string>
+    <string name="gallery_dialog">Show dialog</string>
+    <string name="gallery_sheet">Show bottom sheet</string>
+</resources>

@@ -1,0 +1,30 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/hello_background">
+    <LinearLayout android:id="@+id/components" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="@dimen/screen_gutter" android:orientation="vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/back" style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/back" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/gallery_title" android:textAppearance="@style/TextAppearance.Hello.Hero" android:accessibilityHeading="true" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:text="@string/gallery_description" android:textAppearance="@style/TextAppearance.Hello.Body" />
+        <com.google.android.material.button.MaterialButton android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:text="@string/gallery_primary" />
+        <com.google.android.material.button.MaterialButton style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/button_height" android:text="@string/gallery_secondary" />
+        <com.google.android.material.button.MaterialButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/gallery_disabled" android:enabled="false" />
+        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/gallery_input" android:layout_marginTop="@dimen/space_md">
+            <com.google.android.material.textfield.TextInputEditText android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" android:importantForAutofill="no" android:text="@string/gallery_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/gallery_error" android:textColor="@color/hello_error" android:textAppearance="@style/TextAppearance.Hello.Body" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:text="@string/gallery_status" android:textAppearance="@style/TextAppearance.Hello.Title" android:accessibilityHeading="true" />
+        <com.google.android.material.chip.ChipGroup android:layout_width="match_parent" android:layout_height="wrap_content">
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/gallery_open" app:chipIcon="@drawable/ic_discover" app:chipBackgroundColor="@color/hello_sage" app:ensureMinTouchTargetSize="true" />
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/gallery_browsing" app:chipIcon="@drawable/ic_profile" app:chipBackgroundColor="@color/hello_peach" app:ensureMinTouchTargetSize="true" />
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/gallery_event" app:chipIcon="@drawable/ic_tickets" app:chipBackgroundColor="@color/hello_lilac" app:ensureMinTouchTargetSize="true" />
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/gallery_off" app:chipIcon="@drawable/ic_inbox" app:ensureMinTouchTargetSize="true" />
+        </com.google.android.material.chip.ChipGroup>
+        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" app:cardCornerRadius="@dimen/card_radius" app:cardBackgroundColor="@color/hello_surface" app:cardElevation="0dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="@dimen/space_lg" android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/gallery_empty" android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" android:text="@string/gallery_empty_body" android:textAppearance="@style/TextAppearance.Hello.Body" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:text="@string/gallery_loading" android:textAppearance="@style/TextAppearance.Hello.Body" />
+        <com.google.android.material.progressindicator.LinearProgressIndicator android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" android:indeterminate="true" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:padding="@dimen/space_md" android:background="@color/hello_surface_variant" android:text="@string/gallery_offline" android:textAppearance="@style/TextAppearance.Hello.Body" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,6 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Romear" parent="Base.Theme.Romear">
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

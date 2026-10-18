@@ -1,0 +1,138 @@
+package com.example.romear.feature.hello.ui
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.romear.feature.hello.data.HelloRepository
+import com.example.romear.feature.hello.domain.ConnectionItem
+import com.example.romear.feature.hello.domain.HelloItem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
+import javax.inject.Inject
+
+@HiltViewModel
+class InboxViewModel @Inject constructor(
+    private val helloRepository: HelloRepository,
+) : ViewModel() {
+
+    enum class Tab { RECEIVED, SENT, CONNECTIONS }
+
+    private val _currentTab = MutableStateFlow(Tab.RECEIVED)
+    val currentTab: StateFlow<Tab> = _currentTab.asStateFlow()
+
+    private val _hellos = MutableStateFlow<List<HelloItem>>(emptyList())
+    val hellos: StateFlow<List<HelloItem>> = _hellos.asStateFlow()
+
+    private val _connections = MutableStateFlow<List<ConnectionItem>>(emptyList())
+    val connections: StateFlow<List<ConnectionItem>> = _connections.asStateFlow()
+
+    private var loadJob: Job? = null
+    private val _loadFailed = MutableStateFlow(false)
+    val loadFailed: StateFlow<Boolean> = _loadFailed.asStateFlow()
+
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
+
+    private val _events = MutableSharedFlow<InboxEvent>()
+    val events: SharedFlow<InboxEvent> = _events.asSharedFlow()
+
+    init {
+        loadData()
+    }
+
+    fun switchTab(tab: Tab) {
+        if (_currentTab.value == tab) return
+        _currentTab.value = tab
+        loadData()
+    }
+
+    fun loadData() {
+        when (_currentTab.value) {
+            Tab.RECEIVED -> loadHellos("received")
+            Tab.SENT -> loadHellos("sent")
+            Tab.CONNECTIONS -> loadConnections()
+        }
+    }
+
+    private fun loadHellos(box: String) {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            _loading.value = true
+            _loadFailed.value = false
+            try {
+                _hellos.value = helloRepository.listHellos(box = box)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (e: Exception) {
+                _loadFailed.value = true
+            } finally {
+                if (currentCoroutineContext().isActive) _loading.value = false
+            }
+        }
+    }
+
+    private fun loadConnections() {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            _loading.value = true
+            _loadFailed.value = false
+            try {
+                _connections.value = helloRepository.listConnections()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (e: Exception) {
+                _loadFailed.value = true
+            } finally {
+                if (currentCoroutineContext().isActive) _loading.value = false
+            }
+        }
+    }
+
+    fun acceptHello(hello: HelloItem) {
+        viewModelScope.launch {
+            try {
+                helloRepository.acceptHello(hello.id)
+                _events.emit(InboxEvent.Success("Connected! You can now chat."))
+                loadData()
+            } catch (e: Exception) {
+                _events.emit(InboxEvent.Error(e.message ?: "Failed to accept"))
+            }
+        }
+    }
+
+    fun declineHello(hello: HelloItem) {
+        viewModelScope.launch {
+            try {
+                helloRepository.declineHello(hello.id)
+                loadData()
+            } catch (e: Exception) {
+                _events.emit(InboxEvent.Error(e.message ?: "Failed to decline"))
+            }
+        }
+    }
+
+    fun withdrawHello(hello: HelloItem) {
+        viewModelScope.launch {
+            try {
+                helloRepository.withdrawHello(hello.id)
+                loadData()
+            } catch (e: Exception) {
+                _events.emit(InboxEvent.Error(e.message ?: "Failed to withdraw"))
+            }
+        }
+    }
+
+    sealed class InboxEvent {
+        data class Success(val message: String) : InboxEvent()
+        data class Error(val error: String) : InboxEvent()
+    }
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hello_primary">#BE4020</color>
+    <color name="hello_primary_variant">#C03C17</color>
+    <color name="hello_primary_container">#FEECE5</color>
+    <color name="hello_on_primary_container">#822007</color>
+    <color name="hello_on_primary">#FFFFFF</color>
+    <color name="hello_background">#FBF9F6</color>
+    <color name="hello_surface">#FFFFFF</color>
+    <color name="hello_surface_variant">#F4ECE4</color>
+    <color name="hello_text">#1F1E19</color>
+    <color name="hello_text_secondary">#6E6A62</color>
+    <color name="hello_outline">#E3DACF</color>
+    <color name="hello_outline_subtle">#EFE8E0</color>
+    <color name="hello_accent">#E4572E</color>
+    <color name="hello_sage">#DDE8D5</color>
+    <color name="hello_lilac">#EAE1F5</color>
+    <color name="hello_peach">#FCE8DA</color>
+    <color name="hello_success">#107C41</color>
+    <color name="hello_emerald">#087650</color>
+    <color name="hello_emerald_container">#D1FAE5</color>
+    <color name="hello_amber">#945600</color>
+    <color name="hello_amber_container">#FEF3C7</color>
+    <color name="hello_indigo">#4F46E5</color>
+    <color name="hello_indigo_container">#EEF2FF</color>
+    <color name="hello_error">#BA1A1A</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+<color name="hello_header_tint">#F8EDE3</color>
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="screen_gutter">32dp</dimen>
+    <dimen name="hero_type">48sp</dimen>
+    <dimen name="illustration_height">280dp</dimen>
+</resources>

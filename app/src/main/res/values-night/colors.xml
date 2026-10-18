@@ -1,0 +1,26 @@
+<resources>
+    <color name="hello_primary">#FFAC91</color>
+    <color name="hello_on_primary">#3A0F00</color>
+    <color name="hello_background">#191713</color>
+    <color name="hello_surface">#24211D</color>
+    <color name="hello_surface_variant">#332C25</color>
+    <color name="hello_text">#F6EFE7</color>
+    <color name="hello_text_secondary">#C3BAB0</color>
+    <color name="hello_outline">#554B42</color>
+    <color name="hello_accent">#FFAC91</color>
+    <color name="hello_sage">#2E4030</color>
+    <color name="hello_lilac">#3B3049</color>
+    <color name="hello_peach">#4C3025</color>
+    <color name="hello_success">#A0DBB2</color>
+    <color name="hello_error">#FFB4AB</color>
+    <color name="hello_primary_container">#542819</color>
+    <color name="hello_on_primary_container">#FFDBCF</color>
+    <color name="hello_outline_subtle">#3C352D</color>
+    <color name="hello_emerald">#7BDCB0</color>
+    <color name="hello_emerald_container">#173E30</color>
+    <color name="hello_amber">#F4C16D</color>
+    <color name="hello_amber_container">#493619</color>
+    <color name="hello_indigo">#C4BFFF</color>
+    <color name="hello_indigo_container">#302B55</color>
+<color name="hello_header_tint">#30231D</color>
+</resources>

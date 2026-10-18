@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/authFragment">
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.example.romear.feature.auth.ui.AuthFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_auth_to_discover"
+            app:destination="@id/discover_graph"
+            app:popUpTo="@id/authFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.romear.feature.onboarding.ui.WelcomeFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_welcome_to_discover"
+            app:destination="@id/discover_graph"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <navigation
+        android:id="@id/discover_graph"
+        app:startDestination="@id/homeFragment">
+        <fragment android:id="@+id/homeFragment" android:name="com.example.romear.feature.social.HomeFragment" android:label="@string/social_home" />
+        <fragment
+            android:id="@+id/discoverFragment"
+            android:name="com.example.romear.feature.discovery.ui.DiscoveryFragment"
+            android:label="@string/discover" />
+    </navigation>
+
+    <navigation
+        android:id="@id/happening_graph"
+        app:startDestination="@id/happeningFragment">
+        <fragment
+            android:id="@+id/happeningFragment"
+            android:name="com.example.romear.feature.pools.ui.HappeningFragment"
+            android:label="@string/happening">
+            <action
+                android:id="@+id/action_happening_to_chat"
+                app:destination="@id/chatFragment" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@id/inbox_graph"
+        app:startDestination="@id/inboxFragment">
+        <fragment
+            android:id="@+id/inboxFragment"
+            android:name="com.example.romear.feature.hello.ui.InboxFragment"
+            android:label="@string/inbox">
+            <action
+                android:id="@+id/action_inbox_to_chat"
+                app:destination="@id/chatFragment" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@id/tickets_graph"
+        app:startDestination="@id/ticketsFragment">
+        <fragment
+            android:id="@+id/ticketsFragment"
+            android:name="com.example.romear.feature.events.ui.TicketsFragment"
+            android:label="@string/tickets" />
+    </navigation>
+
+    <navigation
+        android:id="@id/profile_graph"
+        app:startDestination="@id/profileFragment">
+        <fragment
+            android:id="@+id/profileFragment"
+            android:name="com.example.romear.feature.profile.ui.ProfileFragment"
+            android:label="@string/profile" />
+    </navigation>
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.romear.feature.chat.ui.ChatFragment"
+        android:label="@string/inbox">
+        <argument
+            android:name="conversationId"
+            app:argType="string" />
+        <argument
+            android:name="partnerName"
+            app:argType="string" />
+        <argument
+            android:name="partnerPhotoUrl"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="partnerId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

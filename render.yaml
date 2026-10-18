@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: hello-api-staging
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: npm ci --include=dev && npm run db:generate && npm run build
+    startCommand: npx --no-install prisma migrate deploy && npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.0
+      - key: NODE_ENV
+        value: production
+      - key: APP_ENV
+        value: staging
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_PEPPER
+        generateValue: true
+      - key: OTP_HASH_PEPPER
+        generateValue: true
+      - key: OTP_PROVIDER
+        value: console
+      - key: OTP_DAILY_SMS_BUDGET
+        value: "0"
+      - key: OTP_SANDBOX_NUMBERS
+        sync: false
+      - key: ADMIN_ORIGIN
+        sync: false

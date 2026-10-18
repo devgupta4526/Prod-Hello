@@ -1,0 +1,781 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AccountStatus {
+  ONBOARDING
+  ACTIVE
+  SUSPENDED
+  DELETION_PENDING
+  DELETED
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum Availability {
+  OFF
+  OPEN
+  BROWSING
+  AT_EVENT
+}
+
+enum HelloStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  WITHDRAWN
+  CANCELLED_BY_BLOCK
+}
+
+enum ConversationType {
+  DM
+  POOL
+}
+
+enum PoolStatus {
+  OPEN
+  FULL
+  CLOSED
+  CANCELLED
+  ARCHIVED
+}
+
+enum KnockStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  EXPIRED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  ENDED
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  EXPIRED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum TicketStatus {
+  CONFIRMED
+  REFUNDED
+  CANCELLED
+}
+
+enum LedgerType {
+  SALE
+  PLATFORM_FEE
+  REFUND
+  FEE_REVERSAL
+  PAYOUT
+  ADJUSTMENT
+}
+
+model User {
+  socialPlans SocialPlan[]
+  planVotes PlanVote[]
+  hostedCircles InterestCircle[]
+  circleMemberships CircleMember[]
+  circlePosts CirclePost[]
+  savedExperiences SavedExperience[]
+  reconnectChoices ReconnectChoice[] @relation("reconnectSender")
+  reconnectReceived ReconnectChoice[] @relation("reconnectTarget")
+  planMemories PlanMemory[]
+  id                        String                 @id @db.Uuid
+  phoneE164                 String                 @unique
+  phoneVerifiedAt           DateTime?              @db.Timestamptz(3)
+  role                      Role                   @default(USER)
+  isOrganizer               Boolean                @default(false)
+  status                    AccountStatus          @default(ONBOARDING)
+  dateOfBirth               DateTime?              @db.Date
+  adultVerifiedAt           DateTime?              @db.Timestamptz(3)
+  guidelinesAcceptedAt      DateTime?              @db.Timestamptz(3)
+  suspendedUntil            DateTime?              @db.Timestamptz(3)
+  deletionRequestedAt       DateTime?              @db.Timestamptz(3)
+  lastActiveAt              DateTime?              @db.Timestamptz(3)
+  createdAt                 DateTime               @default(now()) @db.Timestamptz(3)
+  updatedAt                 DateTime               @updatedAt @db.Timestamptz(3)
+  profile                   Profile?
+  photos                    ProfilePhoto[]
+  uploads                   PhotoUpload[]
+  sessions                  Session[]
+  devices                   Device[]
+  presence                  Presence?
+  blocksSent                Block[]                @relation("blocker")
+  blocksReceived            Block[]                @relation("blocked")
+  hellosSent                Hello[]                @relation("hellosSent")
+  hellosReceived            Hello[]                @relation("hellosReceived")
+  connectionsLow            Connection[]           @relation("connectionsLow")
+  connectionsHigh           Connection[]           @relation("connectionsHigh")
+  messagesSent              Message[]
+  organizedPools            Pool[]                 @relation("organizedPools")
+  poolMemberships           PoolMember[]
+  poolKnocks                PoolKnock[]
+  organizerApplications     OrganizerApplication[]
+  events                    Event[]                @relation("organizerEvents")
+  orders                    Order[]
+  tickets                   Ticket[]
+  ledgerEntries             LedgerEntry[]
+  notifications             Notification[]
+  notificationPreferences   NotificationPreference[]
+  reportsMade               Report[]               @relation("reportsMade")
+  reportsReceived           Report[]               @relation("reportsReceived")
+  moderationActionsReceived ModerationAction[]     @relation("moderatedUser")
+  moderationActionsTaken    ModerationAction[]     @relation("moderator")
+  appeals                   Appeal[]
+  dataExports               DataExport[]
+  idempotencyKeys           IdempotencyKey[]
+}
+
+model OtpChallenge {
+  id                String    @id @db.Uuid
+  requestId         String    @unique @db.Uuid
+  phoneE164         String
+  deviceId          String
+  codeHash          String
+  ipHash            String
+  sandbox           Boolean
+  provider          String?
+  providerMessageId String?
+  deliveryStatus    String    @default("pending")
+  attempts          Int       @default(0)
+  resendAfterSec    Int
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt         DateTime  @db.Timestamptz(3)
+  consumedAt        DateTime? @db.Timestamptz(3)
+
+  @@index([phoneE164, createdAt])
+  @@index([ipHash, createdAt])
+  @@index([deviceId, createdAt])
+  @@index([expiresAt])
+  @@index([provider, providerMessageId])
+  @@index([createdAt])
+}
+
+model ProfilePhoto {
+  id         String   @id @db.Uuid
+  userId     String   @db.Uuid
+  storageKey String   @unique
+  url        String
+  position   Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, position])
+}
+
+model PhotoUpload {
+  id          String    @id @db.Uuid
+  userId      String    @db.Uuid
+  storageKey  String    @unique
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  confirmedAt DateTime? @db.Timestamptz(3)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+}
+
+model Profile {
+  prompts Json @default("[]")
+  idealWeekend String @default("")
+  upFor String?
+  upForUntil DateTime? @db.Timestamptz(3)
+  userId            String   @id @db.Uuid
+  displayName       String
+  bio               String?
+  interests         String[]
+  discoveryRadiusKm Int      @default(5)
+  showAge           Boolean  @default(false)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
+
+model MediaDeletion {
+  id            String   @id @db.Uuid
+  storageKey    String   @unique
+  attempts      Int      @default(0)
+  nextAttemptAt DateTime @default(now()) @db.Timestamptz(3)
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([nextAttemptAt])
+}
+
+model Session {
+  id               String    @id @db.Uuid
+  userId           String    @db.Uuid
+  deviceId         String
+  familyId         String    @db.Uuid
+  refreshTokenHash String    @unique
+  replacedById     String?   @unique @db.Uuid
+  ipHash           String?
+  userAgent        String?
+  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt        DateTime  @db.Timestamptz(3)
+  revokedAt        DateTime? @db.Timestamptz(3)
+  user             User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  replacement      Session?  @relation("rotation", fields: [replacedById], references: [id], onDelete: Restrict)
+  predecessor      Session?  @relation("rotation")
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+}
+
+model Block {
+  id        String   @id @db.Uuid
+  blockerId String   @db.Uuid
+  blockedId String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  blocker   User     @relation("blocker", fields: [blockerId], references: [id], onDelete: Restrict)
+  blocked   User     @relation("blocked", fields: [blockedId], references: [id], onDelete: Restrict)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId])
+}
+
+model RateLimitBucket {
+  key         String
+  windowStart DateTime @db.Timestamptz(3)
+  count       Int
+
+  @@id([key, windowStart])
+  @@index([windowStart])
+}
+
+model Device {
+  id         String   @id @db.Uuid
+  userId     String   @db.Uuid
+  deviceId   String
+  fcmToken   String?
+  platform   String
+  appVersion String
+  lastSeenAt DateTime @db.Timestamptz(3)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, deviceId])
+  @@index([userId])
+}
+
+model Presence {
+  userId        String       @id @db.Uuid
+  availability  Availability
+  lat           Float
+  lng           Float
+  accuracyM     Int?
+  cellId        String
+  updatedAt     DateTime     @db.Timestamptz(3)
+  expiresAt     DateTime     @db.Timestamptz(3)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([cellId])
+  @@index([expiresAt])
+}
+
+model Hello {
+  context Json?
+  id          String      @id @db.Uuid
+  senderId    String      @db.Uuid
+  receiverId  String      @db.Uuid
+  message     String
+  status      HelloStatus @default(PENDING)
+  expiresAt   DateTime    @db.Timestamptz(3)
+  respondedAt DateTime?   @db.Timestamptz(3)
+  createdAt   DateTime    @default(now()) @db.Timestamptz(3)
+  sender      User        @relation("hellosSent", fields: [senderId], references: [id], onDelete: Restrict)
+  receiver    User        @relation("hellosReceived", fields: [receiverId], references: [id], onDelete: Restrict)
+
+  @@index([receiverId, status, createdAt])
+  @@index([senderId, createdAt])
+}
+
+model Connection {
+  id           String        @id @db.Uuid
+  userLowId    String        @db.Uuid
+  userHighId   String        @db.Uuid
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  userLow      User          @relation("connectionsLow", fields: [userLowId], references: [id], onDelete: Restrict)
+  userHigh     User          @relation("connectionsHigh", fields: [userHighId], references: [id], onDelete: Restrict)
+  conversation Conversation?
+
+  @@unique([userLowId, userHighId])
+  @@index([userHighId])
+}
+
+model Conversation {
+  socialPlans SocialPlan[]
+  id           String           @id @db.Uuid
+  type         ConversationType
+  connectionId String?          @unique @db.Uuid
+  poolId       String?          @unique @db.Uuid
+  mutedBy      String[]         @default([])
+  createdAt    DateTime         @default(now()) @db.Timestamptz(3)
+  connection   Connection?      @relation(fields: [connectionId], references: [id], onDelete: Restrict)
+  pool         Pool?            @relation(fields: [poolId], references: [id], onDelete: Restrict)
+  messages     Message[]
+}
+
+model Message {
+  id             String       @id @db.Uuid
+  conversationId String       @db.Uuid
+  senderId       String       @db.Uuid
+  clientMsgId    String
+  body           String
+  deliveredAt    DateTime?    @db.Timestamptz(3)
+  deletedAt      DateTime?    @db.Timestamptz(3)
+  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Restrict)
+
+  @@unique([senderId, clientMsgId])
+  @@index([conversationId, id])
+}
+
+model Pool {
+  id           String        @id @db.Uuid
+  organizerId  String        @db.Uuid
+  title        String
+  description  String
+  category     String
+  startsAt     DateTime      @db.Timestamptz(3)
+  endsAt       DateTime?     @db.Timestamptz(3)
+  capacity     Int
+  status       PoolStatus    @default(OPEN)
+  venueName    String
+  venueLat     Float
+  venueLng     Float
+  areaLabel    String
+  areaCell     String
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  organizer    User          @relation("organizedPools", fields: [organizerId], references: [id], onDelete: Restrict)
+  members      PoolMember[]
+  knocks       PoolKnock[]
+  conversation Conversation?
+
+  @@index([status, startsAt])
+  @@index([areaCell])
+  @@index([organizerId])
+}
+
+model PoolMember {
+  id       String    @id @db.Uuid
+  poolId   String    @db.Uuid
+  userId   String    @db.Uuid
+  joinedAt DateTime  @default(now()) @db.Timestamptz(3)
+  leftAt   DateTime? @db.Timestamptz(3)
+  pool     Pool      @relation(fields: [poolId], references: [id], onDelete: Restrict)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([poolId, userId])
+  @@index([userId])
+}
+
+model PoolKnock {
+  id        String      @id @db.Uuid
+  poolId    String      @db.Uuid
+  userId    String      @db.Uuid
+  message   String?
+  status    KnockStatus @default(PENDING)
+  decidedAt DateTime?   @db.Timestamptz(3)
+  createdAt DateTime    @default(now()) @db.Timestamptz(3)
+  pool      Pool        @relation(fields: [poolId], references: [id], onDelete: Restrict)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([poolId, status])
+  @@index([userId])
+}
+
+model OrganizerApplication {
+  id          String    @id @db.Uuid
+  userId      String    @db.Uuid
+  orgName     String
+  description String
+  links       Json?
+  status      String    @default("PENDING")
+  reviewedBy  String?   @db.Uuid
+  reviewedAt  DateTime? @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Event {
+  id           String        @id @db.Uuid
+  organizerId  String        @db.Uuid
+  title        String
+  description  String
+  category     String
+  venueName    String
+  address      String
+  lat          Float
+  lng          Float
+  coverKey     String?
+  startsAt     DateTime      @db.Timestamptz(3)
+  endsAt       DateTime      @db.Timestamptz(3)
+  status       EventStatus   @default(DRAFT)
+  publishedAt  DateTime?     @db.Timestamptz(3)
+  salesStartAt DateTime?     @db.Timestamptz(3)
+  salesEndAt   DateTime?     @db.Timestamptz(3)
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  organizer    User          @relation("organizerEvents", fields: [organizerId], references: [id], onDelete: Restrict)
+  tiers        TicketTier[]
+  orders       Order[]
+  tickets      Ticket[]
+  ledger       LedgerEntry[]
+
+  @@index([status, startsAt])
+  @@index([organizerId])
+}
+
+model TicketTier {
+  id          String   @id @db.Uuid
+  eventId     String   @db.Uuid
+  name        String
+  pricePaise  Int
+  capacity    Int
+  reserved    Int      @default(0)
+  sold        Int      @default(0)
+  maxPerOrder Int      @default(6)
+  sortOrder   Int      @default(0)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  orders      Order[]
+  tickets     Ticket[]
+
+  @@index([eventId])
+}
+
+model Order {
+  id               String        @id @db.Uuid
+  userId           String        @db.Uuid
+  eventId          String        @db.Uuid
+  tierId           String        @db.Uuid
+  quantity         Int
+  amountPaise      Int
+  platformFeePaise Int
+  currency         String        @default("INR")
+  status           OrderStatus   @default(PENDING_PAYMENT)
+  razorpayOrderId  String?       @unique
+  requestId        String
+  reservedUntil    DateTime?     @db.Timestamptz(3)
+  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  user             User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  event            Event         @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  tier             TicketTier    @relation(fields: [tierId], references: [id], onDelete: Restrict)
+  payments         Payment[]
+  tickets          Ticket[]
+  refunds          Refund[]
+  ledgerEntries    LedgerEntry[]
+
+  @@unique([userId, requestId])
+  @@index([status, reservedUntil])
+  @@index([userId])
+}
+
+model Payment {
+  id                String    @id @db.Uuid
+  orderId           String    @db.Uuid
+  razorpayPaymentId String    @unique
+  amountPaise       Int
+  status            String
+  method            String?
+  capturedAt        DateTime? @db.Timestamptz(3)
+  order             Order     @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  refunds           Refund[]
+
+  @@index([orderId])
+}
+
+model WebhookEvent {
+  id          String    @id
+  provider    String
+  type        String
+  payloadHash String
+  receivedAt  DateTime  @default(now()) @db.Timestamptz(3)
+  processedAt DateTime? @db.Timestamptz(3)
+
+  @@index([provider, type])
+}
+
+model Ticket {
+  id          String       @id @db.Uuid
+  orderId     String       @db.Uuid
+  eventId     String       @db.Uuid
+  tierId      String       @db.Uuid
+  ownerId     String       @db.Uuid
+  bookingRef  String       @unique
+  qrToken     String       @unique
+  status      TicketStatus @default(CONFIRMED)
+  checkedInAt DateTime?    @db.Timestamptz(3)
+  checkedInBy String?      @db.Uuid
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  event       Event        @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  tier        TicketTier   @relation(fields: [tierId], references: [id], onDelete: Restrict)
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+
+  @@index([eventId])
+  @@index([ownerId])
+}
+
+model Refund {
+  id               String   @id @db.Uuid
+  orderId          String   @db.Uuid
+  paymentId        String   @db.Uuid
+  amountPaise      Int
+  reason           String
+  status           String
+  razorpayRefundId String?  @unique
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  order            Order    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  payment          Payment  @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+}
+
+model LedgerEntry {
+  id          String     @id @db.Uuid
+  organizerId String     @db.Uuid
+  eventId     String     @db.Uuid
+  orderId     String?    @db.Uuid
+  type        LedgerType
+  amountPaise Int
+  memo        String?
+  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
+  organizer   User       @relation(fields: [organizerId], references: [id], onDelete: Restrict)
+  event       Event      @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  order       Order?     @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([organizerId, createdAt])
+  @@index([eventId])
+}
+
+model Notification {
+  id        String    @id @db.Uuid
+  userId    String    @db.Uuid
+  type      String
+  payload   Json
+  dedupeKey String?
+  readAt    DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, createdAt])
+}
+
+model NotificationPreference {
+  userId   String  @db.Uuid
+  category String
+  push     Boolean @default(true)
+  inApp    Boolean @default(true)
+  user     User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([userId, category])
+}
+
+model Report {
+  id           String    @id @db.Uuid
+  reporterId   String    @db.Uuid
+  targetType   String
+  targetId     String
+  targetUserId String?   @db.Uuid
+  reason       String
+  details      String?
+  evidence     Json?
+  status       String    @default("OPEN")
+  assignedTo   String?   @db.Uuid
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  resolvedAt   DateTime? @db.Timestamptz(3)
+  reporter     User      @relation("reportsMade", fields: [reporterId], references: [id], onDelete: Restrict)
+  targetUser   User?     @relation("reportsReceived", fields: [targetUserId], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([reporterId])
+  @@index([targetUserId])
+}
+
+model ModerationAction {
+  id           String    @id @db.Uuid
+  reportId     String?   @db.Uuid
+  targetUserId String    @db.Uuid
+  actorId      String    @db.Uuid
+  action       String
+  reason       String
+  expiresAt    DateTime? @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  targetUser   User      @relation("moderatedUser", fields: [targetUserId], references: [id], onDelete: Restrict)
+  actor        User      @relation("moderator", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([targetUserId])
+  @@index([actorId])
+}
+
+model Appeal {
+  id                 String    @id @db.Uuid
+  userId             String    @db.Uuid
+  moderationActionId String    @db.Uuid
+  message            String
+  status             String    @default("PENDING")
+  decidedBy          String?   @db.Uuid
+  decidedAt          DateTime? @db.Timestamptz(3)
+  createdAt          DateTime  @default(now()) @db.Timestamptz(3)
+  user               User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model AuditLog {
+  id         String   @id @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String
+  entityType String
+  entityId   String?
+  meta       Json?
+  ipHash     String?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([action, createdAt])
+  @@index([actorId])
+}
+
+model DataExport {
+  id         String    @id @db.Uuid
+  userId     String    @db.Uuid
+  status     String
+  storageKey String?
+  expiresAt  DateTime? @db.Timestamptz(3)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+}
+
+model IdempotencyKey {
+  id             String   @id @db.Uuid
+  userId         String   @db.Uuid
+  key            String
+  requestHash    String
+  responseStatus Int?
+  responseBody   Json?
+  expiresAt      DateTime @db.Timestamptz(3)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, key])
+  @@index([expiresAt])
+}
+
+
+model SocialPlan {
+  durationMinutes Int @default(60)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  participantIds String[]
+  id String @id @db.Uuid
+  conversationId String @db.Uuid
+  creatorId String @db.Uuid
+  activity String
+  venue String
+  timeOptions DateTime[] @db.Timestamptz(3)
+  confirmedTime DateTime? @db.Timestamptz(3)
+  status String @default("PROPOSED")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  votes PlanVote[]
+  memories PlanMemory[]
+  reconnects ReconnectChoice[]
+  @@index([conversationId, createdAt])
+}
+
+model PlanVote {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId String @db.Uuid
+  userId String @db.Uuid
+  option Int
+  plan SocialPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  @@id([planId, userId])
+}
+
+model InterestCircle {
+  host User @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  posts CirclePost[]
+  id String @id @db.Uuid
+  hostId String @db.Uuid
+  name String
+  interest String
+  rules String
+  capacity Int @default(30)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  members CircleMember[]
+}
+
+model CircleMember {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId String @db.Uuid
+  userId String @db.Uuid
+  removed Boolean @default(false)
+  circle InterestCircle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  @@id([circleId, userId])
+}
+
+model SavedExperience {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  targetId String @db.Uuid
+  kind String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  @@id([userId, targetId, kind])
+}
+
+model ReconnectChoice {
+  user User @relation("reconnectSender", fields: [userId], references: [id], onDelete: Cascade)
+  target User @relation("reconnectTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  planId String @db.Uuid
+  userId String @db.Uuid
+  targetId String @db.Uuid
+  activity String
+  plan SocialPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  @@id([planId, userId, targetId])
+}
+
+model PlanMemory {
+  consentAt DateTime @default(now()) @db.Timestamptz(3)
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id String @id @db.Uuid
+  planId String @db.Uuid
+  ownerId String @db.Uuid
+  caption String
+  image Bytes
+  audience String @default("PRIVATE")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  plan SocialPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  @@index([planId])
+}
+
+model CirclePost {
+  id String @id @db.Uuid
+  circleId String @db.Uuid
+  authorId String @db.Uuid
+  body String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  circle InterestCircle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  @@index([circleId, createdAt])
+}

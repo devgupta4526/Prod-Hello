@@ -1,0 +1,9 @@
+<resources>
+    <string name="social_home">Home</string>
+    <string name="social_week">Your week · Plans, saved experiences and circles</string>
+    <string name="social_up_for">Up for…</string>
+    <string name="social_personality">Edit prompts and ideal weekend</string>
+    <string name="social_gallery">Edit photo gallery</string>
+    <string name="social_basics">Edit bio and interests</string>
+    <string name="social_plan">Make a plan · Vote, confirm and meet again</string>
+</resources>

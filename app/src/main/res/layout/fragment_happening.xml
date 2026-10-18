@@ -1,0 +1,25 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/hello_background">
+  <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/hello_background" android:elevation="0dp" android:stateListAnimator="@null">
+    <LinearLayout android:id="@+id/headerContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_hello_header" android:elevation="0dp" android:orientation="vertical" android:paddingHorizontal="@dimen/screen_gutter" android:paddingTop="28dp" android:paddingBottom="14dp" app:layout_scrollFlags="scroll|enterAlways">
+      <TextView android:id="@+id/headerEyebrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ui_happening_eyebrow" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+      <TextView android:id="@+id/headerTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/ui_happening_title" android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" android:accessibilityHeading="true" />
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/ui_happening_body" android:textAppearance="@style/TextAppearance.Hello.Caption" android:lineSpacingExtra="3dp" />
+    </LinearLayout>
+  </com.google.android.material.appbar.AppBarLayout>
+  <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <ProgressBar android:id="@+id/loadingIndicator" android:layout_width="wrap_content" android:layout_height="wrap_content" android:indeterminateTint="@color/hello_primary" android:visibility="gone" android:layout_gravity="center" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/poolsRecyclerView" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:paddingTop="8dp" android:paddingBottom="88dp" />
+    <androidx.core.widget.NestedScrollView android:id="@+id/emptyStateView" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="32dp">
+        <ImageView android:importantForAccessibility="no" android:layout_width="112dp" android:layout_height="112dp" android:background="@drawable/bg_empty_orbit" android:padding="34dp" android:src="@drawable/ic_happening" app:tint="@color/hello_primary" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="No active pools right now" android:textColor="@color/hello_text" android:textSize="22sp" android:textStyle="bold" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center" android:lineSpacingExtra="3dp" android:text="Be the one who brings people together. Tap below to create a pool for coffee, sports, or games." android:textColor="@color/hello_text_secondary" android:textSize="14sp" />
+      </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton android:id="@+id/hostPoolFab" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="20dp" android:letterSpacing="0" android:text="@string/pools_host_button" android:textColor="@color/hello_on_primary" android:textStyle="bold" app:backgroundTint="@color/hello_primary" app:cornerRadius="24dp" app:elevation="4dp" app:icon="@drawable/ic_add" app:iconTint="@color/hello_on_primary" android:layout_gravity="bottom|end" />
+    <LinearLayout android:id="@+id/feedError" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp" android:gravity="center" android:background="@color/hello_surface" android:visibility="gone" android:layout_gravity="bottom">
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ui_feed_error" android:textAppearance="@style/TextAppearance.Hello.Body" android:gravity="center" android:accessibilityLiveRegion="polite" />
+      <com.google.android.material.button.MaterialButton android:id="@+id/feedRetry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/ui_feed_retry" />
+    </LinearLayout>
+  </FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

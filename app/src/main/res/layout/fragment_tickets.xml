@@ -1,0 +1,28 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/hello_background">
+  <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/hello_background" android:elevation="0dp" android:stateListAnimator="@null">
+    <LinearLayout android:id="@+id/headerContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_hello_header" android:elevation="0dp" android:orientation="vertical" android:paddingHorizontal="@dimen/screen_gutter" android:paddingTop="28dp" android:paddingBottom="12dp" app:layout_scrollFlags="scroll|enterAlways">
+      <TextView android:id="@+id/headerEyebrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ui_tickets_eyebrow" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+      <TextView android:id="@+id/headerTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/ui_tickets_title" android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" android:accessibilityHeading="true" />
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/ui_tickets_body" android:textAppearance="@style/TextAppearance.Hello.Caption" android:lineSpacingExtra="3dp" />
+      <com.google.android.material.chip.ChipGroup android:id="@+id/ticketsTabGroup" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:chipSpacingHorizontal="8dp" app:singleSelection="true" app:selectionRequired="true">
+        <com.google.android.material.chip.Chip android:id="@+id/tabExplore" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="Explore Events" android:textSize="14sp" app:chipCornerRadius="16dp" />
+        <com.google.android.material.chip.Chip android:id="@+id/tabMyTickets" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="My Tickets" android:textSize="14sp" app:chipCornerRadius="16dp" />
+      </com.google.android.material.chip.ChipGroup>
+    </LinearLayout>
+  </com.google.android.material.appbar.AppBarLayout>
+  <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <ProgressBar android:id="@+id/loadingIndicator" android:layout_width="wrap_content" android:layout_height="wrap_content" android:indeterminateTint="@color/hello_primary" android:visibility="gone" android:layout_gravity="center" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/ticketsRecyclerView" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:paddingTop="8dp" android:paddingBottom="24dp" />
+    <androidx.core.widget.NestedScrollView android:id="@+id/emptyStateView" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="32dp">
+        <ImageView android:importantForAccessibility="no" android:layout_width="112dp" android:layout_height="112dp" android:background="@drawable/bg_empty_orbit" android:padding="34dp" android:src="@drawable/ic_tickets" app:tint="@color/hello_primary" />
+        <TextView android:id="@+id/emptyStateTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="No events found" android:textColor="@color/hello_text" android:textSize="22sp" android:textStyle="bold" />
+        <TextView android:id="@+id/emptyStateBody" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center" android:lineSpacingExtra="3dp" android:text="@string/ui_events_empty_body" android:textColor="@color/hello_text_secondary" android:textSize="14sp" />
+      </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <LinearLayout android:id="@+id/feedError" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp" android:gravity="center" android:background="@color/hello_surface" android:visibility="gone" android:layout_gravity="bottom">
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/ui_feed_error" android:textAppearance="@style/TextAppearance.Hello.Body" android:gravity="center" android:accessibilityLiveRegion="polite" />
+      <com.google.android.material.button.MaterialButton android:id="@+id/feedRetry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/ui_feed_retry" />
+    </LinearLayout>
+  </FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,29 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Backend and private configuration
+**/node_modules/
+backend/dist/
+backend/src/generated/
+**/.env
+**/.env.*
+!**/.env.example
+**/coverage/
+
+# Local IDE state and JVM crash dumps
+/.idea/
+hs_err_pid*.log
+replay_pid*.log
