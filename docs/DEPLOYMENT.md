@@ -31,3 +31,9 @@ Photo uploads require Cloudinary credentials. Browser clients need their HTTPS
 origin configured as `ADMIN_ORIGIN`; native apps and curl are not subject to CORS.
 
 The API contract is in `docs/openapi.json`. Protected routes require an access token.
+
+Verification completed: `/health` and `/v1/config` return 200; `/v1/me` without a
+token returns 401. Sandbox OTP request (202), OTP verification (200), authenticated
+profile (200), and logout (200) were tested against the public HTTPS API. The
+test account is in onboarding. The sandbox phone and code are configured only in
+Render and are intentionally omitted from this repository.
