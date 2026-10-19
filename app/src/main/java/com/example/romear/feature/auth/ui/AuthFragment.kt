@@ -124,7 +124,7 @@ class AuthFragment : Fragment() {
             else if (viewModel.state.value.step == OnboardingStep.NOTIFICATIONS) viewModel.notificationsFinished()
         }
         ui.preview.setOnClickListener { if (BuildConfig.DEBUG) enterApp() }
-        ui.gallery.isVisible = BuildConfig.DEBUG
+        ui.gallery.isVisible = false
         ui.gallery.setOnClickListener {
             if (BuildConfig.DEBUG) startActivity(Intent().setClassName(requireContext(), "com.example.romear.core.designsystem.DesignGalleryActivity"))
         }
@@ -213,7 +213,7 @@ class AuthFragment : Fragment() {
         ui.guidelinesCheck.isVisible = step == OnboardingStep.GUIDELINES
         ui.availability.isVisible = step == OnboardingStep.AVAILABILITY
         ui.secondary.isVisible = step == OnboardingStep.LOCATION || step == OnboardingStep.NOTIFICATIONS
-        ui.preview.isVisible = BuildConfig.DEBUG && (step == OnboardingStep.WELCOME || step == OnboardingStep.SPLASH)
+        ui.preview.isVisible = false
         ui.primary.isVisible = step != OnboardingStep.UNDER_AGE
         ui.primary.isEnabled = !state.loading && (step != OnboardingStep.GUIDELINES || ui.guidelinesCheck.isChecked)
         ui.photoButton.isEnabled = !state.loading

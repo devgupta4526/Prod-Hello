@@ -29,15 +29,26 @@ class PoolsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pool: PoolItem) {
+            binding.activityArtwork.category = pool.activity
             binding.poolTitle.text = pool.title
             binding.activityBadge.text = pool.activity.uppercase()
-            binding.capacityBadge.text = "${pool.memberCount} / ${pool.capacity} joined"
+            val spotsLeft = (pool.capacity - pool.memberCount).coerceAtLeast(0)
+            binding.capacityBadge.text = if (spotsLeft == 0) "Pool full (${pool.capacity})" else "${pool.memberCount}/${pool.capacity} joined · $spotsLeft left"
             binding.hostName.text = "Hosted by ${pool.host.displayName}"
-            binding.hostAvatar.load(pool.host.photoUrl, pool.host.displayName, sizeDp = 32)
-            binding.distanceBucket.text = "📍 ${pool.distanceBucket}"
+            binding.hostAvatar.load(pool.host.photoUrl, pool.host.displayName, sizeDp = 34)
+
+            val time = runCatching {
+                java.time.Instant.parse(pool.timeWindowStart)
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a"))
+            }.getOrDefault(pool.timeWindowStart)
+            binding.poolTime.text = time
+            val cleanDistance = pool.distanceBucket.removePrefix("📍").trim()
+            binding.distanceBucket.text = cleanDistance
 
             binding.root.setOnClickListener { onPoolClicked(pool) }
         }
+
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<PoolItem>() {

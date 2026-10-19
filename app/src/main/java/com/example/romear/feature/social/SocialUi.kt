@@ -27,7 +27,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 /** Dialogs share the fragment view lifecycle; all writes are confirmed by the server. */
-class SocialUi(private val fragment: Fragment, private val repo: SocialRepository) {
+class SocialUi(private val fragment: Fragment, private val repo: SocialRepository, private val onProfileChanged: () -> Unit = {}) {
     private val context get() = fragment.requireContext()
     private val restored = fragment.savedStateRegistry.consumeRestoredStateForKey("social_photo")
     private var memoryPlan: String? = restored?.getString("plan")
@@ -38,8 +38,8 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
             Bundle().apply { putString("plan", memoryPlan); putBoolean("gallery", galleryUpload) }
         }
     }
-    private val dialogs = mutableMapOf<String, androidx.appcompat.app.AlertDialog>()
-    private fun track(title: String, dialog: androidx.appcompat.app.AlertDialog) {
+    private val dialogs = mutableMapOf<String, androidx.appcompat.app.AppCompatDialog>()
+    private fun track(title: String, dialog: androidx.appcompat.app.AppCompatDialog) {
         dialogs.remove(title)?.dismiss()
         dialogs[title] = dialog
         val lifecycle = fragment.viewLifecycleOwner.lifecycle
@@ -54,7 +54,7 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
         if (uri != null && galleryUpload) run {
             galleryUpload = false
             val file = com.example.romear.core.security.ProfilePhotoProcessor.prepare(context, uri)
-            try { repo.uploadProfilePhoto(file); gallery() } finally { file.delete() }
+            try { repo.uploadProfilePhoto(file); onProfileChanged(); gallery() } finally { file.delete() }
         }
         else if (uri != null && plan != null) run {
             val bytes = withContext(Dispatchers.IO) {
@@ -87,9 +87,16 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
     }
     private fun column() = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; val p = (20 * resources.displayMetrics.density).toInt(); setPadding(p,p,p,p) }
     private fun label(c: LinearLayout, value: String) { c.addView(TextView(context).apply { text = value; textSize = 16f; setPadding(0,12,0,12) }) }
-    private fun button(c: LinearLayout, value: String, action: () -> Unit) { c.addView(MaterialButton(context).apply { text = value; isAllCaps = false; setOnClickListener { action() } }) }
+    private fun button(c: LinearLayout, value: String, action: () -> Unit) { c.addView(MaterialButton(android.view.ContextThemeWrapper(context, com.google.android.material.R.style.Widget_Material3_Button_TextButton), null, 0).apply { text = value; isAllCaps = false; minHeight = dp(48); setOnClickListener { action() } }) }
     private fun input(c: LinearLayout, hint: String, value: String = "", max: Int = 240): EditText = EditText(context).apply { this.hint = hint; setText(value); inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE; filters = arrayOf(android.text.InputFilter.LengthFilter(max)); c.addView(this) }
-    private fun show(title: String, c: LinearLayout) { val dialog = MaterialAlertDialogBuilder(context).setTitle(title).setView(ScrollView(context).apply { addView(c) }).setNegativeButton("Close", null).show(); track(title, dialog) }
+    private fun show(title: String, c: LinearLayout) {
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(context)
+        val body = column(); heading(body,title)
+        button(body,"Close") { dialog.dismiss() }; body.addView(c)
+        dialog.setContentView(ScrollView(context).apply { addView(body) })
+        track(title,dialog); dialog.show()
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+    }
     private fun run(action: suspend () -> Unit) { fragment.viewLifecycleOwner.lifecycleScope.launch { try { action() } catch (e: CancellationException) { throw e } catch (e: Exception) { Toast.makeText(context, if(e is retrofit2.HttpException) "Could not save or load (${e.code()}). Check access, availability and agreement, then retry." else e.message ?: "Please retry", Toast.LENGTH_LONG).show() } } }
     private fun form(title: String, c: LinearLayout, positive: String = "Save", save: suspend () -> Unit) {
         val d = MaterialAlertDialogBuilder(context).setTitle(title).setView(ScrollView(context).apply { addView(c) }).setNegativeButton("Cancel", null).setPositiveButton(positive, null).create()
@@ -99,15 +106,28 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
     private fun date(value: String): String = try { DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a").format(Instant.parse(value).atZone(java.time.ZoneId.systemDefault())) } catch (_: Exception) { value }
     private fun objects(array: JSONArray): List<JSONObject> = List(array.length()) { array.getJSONObject(it) }
 
+    private fun profilePhoto(url: String, name: String) = com.example.romear.core.designsystem.AvatarView(context).apply {
+        load(url,name,sizeDp=120)
+        shapeAppearanceModel = shapeAppearanceModel.toBuilder().setAllCornerSizes(dp(20).toFloat()).build()
+        contentDescription = "Photo of $name"
+    }
     fun gallery(): Unit = run {
         val data = repo.request("v1/me/profile"); val c = column()
         val photos = objects(data.getJSONArray("photos"))
         label(c,"Your profile gallery · ${photos.size}/6 photos. Keep at least one photo.")
         if(photos.size < 6) button(c,"Add a photo") { galleryUpload = true; memoryPlan = null; picker.launch("image/*") }
-        photos.forEachIndexed { index, photo ->
-            val avatar = com.example.romear.core.designsystem.AvatarView(context).apply { load(photo.getString("url"),"Photo ${index+1}",sizeDp=160); contentDescription = "Profile photo ${index+1}" }
-            val size = (160 * context.resources.displayMetrics.density).toInt(); c.addView(avatar,LinearLayout.LayoutParams(size,size))
-            if(photos.size > 1) button(c,"Remove photo ${index+1}") { MaterialAlertDialogBuilder(context).setTitle("Remove this profile photo?").setNegativeButton("Keep",null).setPositiveButton("Remove") { _,_ -> run { repo.request("v1/me/photos/${photo.getString("id")}","DELETE"); gallery() } }.show() }
+        photos.chunked(2).forEachIndexed { rowIndex, rowPhotos ->
+            val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+            rowPhotos.forEachIndexed { index, photo ->
+                val slot = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(4),dp(8),dp(4),dp(8)) }
+                val number = rowIndex*2+index+1
+                slot.addView(profilePhoto(photo.getString("url"),"Photo $number"),LinearLayout.LayoutParams(-1,dp(180)))
+                label(slot,if(number == 1) "Cover photo" else "Photo $number")
+                if(photos.size > 1) button(slot,"Remove") { MaterialAlertDialogBuilder(context).setTitle("Remove this profile photo?").setNegativeButton("Keep",null).setPositiveButton("Remove") { _,_ -> run { repo.request("v1/me/photos/${photo.getString("id")}","DELETE"); onProfileChanged(); gallery() } }.show() }
+                row.addView(slot,LinearLayout.LayoutParams(0,-2,1f))
+            }
+            if(rowPhotos.size == 1) row.addView(View(context),LinearLayout.LayoutParams(0,1,1f))
+            c.addView(row)
         }
         show("My photos",c)
     }
@@ -120,7 +140,7 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
         listOf("Coffee","Music","Food","Books","Art","Travel","Fitness","Outdoors","Gaming","Photography","Sports","Technology").forEach { interest ->
             c.addView(CheckBox(context).apply { text = interest; isChecked = interest in selected; setOnCheckedChangeListener { _,checked -> if(checked) selected.add(interest) else selected.remove(interest) } })
         }
-        form("Edit profile",c) { require(selected.size in 3..8 && name.text.trim().length >= 2) { "Enter your name and choose 3 to 8 interests" }; repo.updateProfile(name.text.toString(),bio.text.toString(),selected.toList()) }
+        form("Edit profile",c) { require(selected.size in 3..8 && name.text.trim().length >= 2) { "Enter your name and choose 3 to 8 interests" }; repo.updateProfile(name.text.toString(),bio.text.toString(),selected.toList()); onProfileChanged() }
     }
     fun personality(): Unit = run {
         val data = repo.request("v1/me/personality")
@@ -145,45 +165,74 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
         button(c, "Clear availability") { run { repo.request("v1/me/up-for", "PUT", JSONObject().put("activity", JSONObject.NULL)); Toast.makeText(context, "Availability cleared", Toast.LENGTH_SHORT).show() } }
         form("Up for…", c) { require(activity.text.isNotBlank()) { "Choose an activity" }; repo.request("v1/me/up-for", "PUT", JSONObject().put("activity", activity.text.toString()).put("hours", listOf(1,3,6,24)[hours.selectedItemPosition])) }
     }
+    private fun dp(n: Int) = (n * context.resources.displayMetrics.density).toInt()
+    private fun heading(c: LinearLayout, title: String) {
+        c.addView(TextView(context).apply { text = title; textSize = 24f; setTypeface(typeface, android.graphics.Typeface.BOLD); setTextColor(context.getColor(R.color.hello_text)); setPadding(0,dp(24),0,dp(12)); androidx.core.view.ViewCompat.setAccessibilityHeading(this,true) })
+    }
+    private fun card(c: LinearLayout, title: String, detail: String, action: String? = null, click: (() -> Unit)? = null) {
+        val panel = column().apply { background = android.graphics.drawable.GradientDrawable().apply { setColor(context.getColor(R.color.hello_surface)); cornerRadius = dp(20).toFloat(); setStroke(dp(1),context.getColor(R.color.hello_outline_subtle)) } }
+        panel.addView(TextView(context).apply { text = title; textSize = 21f; setTextColor(context.getColor(R.color.hello_text)); setTypeface(typeface,android.graphics.Typeface.BOLD) })
+        label(panel,detail)
+        if(action != null && click != null) button(panel,action,click)
+        c.addView(panel,LinearLayout.LayoutParams(-1,-2).apply { topMargin = dp(12) })
+    }
     fun home(container: LinearLayout? = null): Unit = run {
         if(container != null) homeContainer = container
-        val data = repo.request("v1/home"); val c = column()
-        label(c, "Your week")
-        button(c, "Notifications") { notifications() }
-        button(c, "Refresh") { home() }
-        button(c, "Discover people nearby") { fragment.findNavController().navigate(R.id.discoverFragment) }
-        button(c, "Interest circles") { circles() }
-        button(c, "Up for…") { upFor() }
-        label(c, "People with shared interests")
-        val people = objects(data.getJSONArray("relevantPeople"))
-        if(people.isEmpty()) label(c, "People appear here while nearby discovery is active.")
-        people.forEach { person -> button(c, person.getString("displayName") + if(person.isNull("upFor")) "" else " · Up for ${person.getString("upFor")}") { publicProfile(person.getString("userId")) } }
-        label(c, "Upcoming commitments")
-        val commitments = objects(data.getJSONArray("commitments"))
-        if(commitments.isEmpty()) label(c, "Your booked events will appear here.")
-        commitments.forEach { label(c, "${it.getString("title")} · ${date(it.getString("startsAt"))}") }
-        label(c, "Your plans")
-        val planItems = objects(data.getJSONArray("plans"))
-        if(planItems.isEmpty()) label(c, "Make a plan from a conversation in your inbox.")
-        planItems.forEach { p -> button(c, "${p.getString("activity")} · ${p.getString("status")}") { plans(p.getString("conversationId")) } }
-        label(c, "Saved experiences")
-        val saved = objects(data.getJSONArray("saved"))
-        if(saved.isEmpty()) label(c, "Save an experience below for later.")
-        saved.forEach { e -> button(c, "${e.getString("title")} · ${date(e.getString("startsAt"))} · Unsave") { run { save(e, false); home() } } }
-        val digest = Switch(context).apply { text = "Receive an optional weekly in-app digest"; isChecked = data.getBoolean("weeklyDigest") }; c.addView(digest)
-        digest.setOnCheckedChangeListener { _, enabled -> run { try { repo.request("v1/me/weekly-digest", "PUT", JSONObject().put("enabled", enabled)); home() } catch(e: Exception) { digest.setOnCheckedChangeListener(null); digest.isChecked = !enabled; throw e } } }
-        if(data.getBoolean("weeklyDigest")) { label(c, "This week's shortlist"); val shortlist = objects(data.getJSONArray("shortlist")); if(shortlist.isEmpty()) label(c, "No matching experiences this week yet."); shortlist.forEach { label(c, "${it.getString("title")} · ${date(it.getString("startsAt"))}") } }
-        label(c, "Nearby plans")
-        val nearby = objects(data.getJSONArray("nearbyPlans"))
-        if(nearby.isEmpty()) label(c, "No upcoming plans in your discovery area yet.")
-        nearby.forEach { label(c, "${it.getString("title")} · ${date(it.getString("startsAt"))}") }
-        label(c, "Experiences for you")
-        val experiences = objects(data.getJSONArray("experiences"))
-        if(experiences.isEmpty()) label(c, "No upcoming experiences yet. Check Happening for new plans.")
-        experiences.forEach { e -> button(c, "${e.getString("title")} · ${date(e.getString("startsAt"))} · Save") { run { save(e, true); Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show() } } }
         val target = homeContainer
-        if(target == null) show("Your week", c)
-        else { target.removeAllViews(); target.addView(c) }
+        if(target != null && target.childCount == 0) label(target,"Finding your next hello…")
+        val data = try { repo.request("v1/home") } catch(e: Exception) {
+            target?.removeAllViews()
+            target?.let { card(it,"Let’s reconnect", "Your feed couldn’t load. Check your connection and try again.","Try again") { home() } }
+            throw e
+        }
+        val c = column()
+        val toolbar = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL }
+        toolbar.addView(TextView(context).apply { text = "hello."; textSize = 30f; setTextColor(context.getColor(R.color.hello_primary)); setTypeface(typeface,android.graphics.Typeface.BOLD) },LinearLayout.LayoutParams(0,-2,1f))
+        button(toolbar,"Updates") { notifications() }; c.addView(toolbar)
+        heading(c,"Good company starts here.")
+        label(c,"People to meet. Plans to look forward to.")
+        card(c,"Make room for someone new", "Find people nearby who share your interests. Start with something you both love.","Explore people →") { fragment.findNavController().navigate(R.id.discoverFragment) }
+        val actions = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+        button(actions,"Interest circles") { circles() }; button(actions,"I’m up for…") { upFor() }; for(i in 0 until actions.childCount) actions.getChildAt(i).layoutParams = LinearLayout.LayoutParams(0,-2,1f); c.addView(actions)
+        val people = objects(data.getJSONArray("relevantPeople"))
+        if(people.isNotEmpty()) heading(c,"Your kind of people")
+        people.forEach { person ->
+            val panel = column()
+            val avatar = com.example.romear.core.designsystem.AvatarView(context).apply { load(person.optString("photoUrl"),person.getString("displayName"),sizeDp=72) }
+            panel.addView(avatar,LinearLayout.LayoutParams(dp(72),dp(72)))
+            val shared = person.optJSONArray("sharedInterests") ?: JSONArray()
+            val detail = buildString {
+                append(person.optString("distanceBucket"))
+                if(shared.length() > 0) append("\nBoth into " + (0 until shared.length()).joinToString(", ") { shared.getString(it) })
+                if(!person.isNull("upFor")) append("\nUp for ${person.getString("upFor")}")
+            }
+            val name = person.getString("displayName") + if(person.isNull("age")) "" else ", ${person.getInt("age")}"
+            card(panel,name,detail,"View profile →") { publicProfile(person.getString("userId")) }
+            c.addView(panel)
+        }
+        heading(c,"On your calendar")
+        val commitments = objects(data.getJSONArray("commitments")); val planItems = objects(data.getJSONArray("plans"))
+        if(commitments.isEmpty() && planItems.isEmpty()) card(c,"Your next plan belongs here", "Join a small group or turn a conversation into a plan.","Find a group →") { fragment.findNavController().navigate(R.id.happening_graph) }
+        commitments.forEach { card(c,it.getString("title"),date(it.getString("startsAt"))) }
+        planItems.forEach { p -> card(c,p.getString("activity"),p.getString("status").lowercase().replaceFirstChar { it.uppercase() },"See plan →") { plans(p.getString("conversationId")) } }
+        heading(c,"Worth going out for")
+        val experiences = objects(data.getJSONArray("experiences"))
+        if(experiences.isEmpty()) card(c,"More experiences on the way", "Explore events for current availability.","Explore events →") { fragment.findNavController().navigate(R.id.tickets_graph) }
+        experiences.forEach { e ->
+            val experience = column()
+            experience.addView(com.example.romear.core.designsystem.ActivityArtworkView(context).apply { category = e.optString("category",e.getString("title")) },LinearLayout.LayoutParams(-1,dp(112)))
+            card(experience,e.getString("title"),date(e.getString("startsAt")),"Save experience") { run { save(e,true); home() } }
+            c.addView(experience)
+        }
+        val saved = objects(data.getJSONArray("saved"))
+        if(saved.isNotEmpty()) { heading(c,"Saved for later"); saved.forEach { e -> card(c,e.getString("title"),date(e.getString("startsAt")),"Remove from saved") { run { save(e,false); home() } } } }
+        val nearby = objects(data.getJSONArray("nearbyPlans"))
+        if(nearby.isNotEmpty()) { heading(c,"Around you"); nearby.forEach { card(c,it.getString("title"),date(it.getString("startsAt"))) } }
+        val digest = com.google.android.material.materialswitch.MaterialSwitch(context).apply { text = "My weekly shortlist"; isChecked = data.getBoolean("weeklyDigest"); setPadding(0,dp(20),0,dp(12)) }; c.addView(digest)
+        digest.setOnCheckedChangeListener { _,enabled -> run { try { repo.request("v1/me/weekly-digest","PUT",JSONObject().put("enabled",enabled)); home() } catch(e: Exception) { digest.setOnCheckedChangeListener(null); digest.isChecked = !enabled; throw e } } }
+        if(data.getBoolean("weeklyDigest")) { heading(c,"This week’s shortlist"); objects(data.getJSONArray("shortlist")).forEach { card(c,it.getString("title"),date(it.getString("startsAt"))) } }
+        button(c,"Refresh feed") { home() }
+        if(target == null) show("Your week",c) else { target.removeAllViews(); target.addView(c) }
     }
     private fun notifications(): Unit = run {
         val c = column()
@@ -206,21 +255,29 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
     }
     private fun publicProfile(id: String): Unit = run {
         val p = repo.request("v1/users/$id"); val c = column()
-        label(c, if(p.optBoolean("phoneVerified")) "Phone verified" else "Phone not verified")
-        label(c, p.optString("bio", ""))
-        label(c, "My ideal weekend\n${p.optString("idealWeekend")}")
+        label(c, if(p.optBoolean("phoneVerified")) "✓ Phone verified" else "Phone not verified")
         objects(p.getJSONArray("photos")).forEachIndexed { index, photo ->
-            val avatar = com.example.romear.core.designsystem.AvatarView(context).apply { load(photo.getString("url"),p.getString("displayName"),sizeDp=160) }
-            val size = (160 * context.resources.displayMetrics.density).toInt()
-            c.addView(avatar, LinearLayout.LayoutParams(size,size))
-            button(c, "Reply to photo ${index+1}") { hello(id,JSONObject().put("type","PHOTO").put("id",photo.getString("id")).put("text","Photo ${index+1}")) }
+            val image = profilePhoto(photo.getString("url"),p.getString("displayName"))
+            c.addView(image, LinearLayout.LayoutParams(-1,dp(320)).apply { bottomMargin = dp(8) })
+            button(c, "Start a conversation about this photo") { hello(id,JSONObject().put("type","PHOTO").put("id",photo.getString("id")).put("text","Photo ${index+1}")) }
         }
-        objects(p.getJSONArray("prompts")).forEach { prompt -> label(c,prompt.getString("answer")); button(c,"Reply to this prompt") { hello(id,JSONObject().put("type","PROMPT").put("id",prompt.getString("id")).put("text",prompt.getString("answer"))) } }
+        if(p.optString("bio").isNotBlank()) card(c,"About me",p.optString("bio"))
+        val interests = p.optJSONArray("interests")
+        if(interests != null && interests.length() > 0) {
+            heading(c,"Things I’m into")
+            val chips = com.google.android.material.chip.ChipGroup(context)
+            for(i in 0 until interests.length()) chips.addView(com.google.android.material.chip.Chip(context).apply { text = interests.getString(i); isClickable = false })
+            c.addView(chips)
+        }
+        if(p.optString("idealWeekend").isNotBlank()) card(c,"My ideal weekend",p.optString("idealWeekend"))
+        val questions = mapOf("joy" to "A small thing that brings me joy", "learn" to "Something I’d love to learn together", "friendship" to "A good friendship looks like")
+        objects(p.getJSONArray("prompts")).forEach { prompt -> card(c,questions[prompt.getString("id")] ?: "A little about me",prompt.getString("answer"),"Reply to this prompt") { hello(id,JSONObject().put("type","PROMPT").put("id",prompt.getString("id")).put("text",prompt.getString("answer"))) } }
         button(c,"Say Hello") { hello(id,null) }
         button(c,"Report profile") { report(id) }
         show(p.getString("displayName"),c)
     }
     private fun hello(id: String, replyContext: JSONObject?) {
+        dialogs.values.toList().forEach { it.dismiss() }
         val c = column(); replyContext?.let { label(c,"Reply to: ${it.optString("text")}") }; val message = input(c,"Your Hello",max=280)
         form("Say Hello",c,"Send") {
             require(message.text.isNotBlank()) { "Write a message first" }

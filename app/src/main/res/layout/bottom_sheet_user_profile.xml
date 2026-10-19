@@ -1,18 +1,344 @@
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:clipToPadding="false" android:overScrollMode="ifContentScrolls">
-  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
-    <View android:layout_width="40dp" android:layout_height="4dp" android:layout_gravity="center_horizontal" android:layout_marginBottom="16dp" android:background="@color/hello_outline" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-      <com.example.romear.core.designsystem.AvatarView android:id="@+id/profileAvatar" android:layout_width="64dp" android:layout_height="64dp" />
-      <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_weight="1" android:orientation="vertical">
-        <TextView android:id="@+id/profileName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/hello_text" android:textSize="20sp" android:textStyle="bold" />
-        <TextView android:id="@+id/profileDistance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:textColor="@color/hello_text_secondary" android:textSize="14sp" />
-      </LinearLayout>
-      <ImageButton android:id="@+id/safetyOptionsButton" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/report_user" android:src="@drawable/ic_more" />
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_sheet_rounded">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="96dp"
+        android:overScrollMode="ifContentScrolls">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Hero Media Header with Gradient Scrim -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="280dp">
+
+                <ImageView
+                    android:id="@+id/profileHeroPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    android:background="@color/hello_surface_variant" />
+
+                <!-- Gradient Scrim overlay -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_gradient_scrim" />
+
+                <!-- Sheet Handle -->
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_bottom_sheet_handle" />
+
+                <!-- Floating Safety / More Options Button -->
+                <ImageButton
+                    android:id="@+id/safetyOptionsButton"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_badge_pill"
+                    android:backgroundTint="#80000000"
+                    android:contentDescription="@string/report_user"
+                    android:src="@drawable/ic_more"
+                    app:tint="@color/white" />
+
+                <!-- Identity info over scrim -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- Small circular avatar fallback/indicator -->
+                        <com.example.romear.core.designsystem.AvatarView
+                            android:id="@+id/profileAvatar"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:strokeColor="@color/white"
+                            app:strokeWidth="2dp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/profileName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    tools:text="Ananya, 23" />
+
+                                <ImageView
+                                    android:id="@+id/profileVerifiedBadge"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_marginStart="6dp"
+                                    android:contentDescription="Verified"
+                                    android:src="@drawable/ic_verified"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/profileDistance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="#E0FFFFFF"
+                                android:textSize="13sp"
+                                tools:text="📍 Within 2 km · Indiranagar" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Trust & IRL Badges Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/profileIrlBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_irl"
+                            android:text="🤝 Met in Real Life"
+                            android:textColor="@color/hello_irl_purple"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/profileStatusBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_emerald"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="3dp"
+                            android:text="🟢 Open to meet"
+                            android:textColor="@color/hello_emerald"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- Main Profile Body Content -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="18dp">
+
+                <!-- 15-Second Audio Bio / Voice Prompt Player (Hinge Feature) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/voiceBioCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/hello_surface_container"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/hello_outline_subtle"
+                    app:strokeWidth="1dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/voicePlayButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Play Voice Bio"
+                            app:backgroundTint="@color/hello_primary"
+                            app:elevation="0dp"
+                            app:fabCustomSize="44dp"
+                            app:tint="@color/white"
+                            app:srcCompat="@drawable/ic_mic" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/voicePromptTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🎙️ Voice Bio"
+                                android:textColor="@color/hello_text"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/voiceWaveformBars"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:letterSpacing="0.08"
+                                android:text=" ▂▃▅▆▇▆▅▃▂ ▂▃▅▇▆▅▃"
+                                android:textColor="@color/hello_primary"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/voiceDuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0:15"
+                            android:textColor="@color/hello_text_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Up For / Current Vibe Banner -->
+                <LinearLayout
+                    android:id="@+id/profileUpForContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_badge_peach"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="10dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_bolt"
+                        app:tint="@color/hello_primary" />
+
+                    <TextView
+                        android:id="@+id/profileUpForText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/hello_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="Up for: Specialty coffee &amp; Sunday cycling" />
+                </LinearLayout>
+
+                <!-- Bio Text -->
+                <TextView
+                    android:id="@+id/profileBio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/hello_text"
+                    android:textSize="16sp"
+                    tools:text="Architect by day, vinyl collector and indie cinema fan by night. Looking for folks to explore hidden cafes." />
+
+                <!-- Interests Section -->
+                <TextView
+                    android:id="@+id/interestsHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/auth_interests"
+                    android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/profileInterestsGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingVertical="6dp" />
+
+                <!-- Hinge-style Personality Prompts & Extra Photos -->
+                <LinearLayout
+                    android:id="@+id/personalityContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Sticky Floating Action Bar (Bumble / Hinge Style) -->
+    <LinearLayout
+        android:id="@+id/stickyActionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_sheet_rounded"
+        android:elevation="12dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="20dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profileSayHelloButton"
+            style="@style/Widget.Hello.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:backgroundTint="@color/hello_primary"
+            android:text="Say Hello 👋"
+            android:textColor="@color/hello_on_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="27dp"
+            app:icon="@drawable/ic_send"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@color/hello_on_primary" />
     </LinearLayout>
-    <TextView android:id="@+id/profileBio" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/hello_text" android:textSize="15sp" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/auth_interests" android:textColor="@color/hello_text_secondary" android:textSize="13sp" android:textStyle="bold" />
-    <com.google.android.material.chip.ChipGroup android:id="@+id/profileInterestsGroup" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" />
-    <LinearLayout android:id="@+id/personalityContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/profileSayHelloButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="@string/say_hello" />
-  </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

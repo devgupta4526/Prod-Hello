@@ -56,7 +56,29 @@
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.material.button.MaterialButton android:id="@+id/planButton" android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/social_plan" app:layout_constraintTop_toBottomOf="@id/chatToolbar" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/planButton"
+        style="@style/Widget.Hello.Button.Tonal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:minHeight="48dp"
+        android:text="@string/social_plan"
+        android:textColor="@color/hello_primary"
+        android:textSize="13sp"
+        app:backgroundTint="@color/hello_surface_container"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/ic_bolt"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconTint="@color/hello_primary"
+        app:strokeColor="@color/hello_outline"
+        app:strokeWidth="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chatToolbar" />
 
     <ProgressBar
         android:id="@+id/loadingIndicator"
@@ -129,9 +151,11 @@
             android:id="@+id/sendButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/ui_chat_send"
-            android:src="@drawable/ic_send" />
+            android:src="@drawable/ic_send"
+            app:tint="@color/hello_primary" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,8 +26,6 @@ class HomeFragment : Fragment() {
         }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val column = (view as ScrollView).getChildAt(0) as LinearLayout
-        column.addView(TextView(requireContext()).apply { text = "Your week"; textSize = 28f; setPadding(24,24,24,12) })
-        column.addView(MaterialButton(requireContext()).apply { text = "Load my home"; setOnClickListener { social.home(column) } })
         social.home(column)
     }
 }

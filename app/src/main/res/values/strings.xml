@@ -111,8 +111,8 @@
     <string name="auth_sign_out">Sign out</string>
     <string name="auth_update_title">A fresh start\nis ready.</string>
     <string name="auth_update_body">This version is no longer supported. Install the latest version to continue.</string>
-    <string name="auth_splash_title">A moment\nbefore hello.</string>
-    <string name="auth_splash_body">Checking your connection and account…</string>
+    <string name="auth_splash_title">Finding your people.</string>
+    <string name="auth_splash_body">Getting things ready for you…</string>
     <string name="auth_error_phone">Enter a valid ten-digit Indian mobile number.</string>
     <string name="auth_error_code">That code doesn’t match. Check it and try again.</string>
     <string name="auth_error_expired">This code expired. Request a new one.</string>
@@ -175,8 +175,8 @@
     <string name="pools_host_button">Host a Pool</string>
     <string name="pools_empty">No active pools nearby. Be the first to start one!</string>
     <string name="pool_create_title">Host a Pool</string>
-    <string name="pool_title_hint">Title (e.g. Saturday Morning Coffee)</string>
-    <string name="pool_activity_hint">Activity (e.g. Coffee, Biking, Board games)</string>
+    <string name="pool_title_hint">Give your plan a name</string>
+    <string name="pool_activity_hint">Activity · coffee, games, cycling…</string>
     <string name="pool_capacity_hint">Capacity (2–12 people)</string>
     <string name="pool_knock_button">Knock to join</string>
     <string name="pool_knock_prompt">Introduce yourself to the host:</string>

@@ -37,18 +37,29 @@ class UserTicketsAdapter(
 
         fun bind(ticket: UserTicketItem) {
             binding.ticketEventTitle.text = ticket.eventTitle
-            binding.ticketTierBadge.text = ticket.tierName
-            binding.ticketStatus.text = ticket.status
+            binding.ticketTierBadge.text = ticket.tierName.uppercase()
+            binding.ticketStatus.text = when (ticket.status.uppercase()) {
+                "CONFIRMED", "VALID", "ACTIVE" -> "Confirmed"
+                "USED" -> "Used"
+                "CANCELLED" -> "Cancelled"
+                else -> ticket.status
+            }
 
             val formattedDate = try {
                 dateFormatter.format(Instant.parse(ticket.startsAt))
             } catch (_: Exception) {
                 ""
             }
-            binding.ticketVenueDate.text = "$formattedDate · ${ticket.venueName}"
+            binding.ticketVenueDate.text = if (formattedDate.isNotEmpty()) {
+                "🗓️ $formattedDate\n📍 ${ticket.venueName}"
+            } else {
+                "📍 ${ticket.venueName}"
+            }
 
             binding.viewQrButton.setOnClickListener { onViewQrClicked(ticket) }
+            binding.root.setOnClickListener { onViewQrClicked(ticket) }
         }
+
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<UserTicketItem>() {

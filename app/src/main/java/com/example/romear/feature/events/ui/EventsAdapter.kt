@@ -16,7 +16,7 @@ class EventsAdapter(
     private val onEventClicked: (EventItem) -> Unit,
 ) : ListAdapter<EventItem, EventsAdapter.ViewHolder>(DiffCallback) {
 
-    private val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+    private val dateFormatter = DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a")
         .withZone(ZoneId.systemDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,6 +36,7 @@ class EventsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(event: EventItem) {
+            binding.activityArtwork.category = event.category
             binding.eventTitle.text = event.title
             binding.categoryBadge.text = event.category.uppercase()
             binding.distanceBucket.text = "📍 ${event.distanceBucket}"
@@ -47,9 +48,11 @@ class EventsAdapter(
             }
             binding.eventDateVenue.text = "$formattedDate · ${event.venueName}"
 
-            val minPrice = event.tiers.minOfOrNull { it.priceInPaise } ?: 0
+            val available = event.tiers.filter { it.remaining > 0 }
+            val minPrice = available.minOfOrNull { it.priceInPaise } ?: 0
             val priceStr = if (minPrice == 0) "Free" else "₹${minPrice / 100}"
-            binding.priceLabel.text = "From $priceStr"
+            binding.priceLabel.text = if(available.isEmpty()) "Sold out" else if(minPrice == 0) "Free entry" else "From $priceStr"
+            binding.bookButton.text = "View experience"
 
             binding.root.setOnClickListener { onEventClicked(event) }
             binding.bookButton.setOnClickListener { onEventClicked(event) }

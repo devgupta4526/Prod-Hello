@@ -46,7 +46,7 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenceLocation = com.example.romear.core.security.PresenceLocation(this) { availability, location -> viewModel.updateAvailability(availability, location) }
-        socialUi = com.example.romear.feature.social.SocialUi(this, socialRepository)
+        socialUi = com.example.romear.feature.social.SocialUi(this, socialRepository) { viewModel.loadData() }
         enterTransition = HelloTransitions.tab()
         exitTransition = HelloTransitions.tab()
     }
@@ -109,6 +109,18 @@ class ProfileFragment : Fragment() {
                             views.profileAge.text = if (profile.age != null) "${profile.age} years old" else ""
                             views.profileAvatar.load(profile.photos.firstOrNull(), profile.displayName, sizeDp = 72)
                             views.profileBio.text = profile.bio ?: "No bio yet"
+                            views.profilePhotoSummary.text = "Your photos · ${profile.photos.size}/6"
+                            views.profilePhotos.removeAllViews()
+                            profile.photos.forEach { url ->
+                                val photo = AvatarView(requireContext()).apply {
+                                    load(url,profile.displayName,sizeDp=120)
+                                    shapeAppearanceModel = shapeAppearanceModel.toBuilder().setAllCornerSizes(16 * resources.displayMetrics.density).build()
+                                    setOnClickListener { socialUi.gallery() }
+                                }
+                                val size = (120 * resources.displayMetrics.density).toInt()
+                                views.profilePhotos.addView(photo,LinearLayout.LayoutParams(size,size).apply { marginEnd = (8 * resources.displayMetrics.density).toInt() })
+                            }
+
 
                             views.profileInterestsGroup.removeAllViews()
                             profile.interests.forEach { interest ->

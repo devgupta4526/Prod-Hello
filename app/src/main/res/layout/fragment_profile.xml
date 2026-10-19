@@ -1,56 +1,427 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/hello_background" android:clipToPadding="false" android:paddingBottom="40dp">
-  <com.example.romear.core.designsystem.ReadableColumnLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center_horizontal">
-    <TextView android:id="@+id/headerEyebrow" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="@dimen/screen_gutter" android:layout_marginTop="16dp" android:layout_marginEnd="@dimen/screen_gutter" android:letterSpacing="0.12" android:text="ACCOUNT &amp; SAFETY" android:textColor="@color/hello_primary" android:textSize="11sp" android:textStyle="bold" />
-    <TextView android:id="@+id/headerTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="@dimen/screen_gutter" android:layout_marginTop="2dp" android:layout_marginEnd="@dimen/screen_gutter" android:text="@string/ui_profile_title" android:textColor="@color/hello_text" android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" android:accessibilityHeading="true" android:textStyle="bold" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/editBasicsButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/social_basics" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/galleryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/social_gallery" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/personalityButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/social_personality" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/upForButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/social_up_for" />
-    <com.example.romear.core.designsystem.HelloCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="@dimen/screen_gutter" android:layout_marginTop="16dp">
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-          <com.example.romear.core.designsystem.AvatarView android:id="@+id/profileAvatar" android:layout_width="64dp" android:layout_height="64dp" />
-          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_weight="1" android:orientation="vertical">
-            <TextView android:id="@+id/profileDisplayName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/hello_text" android:textSize="20sp" android:textStyle="bold" />
-            <TextView android:id="@+id/profileAge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:textColor="@color/hello_text_secondary" android:textSize="14sp" />
-          </LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hello_background"
+    android:clipToPadding="false"
+    android:paddingBottom="48dp">
+
+    <com.example.romear.core.designsystem.ReadableColumnLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- Screen Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/screen_gutter"
+            android:paddingTop="20dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/headerEyebrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="YOUR PROFILE &amp; SETTINGS"
+                android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+            <TextView
+                android:id="@+id/headerTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:accessibilityHeading="true"
+                android:text="A Little More You."
+                android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Manage your public card, photos, vibes, and safety settings."
+                android:textAppearance="@style/TextAppearance.Hello.Caption" />
         </LinearLayout>
-        <TextView android:id="@+id/profileBio" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:textColor="@color/hello_text" android:textSize="15sp" />
-        <com.google.android.material.chip.ChipGroup android:id="@+id/profileInterestsGroup" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" />
-      </LinearLayout>
-    </com.example.romear.core.designsystem.HelloCardView>
-    <com.example.romear.core.designsystem.HelloCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="@dimen/screen_gutter" android:layout_marginTop="12dp">
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile_availability_label" android:textColor="@color/hello_text" android:textSize="16sp" android:textStyle="bold" />
-        <com.google.android.material.chip.ChipGroup android:id="@+id/availabilityChipGroup" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:singleSelection="true" app:selectionRequired="true">
-          <com.google.android.material.chip.Chip android:id="@+id/profileChipOpen" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/discovery_status_open" />
-          <com.google.android.material.chip.Chip android:id="@+id/profileChipBrowsing" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/discovery_status_browsing" />
-          <com.google.android.material.chip.Chip android:id="@+id/profileChipInvisible" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/discovery_status_invisible" />
-        </com.google.android.material.chip.ChipGroup>
-      </LinearLayout>
-    </com.example.romear.core.designsystem.HelloCardView>
-    <com.example.romear.core.designsystem.HelloCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="@dimen/screen_gutter" android:layout_marginTop="16dp">
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/hapticsSwitch" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/haptics_title" android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/haptics_body" android:layout_marginTop="4dp" android:textAppearance="@style/TextAppearance.Hello.Caption" />
-      </LinearLayout>
-    </com.example.romear.core.designsystem.HelloCardView>
-    <com.example.romear.core.designsystem.HelloCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="@dimen/screen_gutter" android:layout_marginTop="12dp">
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/privacy_heading" android:textColor="@color/hello_text" android:textSize="16sp" android:textStyle="bold" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/privacy_body" android:textColor="@color/hello_text_secondary" android:textSize="13sp" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/viewBlockedUsersButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/profile_blocked_users" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/exportDataButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/profile_export_data" />
-        <TextView android:id="@+id/deletionNotice" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:textColor="@color/hello_error" android:textSize="14sp" android:visibility="gone" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/deleteAccountButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/profile_delete_account" android:textColor="@color/hello_error" />
-      </LinearLayout>
-    </com.example.romear.core.designsystem.HelloCardView>
-    <com.example.romear.core.designsystem.HelloCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="@dimen/screen_gutter" android:layout_marginTop="12dp">
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/account_security" android:textColor="@color/hello_text" android:textSize="16sp" android:textStyle="bold" />
-        <LinearLayout android:id="@+id/profileSessionsContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="vertical" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/profileSignOutButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/auth_sign_out" />
-      </LinearLayout>
-    </com.example.romear.core.designsystem.HelloCardView>
-  </com.example.romear.core.designsystem.ReadableColumnLayout>
-</ScrollView>
+
+        <!-- Identity & Photos Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_gutter"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.example.romear.core.designsystem.AvatarView
+                        android:id="@+id/profileAvatar"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/profileDisplayName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hello_text"
+                            android:textSize="21sp"
+                            android:textStyle="bold"
+                            tools:text="Priya Nair" />
+
+                        <TextView
+                            android:id="@+id/profileAge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/hello_text_secondary"
+                            android:textSize="14sp"
+                            tools:text="24 years old" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/profileBio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="@color/hello_text"
+                    android:textSize="15sp"
+                    tools:text="Designer &amp; indie music enthusiast. Always looking for good badminton games and specialty coffee." />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="INTERESTS"
+                    android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/profileInterestsGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:chipSpacingHorizontal="6dp"
+                    app:chipSpacingVertical="4dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/hello_outline_subtle" />
+
+                <TextView
+                    android:id="@+id/profilePhotoSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="PHOTOS"
+                    android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:clipToPadding="false"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/profilePhotos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Profile Customization Actions Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_gutter"
+            android:layout_marginTop="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Details &amp; Prompts"
+                    android:textColor="@color/hello_text"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Share your personality and what you're up for."
+                    android:textColor="@color/hello_text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editBasicsButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="start|center_vertical"
+                    android:text="✏️  Edit Bio &amp; Interests"
+                    app:icon="@drawable/ic_arrow"
+                    app:iconGravity="end" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/galleryButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start|center_vertical"
+                    android:text="📸  Edit Photo Gallery"
+                    app:icon="@drawable/ic_arrow"
+                    app:iconGravity="end" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/personalityButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start|center_vertical"
+                    android:text="✨  Prompts &amp; Ideal Weekend"
+                    app:icon="@drawable/ic_arrow"
+                    app:iconGravity="end" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/upForButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start|center_vertical"
+                    android:text="⚡  What I'm Up For…"
+                    app:icon="@drawable/ic_arrow"
+                    app:iconGravity="end" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Availability Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_gutter"
+            android:layout_marginTop="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_availability_label"
+                    android:textColor="@color/hello_text"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Choose how you appear to people discovered nearby."
+                    android:textColor="@color/hello_text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/availabilityChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:chipSpacingHorizontal="8dp"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/profileChipOpen"
+                        style="@style/Widget.Hello.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🟢 Open to Meet" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/profileChipBrowsing"
+                        style="@style/Widget.Hello.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🟡 Browsing" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/profileChipInvisible"
+                        style="@style/Widget.Hello.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚪ Invisible" />
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Haptics Feedback Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_gutter"
+            android:layout_marginTop="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/hapticsSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/haptics_title"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/haptics_body"
+                    android:textAppearance="@style/TextAppearance.Hello.Caption" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Privacy & Safety Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_gutter"
+            android:layout_marginTop="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/privacy_heading"
+                    android:textColor="@color/hello_text"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/privacy_body"
+                    android:textColor="@color/hello_text_secondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/viewBlockedUsersButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/profile_blocked_users" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/exportDataButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/profile_export_data" />
+
+                <TextView
+                    android:id="@+id/deletionNotice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/hello_error"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteAccountButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/profile_delete_account"
+                    android:textColor="@color/hello_error" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Account Security Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_gutter"
+            android:layout_marginTop="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account_security"
+                    android:textColor="@color/hello_text"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/profileSessionsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/profileSignOutButton"
+                    style="@style/Widget.Hello.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/auth_sign_out"
+                    android:textColor="@color/hello_error" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+    </com.example.romear.core.designsystem.ReadableColumnLayout>
+</ScrollView>

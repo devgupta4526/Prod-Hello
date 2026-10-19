@@ -20,7 +20,7 @@ class AvatarView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     fun bind(label: String, presence: String?, sizeDp: Int = 72) {
-        val validSize = if (sizeDp in setOf(32, 40, 48, 56, 64, 72, 120)) sizeDp else 72
+        val validSize = if (sizeDp > 0) sizeDp else 72
         val size = (validSize * resources.displayMetrics.density).toInt()
         minimumWidth = size
         minimumHeight = size

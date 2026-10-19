@@ -37,3 +37,28 @@ token returns 401. Sandbox OTP request (202), OTP verification (200), authentica
 profile (200), and logout (200) were tested against the public HTTPS API. The
 test account is in onboarding. The sandbox phone and code are configured only in
 Render and are intentionally omitted from this repository.
+
+## Demo data
+
+The hosted staging database contains five fictional demo profiles with labeled
+avatar images, four nearby presences, three pools with group conversations,
+and two published events with four ticket tiers around Nagpur. Use your
+existing sandbox login. Demo accounts have synthetic `+999` identifiers and
+cannot sign in through phone verification; no SMS is sent by seeding.
+
+Set the device/emulator location near Nagpur (21.1458, 79.0882) and enable
+discovery to test nearby people. Demo presence expires after 24 hours.
+Events start four and six days after the initial seed; pools start one to three
+days after it. Existing user accounts and activities are preserved.
+
+To rerun against a deliberately selected local or staging database, set its
+`DATABASE_URL` and `APP_ENV` in the ignored `backend/.env`, then run
+`npm run seed` from `backend`. Optional `SEED_AVATAR_BASE` specifies the URL
+directory containing `avatar-0.jpg` through `avatar-4.jpg`; without it the seed
+uses a generic Cloudinary sample image. The hosted seed uses labeled avatars
+under `https://res.cloudinary.com/zuervxin/image/upload/hello/demo`.
+
+The seed uses deterministic IDs and a transaction. Rerunning creates missing
+demo records and refreshes demo presence, demo locations, and future demo dates;
+it preserves existing profiles, memberships, ticket inventory, and user edits. It rejects APP_ENV
+values other than `local` and `staging`. No payments or bookings are created.

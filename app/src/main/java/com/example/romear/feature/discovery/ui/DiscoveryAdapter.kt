@@ -2,9 +2,14 @@ package com.example.romear.feature.discovery.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load as loadImage
+import coil3.request.crossfade
+import com.example.romear.R
+import com.example.romear.core.designsystem.HelloMotion
 import com.example.romear.databinding.ItemDiscoveryUserBinding
 import com.example.romear.feature.discovery.domain.DiscoveryUser
 import com.google.android.material.chip.Chip
@@ -12,6 +17,7 @@ import com.google.android.material.chip.Chip
 class DiscoveryAdapter(
     private val onUserClicked: (DiscoveryUser) -> Unit,
     private val onSayHelloClicked: (DiscoveryUser) -> Unit,
+    private val onContextualHelloClicked: ((DiscoveryUser, String, String) -> Unit)? = null,
 ) : ListAdapter<DiscoveryUser, DiscoveryAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,40 +39,86 @@ class DiscoveryAdapter(
         fun bind(user: DiscoveryUser) {
             val nameText = if (user.age != null) "${user.displayName}, ${user.age}" else user.displayName
             binding.userName.text = nameText
-            binding.distanceBucket.text = user.distanceBucket + (user.upFor?.let { " · Up for $it" } ?: "")
-            binding.avatar.load(user.photoUrl, user.displayName, user.availability)
+            val cleanDistance = user.distanceBucket.removePrefix("📍").trim()
+            binding.distanceBucket.text = "📍 $cleanDistance"
+
+            // Hero Photo loading via Coil with smooth crossfade
+            val photoUrl = user.photoUrl
+            if (!photoUrl.isNullOrBlank() && photoUrl.startsWith("https://")) {
+                binding.heroPhoto.loadImage(photoUrl) {
+                    crossfade(true)
+                }
+            } else {
+                binding.heroPhoto.setImageResource(R.drawable.illustration_people)
+            }
+
+            // Circular avatar on card
+            binding.avatar.load(user.photoUrl, user.displayName, user.availability, sizeDp = 52)
 
             val isOpen = user.availability.equals("OPEN", ignoreCase = true)
             binding.statusIndicatorDot.setBackgroundResource(
-                if (isOpen) com.example.romear.R.drawable.bg_status_dot_open else com.example.romear.R.drawable.bg_status_dot_browsing
+                if (isOpen) R.drawable.bg_status_dot_open else R.drawable.bg_status_dot_browsing
             )
-            binding.statusBadge.text = if (isOpen) "Open" else "Browsing"
+            binding.statusBadge.text = if (isOpen) "🟢 Open to meet" else "🟡 Browsing"
             binding.statusBadge.setBackgroundResource(
-                if (isOpen) com.example.romear.R.drawable.bg_badge_emerald else com.example.romear.R.drawable.bg_badge_peach
+                if (isOpen) R.drawable.bg_badge_emerald else R.drawable.bg_badge_peach
             )
             binding.statusBadge.setTextColor(
-                androidx.core.content.ContextCompat.getColor(
+                ContextCompat.getColor(
                     binding.root.context,
-                    if (isOpen) com.example.romear.R.color.hello_emerald else com.example.romear.R.color.hello_primary
+                    if (isOpen) R.color.hello_emerald else R.color.hello_primary
                 )
             )
 
+            // Contextual "Up For" highlight
+            if (!user.upFor.isNullOrBlank()) {
+                binding.upForContainer.visibility = android.view.View.VISIBLE
+                binding.upForText.text = "Up for: ${user.upFor}"
+                binding.upForContainer.setOnClickListener {
+                    HelloMotion.bounce(it) {
+                        onContextualHelloClicked?.invoke(user, "VIBE", user.upFor)
+                            ?: onSayHelloClicked(user)
+                    }
+                }
+            } else {
+                binding.upForContainer.visibility = android.view.View.GONE
+                binding.upForContainer.setOnClickListener(null)
+            }
+
+            // Shared interests
             binding.interestsGroup.removeAllViews()
-            user.sharedInterests.take(4).forEach { interest ->
+            val interestsToShow = user.sharedInterests.take(4)
+            interestsToShow.forEach { interest ->
                 val chip = Chip(binding.root.context).apply {
                     text = interest
-                    isClickable = false
+                    isClickable = true
                     isCheckable = false
-                    textSize = 14f
-                    setChipBackgroundColorResource(com.example.romear.R.color.hello_surface_variant)
-                    setTextColor(androidx.core.content.ContextCompat.getColor(context, com.example.romear.R.color.hello_text))
+                    textSize = 12f
+                    setChipBackgroundColorResource(R.color.hello_surface_variant)
+                    setTextColor(ContextCompat.getColor(context, R.color.hello_text))
                     setEnsureMinTouchTargetSize(false)
+                    setOnClickListener {
+                        HelloMotion.bounce(this) {
+                            onContextualHelloClicked?.invoke(user, "INTEREST", interest)
+                                ?: onSayHelloClicked(user)
+                        }
+                    }
                 }
                 binding.interestsGroup.addView(chip)
             }
+            binding.interestsGroup.visibility =
+                if (interestsToShow.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
 
-            binding.root.setOnClickListener { onUserClicked(user) }
-            binding.sayHelloButton.setOnClickListener { onSayHelloClicked(user) }
+            binding.root.setOnClickListener {
+                HelloMotion.bounce(it) {
+                    onUserClicked(user)
+                }
+            }
+            binding.sayHelloButton.setOnClickListener {
+                HelloMotion.bounce(it) {
+                    onSayHelloClicked(user)
+                }
+            }
         }
     }
 

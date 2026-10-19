@@ -1,11 +1,189 @@
-<com.example.romear.core.designsystem.HelloCardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="@dimen/card_gutter" android:layout_marginVertical="8dp" app:cardElevation="2dp" app:strokeColor="@color/hello_outline_subtle" app:strokeWidth="1dp">
-  <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp">
-    <TextView android:id="@+id/activityBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/bg_badge_peach" android:paddingHorizontal="10dp" android:paddingVertical="4dp" android:textColor="@color/hello_primary" android:textSize="12sp" android:textStyle="bold" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" tools:text="SPORTS" />
-    <TextView android:id="@+id/capacityBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/bg_badge_emerald" android:paddingHorizontal="10dp" android:paddingVertical="4dp" android:textColor="@color/hello_emerald" android:textSize="12sp" android:textStyle="bold" tools:text="2 / 4 joined" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/activityBadge" android:layout_marginTop="8dp" />
-    <TextView android:id="@+id/poolTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:textColor="@color/hello_text" android:textSize="22sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/capacityBadge" tools:text="Sunday Badminton &amp; Breakfast" />
-    <View android:id="@+id/divider" android:layout_width="0dp" android:layout_height="1dp" android:layout_marginTop="14dp" android:background="@color/hello_outline_subtle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/poolTitle" />
-    <com.example.romear.core.designsystem.AvatarView android:id="@+id/hostAvatar" android:layout_width="32dp" android:layout_height="32dp" android:layout_marginTop="12dp" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/divider" />
-    <TextView android:id="@+id/hostName" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_marginEnd="8dp" android:ellipsize="end" android:maxLines="2" android:textColor="@color/hello_text" android:textSize="13sp" app:layout_constraintStart_toEndOf="@+id/hostAvatar" app:layout_constraintTop_toTopOf="@+id/hostAvatar" tools:text="Hosted by Aarav Sharma" app:layout_constraintEnd_toEndOf="parent" />
-    <TextView android:id="@+id/distanceBucket" android:layout_width="0dp" android:layout_height="wrap_content" android:textColor="@color/hello_text_secondary" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" tools:text="📍 2-5km" android:layout_marginTop="4dp" app:layout_constraintStart_toStartOf="@id/hostName" app:layout_constraintTop_toBottomOf="@id/hostName" />
-  </androidx.constraintlayout.widget.ConstraintLayout>
-</com.example.romear.core.designsystem.HelloCardView>
+<com.example.romear.core.designsystem.HelloCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/card_gutter"
+    android:layout_marginVertical="8dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/hello_outline_subtle"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.example.romear.core.designsystem.ActivityArtworkView
+            android:id="@+id/activityArtwork"
+            android:layout_width="match_parent"
+            android:layout_height="130dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp">
+
+            <!-- Badges Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/activityBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_peach"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/hello_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="SPORTS" />
+
+                <TextView
+                    android:id="@+id/capacityBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_badge_emerald"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/hello_emerald"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="2 joined · 2 spots left" />
+            </LinearLayout>
+
+            <!-- Pool Title -->
+            <TextView
+                android:id="@+id/poolTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/hello_text"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                tools:text="Sunday Badminton &amp; Breakfast" />
+
+            <!-- Time Row -->
+            <LinearLayout
+                android:id="@+id/timeRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/hello_text_secondary" />
+
+                <TextView
+                    android:id="@+id/poolTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/hello_text_secondary"
+                    android:textSize="13sp"
+                    tools:text="Sun, 26 Oct · 9:00 AM" />
+            </LinearLayout>
+
+            <!-- Distance Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/hello_text_secondary" />
+
+                <TextView
+                    android:id="@+id/distanceBucket"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/hello_text_secondary"
+                    android:textSize="13sp"
+                    tools:text="Within 2-5 km" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="14dp"
+                android:background="@color/hello_outline_subtle" />
+
+            <!-- Host & Action Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.example.romear.core.designsystem.AvatarView
+                    android:id="@+id/hostAvatar"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/hostName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/hello_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="Hosted by Aarav Sharma" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pool Host"
+                        android:textColor="@color/hello_text_tertiary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/viewPoolAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="Join Pool →"
+                    android:textColor="@color/hello_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.example.romear.core.designsystem.HelloCardView>

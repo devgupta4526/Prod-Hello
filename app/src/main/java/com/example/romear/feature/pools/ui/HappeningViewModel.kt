@@ -61,24 +61,25 @@ class HappeningViewModel @Inject constructor(
         }
     }
 
-    fun createPool(title: String, activity: String, capacity: Int) {
+    fun createPool(title: String, activity: String, capacity: Int, start: String, end: String, lat: Double, lng: Double, onDone: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                val now = Instant.now()
-                val start = now.plus(1, ChronoUnit.HOURS).toString()
-                val end = now.plus(4, ChronoUnit.HOURS).toString()
                 poolsRepository.createPool(
                     title = title,
                     activity = activity,
-                    lat = 28.6315,
-                    lng = 77.2167,
+                    lat = lat,
+                    lng = lng,
                     timeWindowStart = start,
                     timeWindowEnd = end,
                     capacity = capacity,
                 )
+                onDone(true)
                 _events.emit(HappeningEvent.Success("Pool hosted!"))
                 loadPools()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
+                onDone(false)
                 _events.emit(HappeningEvent.Error(e.message ?: "Failed to create pool"))
             }
         }

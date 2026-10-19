@@ -4,121 +4,252 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/card_gutter"
-    android:layout_marginVertical="8dp"
-    app:cardElevation="2dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="10dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="3dp"
     app:strokeColor="@color/hello_outline_subtle"
     app:strokeWidth="1dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:orientation="vertical">
 
-        <com.example.romear.core.designsystem.AvatarView
-            android:id="@+id/avatar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Hero Photo Section (Hinge/Bumble Photo-First Treatment) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="280dp">
 
-        <!-- Status Dot indicator on avatar -->
-        <View
-            android:id="@+id/statusIndicatorDot"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:background="@drawable/bg_status_dot_open"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar"
-            app:layout_constraintEnd_toEndOf="@+id/avatar" />
+            <ImageView
+                android:id="@+id/heroPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/hello_surface_variant"
+                android:scaleType="centerCrop"
+                android:contentDescription="@null" />
 
-        <TextView
-            android:id="@+id/userName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginEnd="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/hello_text"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toTopOf="@+id/avatar"
-            tools:text="Priya Nair, 24" />
+            <!-- Gradient Scrim for contrast -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_scrim" />
 
+            <!-- Top Header Badges -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:gravity="center_vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/statusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_emerald"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="🟢 Open to meet"
+                    android:textColor="@color/hello_emerald"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/distanceBucket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_pill"
+                    android:backgroundTint="#99000000"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="📍 Indiranagar · 1.5 km" />
+            </LinearLayout>
+
+            <!-- Bottom of Hero Photo: Identity & Name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="16dp">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.example.romear.core.designsystem.AvatarView
+                        android:id="@+id/avatar"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="2dp" />
+
+                    <!-- Status indicator dot -->
+                    <View
+                        android:id="@+id/statusIndicatorDot"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_status_dot_open" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/userName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/white"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            tools:text="Priya Nair, 24" />
+
+                        <ImageView
+                            android:id="@+id/verifiedBadge"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="6dp"
+                            android:contentDescription="Verified"
+                            android:src="@drawable/ic_verified"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/userSubhead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="#E0FFFFFF"
+                        android:textSize="13sp"
+                        tools:text="Product Designer · Indiranagar" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Card Body Content -->
         <LinearLayout
-            android:id="@+id/locationRow"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center_vertical"
             android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toBottomOf="@+id/userName">
+            android:paddingHorizontal="18dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp">
 
-            <TextView
-                android:id="@+id/distanceBucket"
-                android:layout_width="wrap_content"
+            <!-- Contextual "Up For" / Vibe Intent Banner -->
+            <LinearLayout
+                android:id="@+id/upForContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/hello_text_secondary"
-                android:textSize="13sp"
-                tools:text="📍 Within 2 km" />
+                android:background="@drawable/bg_badge_peach"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-            <TextView
-                android:id="@+id/statusBadge"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_bolt"
+                    app:tint="@color/hello_primary" />
+
+                <TextView
+                    android:id="@+id/upForText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/hello_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="Up for: Badminton &amp; specialty coffee" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reply ⚡"
+                    android:textColor="@color/hello_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Interests Chips -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/interestsGroup"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_badge_emerald"
-                android:paddingHorizontal="6dp"
-                android:paddingVertical="2dp"
-                android:text="Open"
-                android:textColor="@color/hello_emerald"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="10dp"
+                app:chipSpacingHorizontal="6dp"
+                app:chipSpacingVertical="4dp" />
+
+            <!-- Card Bottom Bar: Profile Hint + CTA Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/viewProfileHint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="1"
+                    android:text="Tap card to view full profile →"
+                    android:textColor="@color/hello_text_tertiary"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sayHelloButton"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:backgroundTint="@color/hello_primary"
+                    android:letterSpacing="0"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="0dp"
+                    android:text="Say Hello 👋"
+                    android:textColor="@color/hello_on_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="23dp"
+                    app:icon="@drawable/ic_send"
+                    app:iconGravity="textStart"
+                    app:iconPadding="6dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/hello_on_primary" />
+            </LinearLayout>
+
         </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/sayHelloButton"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/touch_target"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@color/hello_primary"
-            android:letterSpacing="0"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="0dp"
-            android:text="@string/say_hello"
-            android:textColor="@color/hello_on_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:cornerRadius="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/interestsGroup" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/identityBottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="avatar,locationRow" />
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/interestsGroup"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:chipSpacingHorizontal="6dp"
-            app:chipSpacingVertical="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/identityBottom" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </com.example.romear.core.designsystem.HelloCardView>

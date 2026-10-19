@@ -130,7 +130,8 @@ class TicketsFragment : Fragment() {
 
         categoryView.text = event.category.uppercase()
         titleView.text = event.title
-        timeVenueView.text = "${event.venueName} · ${event.distanceBucket}"
+        val eventTime = runCatching { java.time.Instant.parse(event.startsAt).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a")) }.getOrDefault(event.startsAt)
+        timeVenueView.text = "$eventTime\n${event.venueName} · ${event.distanceBucket}" + (event.address?.let { "\n$it" } ?: "")
         descView.text = event.description
 
         var selectedTierId = event.tiers.firstOrNull()?.id.orEmpty()

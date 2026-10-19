@@ -28,7 +28,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000/\"")
+            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("hello.debugUrl").getOrElse("https://prod-hello-api.onrender.com/")}\"")
         }
         release {
             buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("hello.productionUrl").getOrElse("https://unconfigured.invalid/")}\"")
@@ -41,7 +41,7 @@ android {
             applicationIdSuffix = ".staging"
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += "release"
-            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("hello.stagingUrl").getOrElse("https://unconfigured.invalid/")}\"")
+            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("hello.stagingUrl").getOrElse("https://prod-hello-api.onrender.com/")}\"")
         }
     }
     buildFeatures {

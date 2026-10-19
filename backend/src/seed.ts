@@ -1,275 +1,340 @@
-import { v4 as uuidv4 } from "uuid";
-import { readEnvironment } from "./config/env.js";
+import { v5 as uuid } from "uuid";
 import { createDatabase } from "./lib/database.js";
 import { computeCellId } from "./lib/location.js";
 
 async function main() {
-  const env = readEnvironment();
-  const db = createDatabase(env.DATABASE_URL);
-
-  console.log("Connecting to database at", env.DATABASE_URL);
-  await db.$connect();
-
-  console.log("Seeding test data...");
-
-  // 1. Organizer User: Delhi Culture Collective
-  const organizerId = uuidv4();
-  const organizer = await db.user.upsert({
-    where: { phoneE164: "+919876543210" },
-    create: {
-      id: organizerId,
-      phoneE164: "+919876543210",
-      phoneVerifiedAt: new Date(),
-      status: "ACTIVE",
-      role: "USER",
-      isOrganizer: true,
-      dateOfBirth: new Date("1995-05-15"),
-      adultVerifiedAt: new Date(),
-      guidelinesAcceptedAt: new Date(),
-      profile: {
-        create: {
-          displayName: "Delhi Culture Club",
-          bio: "Curating indie music, rooftop mixers, and heritage walks across Delhi NCR.",
-          interests: ["Music", "Culture", "Nightlife", "Art"],
-          showAge: false,
-          discoveryRadiusKm: 25,
-        },
-      },
-    },
-    update: {
-      isOrganizer: true,
-      status: "ACTIVE",
-    },
+  if (!["local", "staging"].includes(process.env.APP_ENV ?? ""))
+    throw new Error("Set APP_ENV=local or staging to seed demo data");
+  if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
+  const client = createDatabase(process.env.DATABASE_URL);
+  const seedId = (name: string) => uuid(`hello-demo-v1:${name}`, uuid.URL);
+  const photo = (index: number) => ({
+    id: seedId(`photo:${String(index)}`),
+    storageKey: `hello/demo/avatar-${String(index)}`,
+    url: process.env.SEED_AVATAR_BASE
+      ? `${process.env.SEED_AVATAR_BASE}/avatar-${String(index)}.jpg`
+      : "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+    position: 0,
   });
 
-  // 2. Regular active users for Discovery
-  const testUsers = [
-    {
-      phone: "+919811111111",
-      name: "Aarav Sharma",
-      bio: "Coffee enthusiast, amateur guitarist, always up for badminton.",
-      interests: ["Coffee", "Music", "Badminton", "Tech"],
-      lat: 28.6139, // Connaught Place
-      lng: 77.2090,
-      availability: "OPEN" as const,
-    },
-    {
-      phone: "+919822222222",
-      name: "Priya Nair",
-      bio: "Product designer & book lover. Exploring Delhi's street food and cafes.",
-      interests: ["Design", "Books", "Food", "Travel"],
-      lat: 28.5535, // Hauz Khas
-      lng: 77.1945,
-      availability: "OPEN" as const,
-    },
-    {
-      phone: "+919833333333",
-      name: "Rohan Verma",
-      bio: "Runner and cinema nerd. Morning runs at Lodhi Garden.",
-      interests: ["Running", "Cinema", "Photography", "Fitness"],
-      lat: 28.5933, // Lodhi Garden
-      lng: 77.2197,
-      availability: "BROWSING" as const,
-    },
-    {
-      phone: "+919844444444",
-      name: "Ananya Iyer",
-      bio: "Architect & weekend painter. Looking for art gallery companions.",
-      interests: ["Art", "Architecture", "Concerts", "Yoga"],
-      lat: 28.4595, // Cyber Hub / Gurgaon
-      lng: 77.0266,
-      availability: "OPEN" as const,
-    },
-  ];
+  await client.$connect();
+  try {
+    await client.$transaction(
+      async (db) => {
+        console.log("Seeding test data...");
 
-  for (const u of testUsers) {
-    const userId = uuidv4();
-    const user = await db.user.upsert({
-      where: { phoneE164: u.phone },
-      create: {
-        id: userId,
-        phoneE164: u.phone,
-        phoneVerifiedAt: new Date(),
-        status: "ACTIVE",
-        dateOfBirth: new Date("1998-08-20"),
-        adultVerifiedAt: new Date(),
-        guidelinesAcceptedAt: new Date(),
-        profile: {
+        // 1. Organizer User: Nagpur Culture Collective
+        const organizerId = seedId("organizer");
+        const organizer = await db.user.upsert({
+          where: { id: organizerId },
           create: {
-            displayName: u.name,
-            bio: u.bio,
-            interests: u.interests,
-            showAge: true,
-            discoveryRadiusKm: 15,
+            id: organizerId,
+            phoneE164: "+999000000001",
+            phoneVerifiedAt: new Date(),
+            status: "ACTIVE",
+            role: "USER",
+            isOrganizer: true,
+            dateOfBirth: new Date("1995-05-15"),
+            adultVerifiedAt: new Date(),
+            guidelinesAcceptedAt: new Date(),
+            profile: {
+              create: {
+                displayName: "Demo Nagpur Culture Club",
+                bio: "Fictional test organizer for music, mixers, and heritage walks.",
+                interests: ["Music", "Food", "Travel", "Art"],
+                showAge: false,
+                discoveryRadiusKm: 25,
+              },
+            },
+            photos: { create: photo(0) },
           },
-        },
-      },
-      update: {
-        status: "ACTIVE",
-      },
-    });
+          update: {},
+        });
 
-    // Create or update Presence
-    const cellId = computeCellId(u.lat, u.lng);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-    await db.presence.upsert({
-      where: { userId: user.id },
-      create: {
-        userId: user.id,
-        availability: u.availability,
-        lat: u.lat,
-        lng: u.lng,
-        accuracyM: 100,
-        cellId,
-        updatedAt: new Date(),
-        expiresAt,
-      },
-      update: {
-        availability: u.availability,
-        lat: u.lat,
-        lng: u.lng,
-        cellId,
-        updatedAt: new Date(),
-        expiresAt,
-      },
-    });
-  }
-
-  // 3. Seed Pools (Happening Tab)
-  const poolsData = [
-    {
-      title: "Sunday Badminton & Breakfast",
-      description: "Friendly doubles match followed by South Indian breakfast at Sagar Ratna.",
-      category: "Sports",
-      capacity: 4,
-      venueName: "Siri Fort Sports Complex",
-      venueLat: 28.5524,
-      venueLng: 77.2185,
-      areaLabel: "Siri Fort, New Delhi",
-      startsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days later
-    },
-    {
-      title: "Board Games & Pour-Over Coffee",
-      description: "Bringing Catan and Wingspan. All experience levels welcome!",
-      category: "Social",
-      capacity: 6,
-      venueName: "Blue Tokai Coffee Roasters",
-      venueLat: 28.6328,
-      venueLng: 77.2195,
-      areaLabel: "Connaught Place, New Delhi",
-      startsAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // tomorrow
-    },
-    {
-      title: "Sunset Heritage Photography Walk",
-      description: "Capturing the evening golden hour around the tombs and gardens.",
-      category: "Creative",
-      capacity: 8,
-      venueName: "Lodhi Garden Main Gate",
-      venueLat: 28.5933,
-      venueLng: 77.2197,
-      areaLabel: "Lodhi Estate, New Delhi",
-      startsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days later
-    },
-  ];
-
-  for (const p of poolsData) {
-    const poolId = uuidv4();
-    const cell = computeCellId(p.venueLat, p.venueLng);
-    await db.pool.create({
-      data: {
-        id: poolId,
-        organizerId: organizer.id,
-        title: p.title,
-        description: p.description,
-        category: p.category,
-        capacity: p.capacity,
-        venueName: p.venueName,
-        venueLat: p.venueLat,
-        venueLng: p.venueLng,
-        areaLabel: p.areaLabel,
-        areaCell: cell,
-        startsAt: p.startsAt,
-        status: "OPEN",
-        members: {
-          create: {
-            id: uuidv4(),
-            userId: organizer.id,
+        // 2. Regular active users for Discovery
+        const testUsers = [
+          {
+            phone: "+999000000002",
+            name: "Aarav Sharma",
+            bio: "Coffee enthusiast, amateur guitarist, always up for badminton.",
+            interests: ["Coffee", "Music", "Sports", "Technology"],
+            lat: 21.1458, // Dharampeth
+            lng: 79.0882,
+            availability: "OPEN" as const,
           },
-        },
+          {
+            phone: "+999000000003",
+            name: "Priya Nair",
+            bio: "Product designer & book lover. Exploring Nagpur's street food and cafes.",
+            interests: ["Art", "Books", "Food", "Travel"],
+            lat: 21.1532, // Civil Lines
+            lng: 79.0731,
+            availability: "OPEN" as const,
+          },
+          {
+            phone: "+999000000004",
+            name: "Rohan Verma",
+            bio: "Runner and cinema nerd. Morning runs near Ambazari Lake.",
+            interests: ["Outdoors", "Music", "Photography", "Fitness"],
+            lat: 21.1368, // Ramdaspeth
+            lng: 79.0795,
+            availability: "BROWSING" as const,
+          },
+          {
+            phone: "+999000000005",
+            name: "Ananya Iyer",
+            bio: "Architect & weekend painter. Looking for art gallery companions.",
+            interests: ["Art", "Photography", "Music", "Fitness"],
+            lat: 21.1594, // Sadar
+            lng: 79.0806,
+            availability: "OPEN" as const,
+          },
+        ];
+
+        for (const [index, u] of testUsers.entries()) {
+          const userId = seedId(`user:${String(index)}`);
+          const user = await db.user.upsert({
+            where: { id: userId },
+            create: {
+              id: userId,
+              phoneE164: u.phone,
+              phoneVerifiedAt: new Date(),
+              status: "ACTIVE",
+              dateOfBirth: new Date("1998-08-20"),
+              adultVerifiedAt: new Date(),
+              guidelinesAcceptedAt: new Date(),
+              profile: {
+                create: {
+                  displayName: `Demo ${u.name}`,
+                  bio: `Fictional test profile. ${u.bio}`,
+                  interests: u.interests,
+                  showAge: true,
+                  discoveryRadiusKm: 15,
+                },
+              },
+              photos: { create: photo(index + 1) },
+            },
+            update: {},
+          });
+
+          // Create or update Presence
+          const cellId = computeCellId(u.lat, u.lng);
+          const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+          await db.presence.upsert({
+            where: { userId: user.id },
+            create: {
+              userId: user.id,
+              availability: u.availability,
+              lat: u.lat,
+              lng: u.lng,
+              accuracyM: 100,
+              cellId,
+              updatedAt: new Date(),
+              expiresAt,
+            },
+            update: {
+              availability: u.availability,
+              lat: u.lat,
+              lng: u.lng,
+              cellId,
+              updatedAt: new Date(),
+              expiresAt,
+            },
+          });
+        }
+
+        // 3. Seed Pools (Happening Tab)
+        const poolsData = [
+          {
+            title: "Sunday Badminton & Breakfast",
+            description:
+              "Friendly doubles match followed by South Indian breakfast at Sagar Ratna.",
+            category: "Sports",
+            capacity: 4,
+            venueName: "Dhanwate National College Sports Ground",
+            venueLat: 21.132,
+            venueLng: 79.094,
+            areaLabel: "Congress Nagar, Nagpur",
+            startsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days later
+          },
+          {
+            title: "Board Games & Pour-Over Coffee",
+            description:
+              "Bringing Catan and Wingspan. All experience levels welcome!",
+            category: "Social",
+            capacity: 6,
+            venueName: "Demo Cafe, Dharampeth",
+            venueLat: 21.1458,
+            venueLng: 79.0882,
+            areaLabel: "Dharampeth, Nagpur",
+            startsAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // tomorrow
+          },
+          {
+            title: "Sunset Heritage Photography Walk",
+            description:
+              "Capturing the evening golden hour around the tombs and gardens.",
+            category: "Creative",
+            capacity: 8,
+            venueName: "Ambazari Lake Garden Entrance",
+            venueLat: 21.1335,
+            venueLng: 79.0453,
+            areaLabel: "Ambazari, Nagpur",
+            startsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days later
+          },
+        ];
+
+        for (const [index, p] of poolsData.entries()) {
+          const poolId = seedId(`pool:${String(index)}`);
+          const cell = computeCellId(p.venueLat, p.venueLng);
+          await db.pool.upsert({
+            where: { id: poolId },
+            update: {
+              venueName: p.venueName,
+              venueLat: p.venueLat,
+              venueLng: p.venueLng,
+              areaLabel: p.areaLabel,
+              areaCell: cell,
+              startsAt: p.startsAt,
+              status: "OPEN",
+            },
+            create: {
+              id: poolId,
+              organizerId: organizer.id,
+              title: `[Demo] ${p.title}`,
+              description: `Fictional test activity. ${p.description}`,
+              category: p.category,
+              capacity: p.capacity,
+              venueName: p.venueName,
+              venueLat: p.venueLat,
+              venueLng: p.venueLng,
+              areaLabel: p.areaLabel,
+              areaCell: cell,
+              startsAt: p.startsAt,
+              status: "OPEN",
+              members: {
+                create: {
+                  id: seedId(`pool-member:${String(index)}`),
+                  userId: organizer.id,
+                },
+              },
+              conversation: {
+                create: {
+                  id: seedId(`pool-conversation:${String(index)}`),
+                  type: "POOL",
+                },
+              },
+            },
+          });
+        }
+
+        // 4. Seed Events & Ticket Tiers (Tickets Tab)
+        const eventsData = [
+          {
+            title: "Nagpur Indie Sunset Sessions",
+            description:
+              "Live acoustic performances by top indie singer-songwriters under the autumn sky with artisan food and craft brews.",
+            category: "Live Music",
+            venueName: "Demo Rooftop, Dharampeth",
+            address: "Dharampeth, Nagpur, Maharashtra",
+            lat: 21.1458,
+            lng: 79.0882,
+            startsAt: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+            endsAt: new Date(
+              Date.now() + 4 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000,
+            ),
+            tiers: [
+              { name: "Early Bird", pricePaise: 49900, capacity: 50 },
+              { name: "General Admission", pricePaise: 79900, capacity: 150 },
+              {
+                name: "VIP + Artist Meet & Greet",
+                pricePaise: 149900,
+                capacity: 20,
+              },
+            ],
+          },
+          {
+            title: "Nagpur Founders & Creators Breakfast",
+            description:
+              "An intimate gathering of tech founders, AI builders, and consumer product designers sharing real war stories.",
+            category: "Tech & Networking",
+            venueName: "Demo Social, Civil Lines",
+            address: "Civil Lines, Nagpur, Maharashtra",
+            lat: 21.1532,
+            lng: 79.0731,
+            startsAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+            endsAt: new Date(
+              Date.now() + 6 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000,
+            ),
+            tiers: [
+              {
+                name: "Founder Pass (Includes Breakfast)",
+                pricePaise: 35000,
+                capacity: 60,
+              },
+            ],
+          },
+        ];
+
+        for (const [index, e] of eventsData.entries()) {
+          const eventId = seedId(`event:${String(index)}`);
+          await db.event.upsert({
+            where: { id: eventId },
+            update: {
+              title: `[Demo] ${e.title}`,
+              venueName: e.venueName,
+              address: e.address,
+              lat: e.lat,
+              lng: e.lng,
+              startsAt: e.startsAt,
+              endsAt: e.endsAt,
+              salesEndAt: e.startsAt,
+              status: "PUBLISHED",
+            },
+            create: {
+              id: eventId,
+              organizerId: organizer.id,
+              title: `[Demo] ${e.title}`,
+              description: `Fictional test event; no real booking. ${e.description}`,
+              category: e.category,
+              venueName: e.venueName,
+              address: e.address,
+              lat: e.lat,
+              lng: e.lng,
+              startsAt: e.startsAt,
+              endsAt: e.endsAt,
+              status: "PUBLISHED",
+              publishedAt: new Date(),
+              salesStartAt: new Date(),
+              salesEndAt: e.startsAt,
+              tiers: {
+                create: e.tiers.map((t, tierIndex) => ({
+                  id: seedId(
+                    `event-tier:${String(index)}:${String(tierIndex)}`,
+                  ),
+                  name: t.name,
+                  pricePaise: t.pricePaise,
+                  capacity: t.capacity,
+                  sortOrder: tierIndex,
+                })),
+              },
+            },
+          });
+        }
       },
-    });
+      { timeout: 60000 },
+    );
+    console.log(
+      "Demo seed ready: 5 profiles with photos, 4 presences (24h), 3 pools with conversations, 2 events, 4 ticket tiers.",
+    );
+  } finally {
+    await client.$disconnect();
   }
-
-  // 4. Seed Events & Ticket Tiers (Tickets Tab)
-  const eventsData = [
-    {
-      title: "Delhi Indie Sunset Sessions",
-      description: "Live acoustic performances by top indie singer-songwriters under the autumn sky with artisan food and craft brews.",
-      category: "Live Music",
-      venueName: "The Rooftop at Connaught Place",
-      address: "Radial Road 3, Inner Circle, Connaught Place, New Delhi",
-      lat: 28.6315,
-      lng: 77.2167,
-      startsAt: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
-      endsAt: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000),
-      tiers: [
-        { name: "Early Bird", pricePaise: 49900, capacity: 50 },
-        { name: "General Admission", pricePaise: 79900, capacity: 150 },
-        { name: "VIP + Artist Meet & Greet", pricePaise: 149900, capacity: 20 },
-      ],
-    },
-    {
-      title: "Delhi Founders & Creators Breakfast",
-      description: "An intimate gathering of tech founders, AI builders, and consumer product designers sharing real war stories.",
-      category: "Tech & Networking",
-      venueName: "Social Cyber Hub",
-      address: "DLF Cyber City, Sector 24, Gurugram",
-      lat: 28.4950,
-      lng: 77.0895,
-      startsAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
-      endsAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000),
-      tiers: [
-        { name: "Founder Pass (Includes Breakfast)", pricePaise: 35000, capacity: 60 },
-      ],
-    },
-  ];
-
-  for (const e of eventsData) {
-    const eventId = uuidv4();
-    await db.event.create({
-      data: {
-        id: eventId,
-        organizerId: organizer.id,
-        title: e.title,
-        description: e.description,
-        category: e.category,
-        venueName: e.venueName,
-        address: e.address,
-        lat: e.lat,
-        lng: e.lng,
-        startsAt: e.startsAt,
-        endsAt: e.endsAt,
-        status: "PUBLISHED",
-        publishedAt: new Date(),
-        salesStartAt: new Date(),
-        salesEndAt: e.startsAt,
-        tiers: {
-          create: e.tiers.map((t) => ({
-            id: uuidv4(),
-            name: t.name,
-            pricePaise: t.pricePaise,
-            capacity: t.capacity,
-          })),
-        },
-      },
-    });
-  }
-
-  console.log("Database seeded successfully with test users, presence, pools, and events!");
-  await db.$disconnect();
 }
 
-main().catch((err) => {
-  console.error("Seeding failed:", err);
-  process.exit(1);
+main().catch(() => {
+  // Database errors can contain connection details. Keep credentials out of logs.
+  console.error(
+    "Seeding failed. Check APP_ENV, DATABASE_URL, migrations, and connectivity.",
+  );
+  process.exitCode = 1;
 });

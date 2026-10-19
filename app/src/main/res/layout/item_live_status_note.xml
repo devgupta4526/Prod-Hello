@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="88dp"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="6dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <!-- Floating Status Bubble (Instagram Notes Style) -->
+    <TextView
+        android:id="@+id/liveStatusBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_live_status_bubble"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:maxWidth="84dp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="3dp"
+        android:textColor="@color/hello_text"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        tools:text="☕ Blue Tokai" />
+
+    <!-- Avatar with Live Pulse Ring -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.example.romear.core.designsystem.AvatarView
+            android:id="@+id/liveAvatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:strokeColor="@color/hello_live_pulse"
+            app:strokeWidth="2.5dp" />
+
+        <!-- Optional add badge for current user's note -->
+        <ImageView
+            android:id="@+id/addNoteBadge"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/bg_badge_pill"
+            android:backgroundTint="@color/hello_primary"
+            android:padding="2dp"
+            android:src="@drawable/ic_add"
+            app:tint="@color/white"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- User Name -->
+    <TextView
+        android:id="@+id/liveUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/hello_text_secondary"
+        android:textSize="12sp"
+        tools:text="Maya" />
+
+</LinearLayout>

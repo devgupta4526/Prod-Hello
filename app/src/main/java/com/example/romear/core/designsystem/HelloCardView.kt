@@ -17,8 +17,11 @@ class HelloCardView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     init {
         radius = resources.getDimension(R.dimen.card_radius)
-        cardElevation = 0f
-        maxCardElevation = 0f
+        val defaultElevation = 2 * resources.displayMetrics.density
+        maxCardElevation = 6 * resources.displayMetrics.density
+        if (cardElevation <= 0f) {
+            cardElevation = defaultElevation
+        }
         strokeWidth = (1 * resources.displayMetrics.density).toInt()
         strokeColor = ContextCompat.getColor(context, R.color.hello_outline_subtle)
         setCardBackgroundColor(ContextCompat.getColor(context, R.color.hello_surface))
@@ -54,15 +57,25 @@ class HelloCardView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     fun bind(heading: CharSequence, description: CharSequence, state: CharSequence) {
         if (titleView == null) {
-            val title = TextView(context).apply { setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleLarge) }
-            val detail = TextView(context).apply { setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge) }
-            val status = Chip(context).apply { isClickable = false; isCheckable = false }
+            val title = TextView(context).apply {
+                setTextAppearance(R.style.TextAppearance_Hello_Title)
+            }
+            val detail = TextView(context).apply {
+                setTextAppearance(R.style.TextAppearance_Hello_Body)
+                setPadding(0, (6 * resources.displayMetrics.density).toInt(), 0, (8 * resources.displayMetrics.density).toInt())
+            }
+            val status = Chip(context).apply {
+                isClickable = false
+                isCheckable = false
+                setChipBackgroundColorResource(R.color.hello_surface_variant)
+                setTextColor(ContextCompat.getColor(context, R.color.hello_text))
+            }
             titleView = title
             detailView = detail
             statusView = status
             addView(LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
-                val padding = (16 * resources.displayMetrics.density).toInt()
+                val padding = (18 * resources.displayMetrics.density).toInt()
                 setPadding(padding, padding, padding, padding)
                 addView(title)
                 addView(detail)
@@ -74,3 +87,4 @@ class HelloCardView @JvmOverloads constructor(context: Context, attrs: Attribute
         statusView?.text = state
     }
 }
+

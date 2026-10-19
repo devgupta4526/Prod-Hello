@@ -33,4 +33,21 @@ data class PublicProfile(
     val upFor: String? = null,
     val upForUntil: String? = null,
     val phoneVerified: Boolean = false,
+    val voiceBioUrl: String? = null,
+    val isIrlVerified: Boolean = false,
+)
+
+data class LiveStatusNote(
+    val userId: String,
+    val displayName: String,
+    val avatarUrl: String?,
+    val noteText: String,
+    val isCurrentUser: Boolean = false,
+)
+
+data class DailyIcebreaker(
+    val id: String,
+    val question: String,
+    val totalAnswers: Int = 18,
+    val expiresAtLabel: String = "4h left",
 )

@@ -1,30 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="hello_primary">#BE4020</color>
-    <color name="hello_primary_variant">#C03C17</color>
-    <color name="hello_primary_container">#FEECE5</color>
-    <color name="hello_on_primary_container">#822007</color>
+    <!-- Brand Primary: Warm Sunset Terracotta / Coral -->
+    <color name="hello_primary">#D94524</color>
+    <color name="hello_primary_variant">#BF391A</color>
+    <color name="hello_primary_container">#FFEAE3</color>
+    <color name="hello_on_primary_container">#7F1F08</color>
     <color name="hello_on_primary">#FFFFFF</color>
-    <color name="hello_background">#FBF9F6</color>
+
+    <!-- Canvas & Surfaces: Warm Modern Ivory -->
+    <color name="hello_background">#FAF8F5</color>
     <color name="hello_surface">#FFFFFF</color>
-    <color name="hello_surface_variant">#F4ECE4</color>
-    <color name="hello_text">#1F1E19</color>
-    <color name="hello_text_secondary">#6E6A62</color>
-    <color name="hello_outline">#E3DACF</color>
-    <color name="hello_outline_subtle">#EFE8E0</color>
-    <color name="hello_accent">#E4572E</color>
-    <color name="hello_sage">#DDE8D5</color>
-    <color name="hello_lilac">#EAE1F5</color>
-    <color name="hello_peach">#FCE8DA</color>
-    <color name="hello_success">#107C41</color>
-    <color name="hello_emerald">#087650</color>
+    <color name="hello_surface_variant">#F2EDE6</color>
+    <color name="hello_surface_container">#F5EFE8</color>
+    <color name="hello_surface_elevated">#FFFFFF</color>
+
+    <!-- Typography: High Contrast Crisp Inks -->
+    <color name="hello_text">#191715</color>
+    <color name="hello_text_secondary">#635E56</color>
+    <color name="hello_text_tertiary">#918B82</color>
+
+    <!-- Borders & Outlines -->
+    <color name="hello_outline">#E3DBD0</color>
+    <color name="hello_outline_subtle">#EFEAE2</color>
+    <color name="hello_header_tint">#F5EEE5</color>
+
+    <!-- Semantic & Accent Accents -->
+    <color name="hello_accent">#E05328</color>
+    <color name="hello_coral">#D94524</color>
+    <color name="hello_sage">#E2ECE0</color>
+    <color name="hello_lilac">#EDE7F6</color>
+    <color name="hello_peach">#FDEEE4</color>
+    
+    <!-- Success / Open Status -->
+    <color name="hello_success">#059669</color>
+    <color name="hello_emerald">#059669</color>
     <color name="hello_emerald_container">#D1FAE5</color>
-    <color name="hello_amber">#945600</color>
+    <color name="hello_emerald_text">#047857</color>
+
+    <!-- Amber / Browsing Status -->
+    <color name="hello_amber">#D97706</color>
     <color name="hello_amber_container">#FEF3C7</color>
+    <color name="hello_amber_text">#B45309</color>
+
+    <!-- Indigo / Experiences & Music -->
     <color name="hello_indigo">#4F46E5</color>
     <color name="hello_indigo_container">#EEF2FF</color>
-    <color name="hello_error">#BA1A1A</color>
+    <color name="hello_indigo_text">#4338CA</color>
+
+    <!-- Error / Danger -->
+    <color name="hello_error">#DC2626</color>
+    <color name="hello_error_container">#FEE2E2</color>
+
+    <!-- Standard Basics -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-<color name="hello_header_tint">#F8EDE3</color>
+
+    <!-- Modern Gradients, Overlays & Badges -->
+    <color name="hello_scrim">#B3000000</color>
+    <color name="hello_scrim_subtle">#66000000</color>
+    <color name="hello_scrim_heavy">#E612100E</color>
+    <color name="hello_gradient_start">#E65100</color>
+    <color name="hello_gradient_end">#D94524</color>
+    <color name="hello_verified_blue">#0284C7</color>
+    <color name="hello_irl_purple">#7C3AED</color>
+    <color name="hello_irl_container">#EDE9FE</color>
+    <color name="hello_live_pulse">#FF5722</color>
+    <color name="hello_card_surface">#FFFFFF</color>
 </resources>
+

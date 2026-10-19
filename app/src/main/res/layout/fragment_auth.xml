@@ -48,7 +48,15 @@
     <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:textAppearance="@style/TextAppearance.Hello.Body" android:textColor="@color/hello_error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
     <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/progress" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:indeterminate="true" android:visibility="gone" />
     <TextView android:id="@+id/loading_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" android:text="@string/service_loading" android:textAppearance="@style/TextAppearance.Hello.Body" android:accessibilityLiveRegion="polite" android:visibility="gone" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/primary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:text="@string/auth_continue" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/primary"
+        style="@style/Widget.Hello.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:minHeight="54dp"
+        android:text="@string/auth_continue"
+        app:cornerRadius="27dp" />
     <com.google.android.material.button.MaterialButton android:id="@+id/secondary" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/auth_later" android:visibility="gone" />
     <com.google.android.material.button.MaterialButton android:id="@+id/preview" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/auth_preview" android:visibility="gone" />
     <com.google.android.material.button.MaterialButton android:id="@+id/gallery" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/open_design_gallery" android:visibility="gone" />

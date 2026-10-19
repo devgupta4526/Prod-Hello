@@ -5,7 +5,17 @@
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_xl" android:text="@string/welcome_eyebrow" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:text="@string/welcome_title" android:textAppearance="@style/TextAppearance.Hello.Hero" android:accessibilityHeading="true" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:text="@string/welcome_body" android:textAppearance="@style/TextAppearance.Hello.Body" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/explore_button" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_xl" android:text="@string/welcome_action" app:icon="@drawable/ic_arrow" app:iconGravity="textEnd" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/explore_button"
+        style="@style/Widget.Hello.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xl"
+        android:minHeight="54dp"
+        android:text="@string/welcome_action"
+        app:cornerRadius="27dp"
+        app:icon="@drawable/ic_arrow"
+        app:iconGravity="textEnd" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" android:gravity="center" android:text="@string/welcome_privacy" android:textAppearance="@style/TextAppearance.Hello.Body" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:gravity="center" android:text="@string/preview_label" android:textAppearance="@style/TextAppearance.Material3.LabelMedium" android:textColor="@color/hello_text_secondary" />
   </com.example.romear.core.designsystem.ReadableColumnLayout>

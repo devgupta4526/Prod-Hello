@@ -36,10 +36,13 @@ class HappeningFragment : Fragment() {
     private var binding: FragmentHappeningBinding? = null
     private val viewModel: HappeningViewModel by viewModels()
 
+    private lateinit var hostLocation: com.example.romear.core.security.PresenceLocation
+    private var locationResult: ((android.location.Location) -> Unit)? = null
     private lateinit var adapter: PoolsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hostLocation = com.example.romear.core.security.PresenceLocation(this) { _, location -> location?.let { locationResult?.invoke(it) } }
         enterTransition = HelloTransitions.tab()
         exitTransition = HelloTransitions.tab()
     }
@@ -107,25 +110,49 @@ class HappeningFragment : Fragment() {
         val submitBtn = dialogView.findViewById<MaterialButton>(R.id.submitCreatePoolButton)
         val cancelBtn = dialogView.findViewById<MaterialButton>(R.id.cancelCreatePoolButton)
 
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(dialogView)
-            .create()
+        val dialog = BottomSheetDialog(requireContext())
+        dialog.setContentView(dialogView)
+        var start: java.time.ZonedDateTime? = null
+        var location: android.location.Location? = null
+        val dateButton = dialogView.findViewById<MaterialButton>(R.id.poolDateButton)
+        val locationButton = dialogView.findViewById<MaterialButton>(R.id.poolLocationButton)
+        val duration = dialogView.findViewById<android.widget.Spinner>(R.id.poolDuration)
+        duration.adapter = android.widget.ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,listOf("1 hour", "2 hours", "3 hours"))
+        dateButton.setOnClickListener {
+            val now = java.time.ZonedDateTime.now()
+            android.app.DatePickerDialog(requireContext(), { _,y,m,d ->
+                android.app.TimePickerDialog(requireContext(), { _,h,min ->
+                    start = now.withDayOfMonth(1).withYear(y).withMonth(m+1).withDayOfMonth(d).withHour(h).withMinute(min).withSecond(0).withNano(0)
+                    dateButton.text = start!!.format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a"))
+                },now.hour,now.minute,false).show()
+            },now.year,now.monthValue-1,now.dayOfMonth).apply { datePicker.minDate = System.currentTimeMillis() }.show()
+        }
+        locationResult = { result -> location = result; locationButton.text = "Nearby location selected ✓" }
+        locationButton.setOnClickListener { hostLocation.choose("OPEN") }
+        dialog.setOnDismissListener { locationResult = null }
 
         cancelBtn.setOnClickListener { dialog.dismiss() }
         submitBtn.setOnClickListener {
             val title = titleInput.text?.toString()?.trim().orEmpty()
             val activity = activityInput.text?.toString()?.trim().orEmpty()
-            val capacity = capacityInput.text?.toString()?.toIntOrNull() ?: 4
+            val capacity = capacityInput.text?.toString()?.toIntOrNull() ?: 0
 
-            if (title.isNotBlank() && activity.isNotBlank() && capacity in 2..12) {
-                viewModel.createPool(title, activity, capacity)
-                dialog.dismiss()
-            } else {
-                Toast.makeText(requireContext(), "Capacity must be between 2 and 12", Toast.LENGTH_SHORT).show()
+            titleInput.error = if(title.isBlank()) "Give your plan a name" else null
+            activityInput.error = if(activity.isBlank()) "Choose an activity" else null
+            capacityInput.error = if(capacity !in 2..12) "Choose 2–12 people, including you" else null
+            val chosenStart = start
+            val chosenLocation = location
+            if(title.isBlank() || activity.isBlank() || capacity !in 2..12) return@setOnClickListener
+            if(chosenStart == null || chosenStart.toInstant() <= java.time.Instant.now()) {
+                Toast.makeText(requireContext(),"Choose a future date and time",Toast.LENGTH_SHORT).show(); return@setOnClickListener
             }
+            if(chosenLocation == null) { Toast.makeText(requireContext(),"Choose your nearby location",Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+            submitBtn.isEnabled = false
+            viewModel.createPool(title,activity,capacity,chosenStart.toInstant().toString(),chosenStart.plusHours((duration.selectedItemPosition+1).toLong()).toInstant().toString(),chosenLocation.latitude,chosenLocation.longitude) { success -> if(success) dialog.dismiss() else submitBtn.isEnabled = true }
         }
 
         dialog.show()
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun showPoolDetailsBottomSheet(detail: PoolDetail) {
@@ -147,7 +174,7 @@ class HappeningFragment : Fragment() {
 
         titleView.text = detail.title
         activityView.text = detail.activity.uppercase()
-        capacityView.text = "${detail.members.size} / ${detail.capacity} joined · ${detail.distanceBucket}"
+        capacityView.text = "${detail.members.size} of ${detail.capacity} joined · ${(detail.capacity - detail.members.size).coerceAtLeast(0)} places left\n${detail.distanceBucket}\n${formatTime(detail.timeWindowStart)} – ${formatTime(detail.timeWindowEnd)}\nHosted by ${detail.host.displayName}"
 
         // Populate members
         membersContainer.removeAllViews()
@@ -233,6 +260,8 @@ class HappeningFragment : Fragment() {
 
         bottomSheet.show()
     }
+
+    private fun formatTime(value: String): String = runCatching { java.time.Instant.parse(value).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("EEE d MMM, h:mm a")) }.getOrDefault(value)
 
     private fun showKnockPrompt(poolId: String, parentSheet: BottomSheetDialog) {
         val input = EditText(requireContext()).apply {

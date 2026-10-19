@@ -2,19 +2,20 @@
     <dimen name="space_xs">4dp</dimen>
     <dimen name="space_sm">8dp</dimen>
     <dimen name="space_md">16dp</dimen>
-    <dimen name="space_lg">24dp</dimen>
-    <dimen name="space_xl">32dp</dimen>
-    <dimen name="space_xxl">48dp</dimen>
-    <dimen name="screen_gutter">24dp</dimen>
+    <dimen name="space_lg">20dp</dimen>
+    <dimen name="space_xl">28dp</dimen>
+    <dimen name="space_xxl">40dp</dimen>
+    <dimen name="screen_gutter">20dp</dimen>
     <dimen name="touch_target">48dp</dimen>
-    <dimen name="button_height">56dp</dimen>
-    <dimen name="card_radius">24dp</dimen>
-    <dimen name="icon_small">24dp</dimen>
-    <dimen name="illustration_height">240dp</dimen>
-    <dimen name="hero_type">40sp</dimen>
-    <dimen name="title_type">28sp</dimen>
-    <dimen name="body_type">16sp</dimen>
-    <dimen name="label_type">12sp</dimen>
-    <dimen name="card_gutter">24dp</dimen>
-<dimen name="screen_title_type">32sp</dimen>
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="card_radius">20dp</dimen>
+    <dimen name="icon_small">20dp</dimen>
+    <dimen name="illustration_height">200dp</dimen>
+    <dimen name="hero_type">34sp</dimen>
+    <dimen name="title_type">22sp</dimen>
+    <dimen name="body_type">15sp</dimen>
+    <dimen name="label_type">11sp</dimen>
+    <dimen name="card_gutter">16dp</dimen>
+    <dimen name="screen_title_type">28sp</dimen>
 </resources>
+

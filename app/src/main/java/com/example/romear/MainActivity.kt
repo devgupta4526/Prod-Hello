@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.romear.core.designsystem.HelloHaptics
 import com.example.romear.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val changed = binding.bottomNavigation.selectedItemId != item.itemId
             val handled = androidx.navigation.ui.NavigationUI.onNavDestinationSelected(item, controller)
-            if (handled && changed) com.example.romear.core.designsystem.HelloHaptics.selection(binding.bottomNavigation)
+            if (handled && changed) HelloHaptics.selection(binding.bottomNavigation)
             handled
         }
         val back = onBackPressedDispatcher.addCallback(this, enabled = false) {
