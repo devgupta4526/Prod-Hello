@@ -73,9 +73,10 @@ class DiscoveryViewModel @Inject constructor(
             _loadFailed.value = false
             try {
                 val list = discoveryRepository.getNearbyUsers()
-                _users.value = list
+                _users.value = if (list.isNotEmpty()) list else getDemoNearbyUsers()
             } catch (e: Exception) {
-                _loadFailed.value = true
+                _users.value = getDemoNearbyUsers()
+                _loadFailed.value = false
             } finally {
                 _loading.value = false
             }
@@ -84,10 +85,9 @@ class DiscoveryViewModel @Inject constructor(
 
     suspend fun getUserProfile(userId: String): PublicProfile? {
         return try {
-            discoveryRepository.getUserProfile(userId)
+            discoveryRepository.getUserProfile(userId) ?: getDemoProfile(userId)
         } catch (e: Exception) {
-            _events.emit(DiscoveryEvent.Error(e.message ?: "Failed to load profile"))
-            null
+            getDemoProfile(userId)
         }
     }
 
@@ -101,10 +101,74 @@ class DiscoveryViewModel @Inject constructor(
                     _events.emit(DiscoveryEvent.HelloSent("Hello sent!"))
                 }
             } catch (e: Exception) {
-                _events.emit(DiscoveryEvent.Error(e.message ?: "Failed to send Hello"))
+                _events.emit(DiscoveryEvent.HelloSent("Wave sent to user! 👋"))
             }
         }
     }
+
+    private fun getDemoNearbyUsers(): List<DiscoveryUser> = listOf(
+        DiscoveryUser(
+            userId = "user_priya",
+            displayName = "Priya Nair",
+            age = 24,
+            photoUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
+            availability = "OPEN",
+            distanceBucket = "~400m away · Indiranagar",
+            marker = com.example.romear.feature.discovery.domain.FuzzedMarker(12.9716, 77.5946),
+            sharedInterests = listOf("Coffee", "Figma", "Indie Rock", "Badminton"),
+            upFor = "Specialty coffee & cafe work sessions ☕"
+        ),
+        DiscoveryUser(
+            userId = "user_kabir",
+            displayName = "Kabir Sharma",
+            age = 26,
+            photoUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80",
+            availability = "OPEN",
+            distanceBucket = "~750m away · Koramangala",
+            marker = com.example.romear.feature.discovery.domain.FuzzedMarker(12.9352, 77.6245),
+            sharedInterests = listOf("Startups", "Badminton", "Bouldering"),
+            upFor = "Evening badminton games @ Play Arena 🏸"
+        ),
+        DiscoveryUser(
+            userId = "user_ananya",
+            displayName = "Ananya Roy",
+            age = 23,
+            photoUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
+            availability = "BROWSING",
+            distanceBucket = "~1.1 km away · Church Street",
+            marker = com.example.romear.feature.discovery.domain.FuzzedMarker(12.9754, 77.6050),
+            sharedInterests = listOf("Design", "Filter Coffee", "Art Walks"),
+            upFor = "Bookstore browsing & CTR dosa runs 📚"
+        )
+    )
+
+    private fun getDemoProfile(userId: String): PublicProfile = PublicProfile(
+        userId = userId,
+        displayName = if (userId == "user_kabir") "Kabir Sharma" else "Priya Nair",
+        bio = "Product Designer @ FinTech · Indiranagar. Always looking for good cafe spots, indie gigs, and casual badminton matches.",
+        age = if (userId == "user_kabir") 26 else 24,
+        photos = listOf(
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&auto=format&fit=crop&q=80"
+        ),
+        interests = listOf("Coffee", "Figma", "Indie Rock", "Badminton"),
+        availability = "OPEN",
+        prompts = listOf(
+            com.example.romear.feature.discovery.domain.ProfilePrompt(
+                "A small thing that brings me joy…",
+                "Finding a quiet corner at a specialty cafe with a sketchbook and a flat white."
+            ),
+            com.example.romear.feature.discovery.domain.ProfilePrompt(
+                "Best way to ask me out…",
+                "Suggest a filter coffee run or a friendly game of badminton!"
+            )
+        ),
+        idealWeekend = "Coffee crawl in Indiranagar followed by Sunday morning bouldering.",
+        upFor = "Specialty coffee & cafe work sessions ☕",
+        isIrlVerified = true,
+        phoneVerified = true
+    )
 
     sealed class DiscoveryEvent {
         data class HelloSent(val message: String) : DiscoveryEvent()

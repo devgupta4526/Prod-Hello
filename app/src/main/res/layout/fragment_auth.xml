@@ -1,64 +1,538 @@
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="@drawable/bg_hello_header">
-  <com.example.romear.core.designsystem.ReadableColumnLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/screen_gutter" android:animateLayoutChanges="false" android:layout_gravity="center_horizontal">
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/wordmark" android:textAppearance="@style/TextAppearance.Hello.Title" android:textColor="@color/hello_primary" />
-    <ImageView android:id="@+id/hero" android:layout_width="match_parent" android:layout_height="@dimen/illustration_height" android:src="@drawable/illustration_people" android:importantForAccessibility="no" android:scaleType="fitCenter" />
-    <TextView android:id="@+id/step_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_xl" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
-    <TextView android:id="@+id/auth_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:textAppearance="@style/TextAppearance.Hello.Hero" android:accessibilityHeading="true" />
-    <TextView android:id="@+id/auth_body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:textAppearance="@style/TextAppearance.Hello.Body" />
-    <com.google.android.material.textfield.TextInputLayout android:id="@+id/phone_layout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:hint="@string/auth_phone_hint" app:prefixText="@string/auth_country_code" android:visibility="gone">
-      <com.google.android.material.textfield.TextInputEditText android:id="@+id/phone" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="phone" android:maxLength="10" android:autofillHints="phoneNational" android:imeOptions="actionDone" />
-    </com.google.android.material.textfield.TextInputLayout>
-    <LinearLayout android:id="@+id/otp_group" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="@dimen/space_lg" android:visibility="gone">
-      <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-        <LinearLayout android:id="@+id/otp_cells" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:importantForAccessibility="noHideDescendants">
-          <TextView android:id="@+id/otp_1" style="@style/Widget.Hello.OtpCell" />
-          <TextView android:id="@+id/otp_2" style="@style/Widget.Hello.OtpCell" />
-          <TextView android:id="@+id/otp_3" style="@style/Widget.Hello.OtpCell" />
-          <TextView android:id="@+id/otp_4" style="@style/Widget.Hello.OtpCell" />
-          <TextView android:id="@+id/otp_5" style="@style/Widget.Hello.OtpCell" />
-          <TextView android:id="@+id/otp_6" style="@style/Widget.Hello.OtpCell" />
-        </LinearLayout>
-        <EditText android:id="@+id/otp_input" android:layout_width="match_parent" android:layout_height="match_parent" android:minHeight="@dimen/button_height" android:inputType="number" android:maxLength="6" android:autofillHints="smsOTPCode" android:background="@android:color/transparent" android:textColor="@android:color/transparent" android:cursorVisible="false" android:contentDescription="@string/auth_otp_hint" android:importantForAutofill="yes" />
-      </FrameLayout>
-      <com.google.android.material.button.MaterialButton android:id="@+id/edit_phone" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/auth_edit_phone" />
-      <com.google.android.material.button.MaterialButton android:id="@+id/resend" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/auth_resend" />
-    </LinearLayout>
-    <com.google.android.material.textfield.TextInputLayout android:id="@+id/dob_layout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:hint="@string/auth_dob_hint" android:visibility="gone">
-      <com.google.android.material.textfield.TextInputEditText android:id="@+id/dob" android:layout_width="match_parent" android:layout_height="wrap_content" android:focusable="false" android:clickable="true" android:inputType="none" android:importantForAutofill="no" />
-    </com.google.android.material.textfield.TextInputLayout>
-    <LinearLayout android:id="@+id/profile_group" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
-      <com.google.android.material.button.MaterialButton android:id="@+id/photo_button" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/button_height" android:layout_marginTop="@dimen/space_lg" android:text="@string/auth_add_photo" app:icon="@drawable/ic_profile" />
-      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/auth_photo_note" android:textAppearance="@style/TextAppearance.Hello.Body" />
-      <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:hint="@string/auth_name_hint">
-        <com.google.android.material.textfield.TextInputEditText android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textPersonName|textCapWords" android:maxLength="30" android:autofillHints="name" />
-      </com.google.android.material.textfield.TextInputLayout>
-      <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:hint="@string/auth_bio_hint" app:counterEnabled="true" app:counterMaxLength="160">
-        <com.google.android.material.textfield.TextInputEditText android:id="@+id/bio" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine|textCapSentences" android:maxLength="160" android:minLines="3" android:importantForAutofill="no" />
-      </com.google.android.material.textfield.TextInputLayout>
-      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:text="@string/auth_interests" android:textAppearance="@style/TextAppearance.Material3.TitleMedium" android:accessibilityHeading="true" />
-      <com.google.android.material.chip.ChipGroup android:id="@+id/interests" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" app:singleSelection="false" />
-    </LinearLayout>
-    <com.google.android.material.checkbox.MaterialCheckBox android:id="@+id/guidelines_check" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:minHeight="@dimen/touch_target" android:text="@string/auth_guidelines_accept" android:visibility="gone" />
-    <RadioGroup android:id="@+id/availability" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_lg" android:visibility="gone">
-      <com.google.android.material.radiobutton.MaterialRadioButton android:id="@+id/availability_open" style="@style/Widget.Hello.Availability" android:text="@string/auth_open" android:checked="true" />
-      <com.google.android.material.radiobutton.MaterialRadioButton android:id="@+id/availability_browsing" style="@style/Widget.Hello.Availability" android:text="@string/auth_browsing" />
-      <com.google.android.material.radiobutton.MaterialRadioButton android:id="@+id/availability_off" style="@style/Widget.Hello.Availability" android:text="@string/auth_off" />
-      <com.google.android.material.radiobutton.MaterialRadioButton android:id="@+id/availability_event" style="@style/Widget.Hello.Availability" android:text="@string/auth_event" android:enabled="false" />
-    </RadioGroup>
-    <TextView android:id="@+id/error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:textAppearance="@style/TextAppearance.Hello.Body" android:textColor="@color/hello_error" android:accessibilityLiveRegion="polite" android:visibility="gone" />
-    <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/progress" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_md" android:indeterminate="true" android:visibility="gone" />
-    <TextView android:id="@+id/loading_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_sm" android:text="@string/service_loading" android:textAppearance="@style/TextAppearance.Hello.Body" android:accessibilityLiveRegion="polite" android:visibility="gone" />
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/primary"
-        style="@style/Widget.Hello.Button.Primary"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_canvas"
+    android:orientation="vertical">
+    <androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_lg"
-        android:minHeight="54dp"
-        android:text="@string/auth_continue"
-        app:cornerRadius="27dp" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/secondary" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/auth_later" android:visibility="gone" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/preview" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/auth_preview" android:visibility="gone" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/gallery" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/open_design_gallery" android:visibility="gone" />
-  </com.example.romear.core.designsystem.ReadableColumnLayout>
-</androidx.core.widget.NestedScrollView>
+        android:animateLayoutChanges="false"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="20dp">
+
+        <!-- Top Navigation Bar: Circular Back Button -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_icon_button"
+                android:contentDescription="@string/back"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/wordmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:fontFamily="sans-serif"
+                android:text="romear"
+                android:textColor="@color/text_tertiary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <!-- Illustration for Welcome / Primers -->
+        <ImageView
+            android:id="@+id/hero"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginBottom="16dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/illustration_radar"
+            android:visibility="gone" />
+
+        <!-- Step Indicator Eyebrow -->
+        <TextView
+            android:id="@+id/step_label"
+            style="@style/TextAppearance.Hello.Eyebrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="STEP 1 OF 3 · VERIFICATION" />
+
+        <!-- Screen Hero Headline -->
+        <TextView
+            android:id="@+id/auth_title"
+            style="@style/TextAppearance.Hello.ScreenTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:accessibilityHeading="true"
+            tools:text="What's your number?" />
+
+        <!-- Screen Subtitle / Description -->
+        <TextView
+            android:id="@+id/auth_body"
+            style="@style/TextAppearance.Hello.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            tools:text="We'll text you a 6-digit code. We only use this to keep Romear bot-free." />
+
+        <!-- ============================================== -->
+        <!-- SCREEN 1.3: PHONE INPUT CARD                   -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:id="@+id/phone_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_phone_input_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:id="@+id/country_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="🇮🇳 +91"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="28dp"
+                    android:layout_marginHorizontal="14dp"
+                    android:background="@color/border_subtle" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/phone"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autofillHints="phoneNational"
+                    android:background="@null"
+                    android:fontFamily="sans-serif-medium"
+                    android:hint="98765 43210"
+                    android:imeOptions="actionDone"
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_tertiary"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+                android:background="@drawable/bg_design_card" android:padding="16dp" android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="✓ PRIVACY BY DESIGN" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Your number stays private" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Your number will never be shown to anyone." android:textAppearance="@style/TextAppearance.Hello.Body" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ============================================== -->
+        <!-- SCREEN 1.4: 6-DIGIT OTP VERIFICATION           -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:id="@+id/otp_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- 6 discrete rounded boxes -->
+                <LinearLayout
+                    android:id="@+id/otp_cells"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="noHideDescendants"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/otp_1"
+                        style="@style/Widget.Hello.OtpCell" />
+
+                    <TextView
+                        android:id="@+id/otp_2"
+                        style="@style/Widget.Hello.OtpCell" />
+
+                    <TextView
+                        android:id="@+id/otp_3"
+                        style="@style/Widget.Hello.OtpCell" />
+
+                    <TextView
+                        android:id="@+id/otp_4"
+                        style="@style/Widget.Hello.OtpCell" />
+
+                    <TextView
+                        android:id="@+id/otp_5"
+                        style="@style/Widget.Hello.OtpCell" />
+
+                    <TextView
+                        android:id="@+id/otp_6"
+                        style="@style/Widget.Hello.OtpCell" />
+                </LinearLayout>
+
+                <!-- Hidden full-width input capture -->
+                <EditText
+                    android:id="@+id/otp_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:autofillHints="smsOTPCode"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/auth_otp_hint"
+                    android:cursorVisible="false"
+                    android:importantForAutofill="yes"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:minHeight="56dp"
+                    android:textColor="@android:color/transparent" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/edit_phone"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="44dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="Change number"
+                    android:textColor="@color/primary_coral"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/resend"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="44dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="Resend Code"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ============================================== -->
+        <!-- SCREEN 1.5: DATE OF BIRTH                      -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:id="@+id/dob_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.08"
+                android:text="DATE OF BIRTH"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_phone_input_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="12dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/text_secondary" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dob"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:fontFamily="sans-serif-medium"
+                    android:hint="Select your birth date"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_tertiary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/age_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_pill"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="18+ only"
+                    android:textColor="@color/primary_coral"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ============================================== -->
+        <!-- SCREEN 1.5 - 1.7: PROFILE & PHOTOS             -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:id="@+id/profile_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Photo Upload Area -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/photo_button"
+                style="@style/Widget.Hello.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Add your best photo"
+                android:textColor="@color/text_primary"
+                app:icon="@drawable/ic_profile"
+                app:iconTint="@color/primary_coral" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif"
+                android:text="Clear faces only. No group photos as main photo."
+                android:textColor="@color/text_tertiary"
+                android:textSize="12sp" />
+
+            <!-- First Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Hello.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/auth_name_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="name"
+                    android:fontFamily="sans-serif-medium"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLength="30"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Short Bio -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Hello.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@string/auth_bio_hint"
+                app:counterEnabled="true"
+                app:counterMaxLength="160"
+                app:counterTextColor="@color/text_tertiary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="160"
+                    android:minLines="3"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Pick your vibes &amp; interests (3–8)"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/interests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp"
+                app:singleSelection="false" />
+        </LinearLayout>
+
+        <!-- Community Guidelines Agreement -->
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/guidelines_check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/auth_guidelines_accept"
+            android:textColor="@color/text_primary"
+            android:visibility="gone"
+            app:buttonTint="@color/primary_coral" />
+
+        <!-- Availability Radio Group -->
+        <RadioGroup
+            android:id="@+id/availability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="gone">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/availability_open"
+                style="@style/Widget.Hello.Availability"
+                android:checked="true"
+                android:text="Open to meet"
+                app:buttonTint="@color/accent_emerald" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/availability_browsing"
+                style="@style/Widget.Hello.Availability"
+                android:text="Browsing plans"
+                app:buttonTint="@color/accent_amber" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/availability_off"
+                style="@style/Widget.Hello.Availability"
+                android:text="Invisible / Ghost Mode"
+                app:buttonTint="@color/accent_lavender" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/availability_event"
+                style="@style/Widget.Hello.Availability"
+                android:enabled="false"
+                android:text="At an event"
+                app:buttonTint="@color/primary_coral" />
+        </RadioGroup>
+
+        <!-- Error Feedback Message -->
+        <TextView
+            android:id="@+id/error"
+            style="@style/TextAppearance.Hello.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:accessibilityLiveRegion="polite"
+            android:textColor="@color/hello_error"
+            android:visibility="gone"
+            tools:text="Please check your phone number" />
+
+        <!-- Loading Progress Indicator -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/primary_coral"
+            app:trackColor="@color/border_subtle" />
+
+        <TextView
+            android:id="@+id/loading_label"
+            style="@style/TextAppearance.Hello.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:text="@string/service_loading"
+            android:visibility="gone" />
+
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+        android:paddingHorizontal="24dp" android:paddingTop="12dp" android:paddingBottom="24dp">
+        <!-- Bottom Action Dock -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/primary"
+            style="@style/Widget.Hello.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/bg_gradient_primary"
+            android:text="@string/auth_continue"
+            app:backgroundTint="@null"
+            app:cornerRadius="999dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/secondary"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/auth_later"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/preview"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/auth_preview"
+            android:textColor="@color/text_tertiary"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/gallery"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/open_design_gallery"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</LinearLayout>

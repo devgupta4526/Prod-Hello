@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/hello_background">
@@ -9,8 +10,8 @@
         android:id="@+id/chatToolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/hello_surface"
-        android:elevation="2dp"
+        android:background="@color/bg_canvas"
+        android:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,58 +24,78 @@
 
             <ImageButton
                 android:id="@+id/backButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_icon_button"
                 android:contentDescription="@string/back"
-                android:src="@drawable/ic_back" />
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/white" />
 
             <com.example.romear.core.designsystem.AvatarView
                 android:id="@+id/partnerAvatar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="8dp" />
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="10dp" />
 
-            <TextView
-                android:id="@+id/partnerName"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:textColor="@color/hello_text"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/partnerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Priya Nair" />
+
+                <TextView
+                    android:id="@+id/partnerStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:text="Online · ~400m away"
+                    android:textColor="@color/accent_emerald"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/optionsButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_circle_icon_button"
                 android:contentDescription="@string/ui_chat_options"
-                android:src="@drawable/ic_more" />
+                android:src="@drawable/ic_more"
+                app:tint="@color/white" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Meetup / Active Plan Context Anchor -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/planButton"
         style="@style/Widget.Hello.Button.Tonal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
-        android:minHeight="48dp"
-        android:text="@string/social_plan"
-        android:textColor="@color/hello_primary"
+        android:minHeight="44dp"
+        android:text="View meetup invitation"
+        android:textColor="@color/primary_coral"
         android:textSize="13sp"
         app:backgroundTint="@color/hello_surface_container"
-        app:cornerRadius="16dp"
+        app:cornerRadius="999dp"
         app:icon="@drawable/ic_bolt"
         app:iconGravity="textStart"
         app:iconPadding="8dp"
-        app:iconTint="@color/hello_primary"
-        app:strokeColor="@color/hello_outline"
+        app:iconTint="@color/primary_coral"
+        app:strokeColor="@color/hello_outline_subtle"
         app:strokeWidth="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +105,7 @@
         android:id="@+id/loadingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="@color/hello_primary"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/inputContainer"
         app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +119,7 @@
         android:gravity="center"
         android:padding="24dp"
         android:text="@string/chat_empty"
-        android:textColor="@color/hello_text_secondary"
+        android:textColor="@color/text_secondary"
         android:textSize="15sp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/inputContainer"
@@ -117,45 +139,73 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/planButton" />
 
+    <!-- Chat Message Composer Bar -->
     <LinearLayout
         android:id="@+id/inputContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/hello_surface"
-        android:elevation="4dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_phone_input_card"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="10dp"
         android:paddingVertical="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <!-- Suggest Meetup Action Button -->
+        <ImageView
+            android:id="@+id/btnLetsMeet"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_circle_icon_button"
+            android:contentDescription="Suggest Meetup"
+            android:padding="9dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/primary_coral" />
+
+        <!-- 15s Voice Note Action Button -->
+        <ImageView
+            android:id="@+id/btnVoiceNote"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_circle_icon_button"
+            android:contentDescription="Voice Note"
+            android:padding="9dp"
+            android:src="@drawable/ic_mic"
+            app:tint="@color/text_secondary" />
+
         <EditText
             android:id="@+id/messageInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_composer"
+            android:background="@null"
             android:hint="@string/chat_hint"
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:maxLines="4"
-            android:minHeight="48dp"
-            android:paddingHorizontal="16dp" android:paddingVertical="12dp"
-            android:textColor="@color/hello_text"
-            android:textColorHint="@color/hello_text_secondary"
-            android:textSize="16sp" />
+            android:minHeight="44dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="8dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/text_tertiary"
+            android:textSize="15sp" />
 
         <ImageButton
             android:id="@+id/sendButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_circle_icon_button"
             android:contentDescription="@string/ui_chat_send"
+            android:padding="10dp"
             android:src="@drawable/ic_send"
-            app:tint="@color/hello_primary" />
+            app:tint="@color/primary_coral" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

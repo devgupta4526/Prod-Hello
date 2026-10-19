@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingBottom="28dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SECURE CHECKOUT"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <TextView
+            android:id="@+id/checkoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Choose How to Pay"
+            android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
+
+        <TextView
+            android:id="@+id/checkoutEventSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="1 ticket · Founders &amp; Creatives Mixer"
+            android:textAppearance="@style/TextAppearance.Hello.Caption" />
+
+        <!-- Price Summary Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total Due"
+                        android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
+
+                    <TextView
+                        android:id="@+id/checkoutTotalAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/hello_coral"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        tools:text="₹499" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="All taxes &amp; entry fee included · Zero convenience fees"
+                    android:textAppearance="@style/TextAppearance.Hello.Micro" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Payment Methods -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="SELECT PAYMENT METHOD"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <RadioGroup
+            android:id="@+id/paymentMethodRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/radioUpi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:paddingVertical="8dp"
+                android:text="UPI · Google Pay / PhonePe / Paytm / BHIM"
+                android:textColor="@color/hello_text"
+                android:textSize="14sp" />
+
+            <!-- UPI ID Field -->
+            <LinearLayout
+                android:id="@+id/upiInputContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/inputUpiId"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="e.g. mobile@okaxis / upi"
+                    android:inputType="textEmailAddress"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="@color/hello_text"
+                    android:textColorHint="@color/hello_text_tertiary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <RadioButton
+                android:id="@+id/radioCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="8dp"
+                android:text="Credit / Debit Card (Visa, Mastercard, RuPay)"
+                android:textColor="@color/hello_text"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/radioNetbanking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="8dp"
+                android:text="Net Banking · All Major Banks"
+                android:textColor="@color/hello_text"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <!-- Security Note -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_chip_neutral"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔒"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="256-bit encrypted checkout. Your ticket and QR pass are issued instantly once confirmed."
+                android:textAppearance="@style/TextAppearance.Hello.Micro" />
+        </LinearLayout>
+
+        <!-- Pay Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitPayment"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
+            android:text="Pay ₹499 &amp; Confirm Ticket ⚡"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="999dp" />
+    </LinearLayout>
+</LinearLayout>

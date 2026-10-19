@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingBottom="28dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
+
+        <!-- Top Status Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_neutral"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="✓ CONFIRMED"
+                android:textColor="@color/hello_emerald"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/bookingRefLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BOOKING RM-1024"
+                android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/bookingDetailTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Founders &amp; Creatives Mixer"
+            android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
+
+        <TextView
+            android:id="@+id/bookingDetailTimeVenue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Fri, 23 Oct · 7:30–10:00 PM\nCommon Ground Café, Indiranagar"
+            android:textAppearance="@style/TextAppearance.Hello.Body" />
+
+        <!-- Ticket Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/bookingTierInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1 × General Admission · ₹499 Paid"
+                    android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Includes entry pass + one specialty coffee or beverage"
+                    android:textAppearance="@style/TextAppearance.Hello.Micro" />
+
+                <!-- Action Button inside card -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewQrPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_gradient_primary"
+                    app:backgroundTint="@null"
+                    android:text="Open Entry QR Code 🎟️"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="999dp" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Arrival Instructions -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="ARRIVING ON THE DAY"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:lineSpacingExtra="2dp"
+            android:text="Doors open at 7:15 PM. Check in at reception with your ticket and a valid photo ID. Independent parking available on 12th Main Road."
+            android:textAppearance="@style/TextAppearance.Hello.Caption" />
+
+        <!-- Cancellation Window -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="CANCELLATION POLICY"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Full 100% refund available up to 24 hours before the event start. Non-refundable after that window."
+            android:textAppearance="@style/TextAppearance.Hello.Caption" />
+
+        <!-- Manage Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBookingSupport"
+                style="@style/Widget.Hello.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Get Help 💬"
+                app:cornerRadius="999dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelBooking"
+                style="@style/Widget.Hello.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Cancel Pass"
+                android:textColor="@color/hello_error"
+                app:cornerRadius="999dp"
+                app:strokeColor="@color/hello_error" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

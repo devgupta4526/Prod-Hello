@@ -204,13 +204,17 @@
             android:layout_width="wrap_content"
             android:layout_height="52dp"
             android:minWidth="160dp"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
             android:text="@string/event_book"
+            android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:cornerRadius="26dp"
+            app:cornerRadius="999dp"
             app:icon="@drawable/ic_tickets"
             app:iconGravity="textStart"
-            app:iconPadding="8dp" />
+            app:iconPadding="8dp"
+            app:iconTint="@color/white" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -74,7 +74,7 @@ class MessagesAdapter(
                 ""
             }
             val delivery = if (message.isOutgoing) {
-                if (message.readAt != null) "Read · $formattedTime" else "Sent · $formattedTime"
+                if (message.readAt != null) "$formattedTime ✓✓" else "$formattedTime ✓"
             } else {
                 formattedTime
             }
@@ -94,7 +94,7 @@ class MessagesAdapter(
 
             binding.bubbleView.setOnTouchListener { _, event ->
                 gestureDetector.onTouchEvent(event)
-                true
+                false
             }
         }
     }

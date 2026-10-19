@@ -87,6 +87,11 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val ui = requireNotNull(binding)
+        findNavController().getBackStackEntry(R.id.authFragment).savedStateHandle
+            .getLiveData<Boolean>("welcome_login").observe(viewLifecycleOwner) { login ->
+                viewModel.begin(login)
+                findNavController().getBackStackEntry(R.id.authFragment).savedStateHandle.remove<Boolean>("welcome_login")
+            }
         ui.phone.setText(viewModel.phone)
         ui.name.setText(viewModel.name)
         ui.bio.setText(viewModel.bio)
@@ -95,7 +100,10 @@ class AuthFragment : Fragment() {
         ui.name.doAfterTextChanged { viewModel.name = it.toString() }
         ui.bio.doAfterTextChanged { viewModel.bio = it.toString() }
         ui.otpInput.doAfterTextChanged { value ->
-            listOf(ui.otp1, ui.otp2, ui.otp3, ui.otp4, ui.otp5, ui.otp6).forEachIndexed { index, cell -> cell.text = value?.getOrNull(index)?.toString().orEmpty() }
+            listOf(ui.otp1, ui.otp2, ui.otp3, ui.otp4, ui.otp5, ui.otp6).forEachIndexed { index, cell ->
+                cell.text = value?.getOrNull(index)?.toString().orEmpty()
+                cell.isSelected = index == (value?.length ?: 0)
+            }
         }
         resources.getStringArray(R.array.profile_interests).forEach { interest ->
             val chip = Chip(requireContext()).apply {
@@ -122,6 +130,14 @@ class AuthFragment : Fragment() {
         ui.secondary.setOnClickListener {
             if (viewModel.state.value.step == OnboardingStep.LOCATION) viewModel.locationFinished()
             else if (viewModel.state.value.step == OnboardingStep.NOTIFICATIONS) viewModel.notificationsFinished()
+        }
+        ui.btnBack.setOnClickListener {
+            if (viewModel.state.value.step == OnboardingStep.OTP) {
+                ui.otpInput.text?.clear()
+                viewModel.editPhone()
+            } else {
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
         }
         ui.preview.setOnClickListener { if (BuildConfig.DEBUG) enterApp() }
         ui.gallery.isVisible = false
@@ -183,6 +199,10 @@ class AuthFragment : Fragment() {
     private fun render(state: AuthUiState) {
         val ui = binding ?: return
         val step = state.step
+        if (step == OnboardingStep.WELCOME && findNavController().currentDestination?.id == R.id.authFragment) {
+            findNavController().navigate(R.id.welcomeFragment)
+            return
+        }
         val copy = when (step) {
             OnboardingStep.WELCOME -> Triple(R.string.welcome_title, R.string.welcome_body, R.string.auth_get_started)
             OnboardingStep.PHONE -> Triple(R.string.auth_phone_title, R.string.auth_phone_body, R.string.auth_send_code)
@@ -205,7 +225,41 @@ class AuthFragment : Fragment() {
         ui.primary.setText(if (step == OnboardingStep.LOCATION && locationDenied) R.string.auth_settings else copy.third)
         val index = when (step) { OnboardingStep.PHONE, OnboardingStep.OTP -> 1; OnboardingStep.DATE_OF_BIRTH -> 2; OnboardingStep.PROFILE -> 3; OnboardingStep.GUIDELINES -> 4; OnboardingStep.LOCATION -> 5; OnboardingStep.NOTIFICATIONS -> 6; OnboardingStep.AVAILABILITY -> 7; else -> 0 }
         ui.stepLabel.text = if (index > 0) getString(R.string.auth_step, index) else getString(R.string.welcome_eyebrow)
-        ui.hero.isVisible = step == OnboardingStep.WELCOME
+        when (step) {
+            OnboardingStep.PHONE -> {
+                ui.stepLabel.text = if (viewModel.loginMode) "ACCOUNT ACCESS" else "STEP 1 OF 3 · VERIFICATION"
+                ui.authTitle.text = if (viewModel.loginMode) "Welcome back." else "What’s your number?"
+                ui.authBody.text = if (viewModel.loginMode) "Your people and plans are waiting." else "We’ll text you a 6-digit code. We only use this to keep Romear bot-free."
+                ui.primary.text = if (viewModel.loginMode) "Send login code" else "Send Verification Code →"
+            }
+            OnboardingStep.OTP -> {
+                ui.stepLabel.text = "SECURITY CHECK"
+                ui.authTitle.text = "Enter the 6-digit code"
+                ui.authBody.text = "Sent to +91 ${viewModel.phone}"
+                ui.primary.text = "Verify & Continue"
+            }
+            OnboardingStep.DATE_OF_BIRTH -> ui.stepLabel.text = "STEP 2 OF 3 · YOUR IDENTITY"
+            else -> Unit
+        }
+        ui.wordmark.isVisible = false
+        ui.btnBack.isVisible = step != OnboardingStep.SPLASH && step != OnboardingStep.WELCOME && step != OnboardingStep.COMPLETE
+        when (step) {
+            OnboardingStep.WELCOME -> {
+                ui.hero.isVisible = true
+                ui.hero.setImageResource(R.drawable.illustration_radar)
+            }
+            OnboardingStep.LOCATION -> {
+                ui.hero.isVisible = true
+                ui.hero.setImageResource(R.drawable.illustration_privacy_shield)
+            }
+            OnboardingStep.NOTIFICATIONS -> {
+                ui.hero.isVisible = true
+                ui.hero.setImageResource(R.drawable.illustration_verified_audio)
+            }
+            else -> {
+                ui.hero.isVisible = false
+            }
+        }
         ui.phoneLayout.isVisible = step == OnboardingStep.PHONE
         ui.otpGroup.isVisible = step == OnboardingStep.OTP
         ui.dobLayout.isVisible = step == OnboardingStep.DATE_OF_BIRTH

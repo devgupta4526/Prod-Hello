@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="88dp"
+    android:layout_width="75dp"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="6dp"
+    android:layout_marginEnd="14dp"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -13,14 +13,14 @@
         android:id="@+id/liveStatusBubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:background="@drawable/bg_live_status_bubble"
+        android:layout_marginBottom="7dp"
+        android:background="@null"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLines="2"
+        android:maxLines="1"
         android:maxWidth="84dp"
         android:paddingHorizontal="6dp"
-        android:paddingVertical="3dp"
+        android:paddingVertical="0dp"
         android:textColor="@color/hello_text"
         android:textSize="11sp"
         android:textStyle="bold"
@@ -36,7 +36,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             app:strokeColor="@color/hello_live_pulse"
-            app:strokeWidth="2.5dp" />
+            app:strokeWidth="0dp" />
 
         <!-- Optional add badge for current user's note -->
         <ImageView
@@ -57,11 +57,11 @@
         android:id="@+id/liveUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="7dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/hello_text_secondary"
-        android:textSize="12sp"
+        android:textSize="11sp"
         tools:text="Maya" />
 
 </LinearLayout>

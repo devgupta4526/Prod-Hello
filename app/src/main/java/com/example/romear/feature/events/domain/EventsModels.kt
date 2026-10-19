@@ -7,6 +7,7 @@ data class TicketTierItem(
     val priceInPaise: Int,
     val capacity: Int,
     val remaining: Int,
+    val maxPerOrder: Int = 6,
 )
 
 data class EventItem(
@@ -21,6 +22,9 @@ data class EventItem(
     val status: String,
     val distanceBucket: String,
     val tiers: List<TicketTierItem>,
+    val coverUrl: String? = null,
+    val organizerName: String? = null,
+    val organizerPhotoUrl: String? = null,
 )
 
 data class CreateOrderResult(

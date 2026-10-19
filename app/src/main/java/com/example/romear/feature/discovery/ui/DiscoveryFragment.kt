@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -77,7 +78,29 @@ class DiscoveryFragment : Fragment() {
             HelloMotion.bounce(it) { socialUi.home() }
         }
         views.upForButton.setOnClickListener {
-            HelloMotion.bounce(it) { socialUi.upFor() }
+            HelloMotion.bounce(it) { showShareVibeBottomSheet() }
+        }
+        views.radarIcon.setOnClickListener {
+            HelloMotion.bounce(it) { showRadarHotspotsSheet() }
+        }
+        views.filterIcon.setOnClickListener {
+            HelloMotion.bounce(it) { showDiscoveryFilterSheet() }
+        }
+        views.btnExpandRadius.setOnClickListener {
+            HelloMotion.bounce(it) {
+                com.example.romear.core.designsystem.HelloFeedback.info(requireView(), "Searching up to 10 km nearby…")
+                viewModel.loadNearby()
+            }
+        }
+        views.btnShareFriends.setOnClickListener {
+            HelloMotion.bounce(it) {
+                val sendIntent = android.content.Intent().apply {
+                    action = android.content.Intent.ACTION_SEND
+                    putExtra(android.content.Intent.EXTRA_TEXT, "Join me on Romear to discover real people and hangout spots nearby! https://romear.app")
+                    type = "text/plain"
+                }
+                startActivity(android.content.Intent.createChooser(sendIntent, "Share Romear"))
+            }
         }
 
         // Live Status Stories row (Instagram Notes style)
@@ -90,7 +113,7 @@ class DiscoveryFragment : Fragment() {
                 }
             },
             onAddNoteClicked = {
-                socialUi.upFor()
+                showShareVibeBottomSheet()
             }
         )
         views.liveStatusRecyclerView.adapter = liveStatusAdapter
@@ -188,28 +211,170 @@ class DiscoveryFragment : Fragment() {
     }
 
     private fun showDailyIcebreakerDialog() {
-        val input = EditText(requireContext()).apply {
-            hint = "e.g. Nagarjuna for Andhra meals or CTR for Benne Masala Dosa"
-            setPadding(48, 36, 48, 36)
-            textSize = 15f
+        val bottomSheet = BottomSheetDialog(requireContext())
+        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_icebreaker, null)
+        bottomSheet.setContentView(sheetView)
+
+        val input = sheetView.findViewById<EditText>(R.id.icebreaker_answer_input)
+        val postBtn = sheetView.findViewById<MaterialButton>(R.id.btn_post_icebreaker_answer)
+        val reply1 = sheetView.findViewById<View>(R.id.btn_reply_wave_1)
+        val reply2 = sheetView.findViewById<View>(R.id.btn_reply_wave_2)
+
+        postBtn?.setOnClickListener {
+            val answer = input?.text?.toString()?.trim().orEmpty()
+            if (answer.isNotBlank()) {
+                binding?.vibeCheckQuestion?.text = "You posted: \"$answer\" ✓"
+                com.example.romear.core.designsystem.HelloFeedback.success(
+                    requireView(),
+                    "Answer posted! Unlocked 18 nearby responses 🎉"
+                )
+                bottomSheet.dismiss()
+            }
         }
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("✨ Daily Bangalore Icebreaker")
-            .setMessage("What's the best late-night food spot in the city?\n\nShare yours to unlock answers from 18 nearby people!")
-            .setView(input)
-            .setPositiveButton("Post & Unlock") { _, _ ->
-                val answer = input.text?.toString()?.trim().orEmpty()
-                if (answer.isNotBlank()) {
-                    binding?.vibeCheckQuestion?.text = "You posted: \"$answer\" ✓"
-                    com.example.romear.core.designsystem.HelloFeedback.success(
-                        requireView(),
-                        "Answer posted! Unlocked 18 nearby responses 🎉"
-                    )
+        reply1?.setOnClickListener {
+            bottomSheet.dismiss()
+            val dummyUser = viewModel.users.value.firstOrNull() ?: return@setOnClickListener
+            val context = JSONObject().put("type", "ICEBREAKER").put("text", "Empire on Church Street at 2 AM")
+            showSayHelloDialog(dummyUser, context)
+        }
+
+        reply2?.setOnClickListener {
+            bottomSheet.dismiss()
+            val dummyUser = viewModel.users.value.getOrNull(1) ?: viewModel.users.value.firstOrNull() ?: return@setOnClickListener
+            val context = JSONObject().put("type", "ICEBREAKER").put("text", "Corner House Death by Chocolate")
+            showSayHelloDialog(dummyUser, context)
+        }
+
+        bottomSheet.show()
+    }
+
+    private fun showShareVibeBottomSheet() {
+        val bottomSheet = BottomSheetDialog(requireContext())
+        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_share_vibe, null)
+        bottomSheet.setContentView(sheetView)
+
+        val inputText = sheetView.findViewById<EditText>(R.id.vibe_input_text)
+        val publishBtn = sheetView.findViewById<MaterialButton>(R.id.btn_publish_vibe)
+        val clearBtn = sheetView.findViewById<MaterialButton>(R.id.btn_clear_vibe)
+        val charCounter = sheetView.findViewById<TextView>(R.id.vibe_char_counter)
+
+        inputText?.doAfterTextChanged {
+            charCounter?.text = "${it?.length ?: 0}/60"
+        }
+
+        var selectedHours = 3
+        val h1 = sheetView.findViewById<TextView>(R.id.duration_1h)
+        val h3 = sheetView.findViewById<TextView>(R.id.duration_3h)
+        val h6 = sheetView.findViewById<TextView>(R.id.duration_6h)
+        val h24 = sheetView.findViewById<TextView>(R.id.duration_24h)
+
+        val durationViews = listOf(1 to h1, 3 to h3, 6 to h6, 24 to h24)
+        durationViews.forEach { (hrs, tv) ->
+            tv?.setOnClickListener {
+                selectedHours = hrs
+                durationViews.forEach { (h, v) ->
+                    v?.setBackgroundResource(if (h == selectedHours) R.drawable.bg_pill_active else R.drawable.bg_pill_inactive)
+                    v?.setTextColor(ContextCompat.getColor(requireContext(), if (h == selectedHours) R.color.text_primary else R.color.text_secondary))
                 }
             }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
+        }
+
+        val s1 = sheetView.findViewById<TextView>(R.id.vibe_suggestion_1)
+        val s2 = sheetView.findViewById<TextView>(R.id.vibe_suggestion_2)
+        val s3 = sheetView.findViewById<TextView>(R.id.vibe_suggestion_3)
+        val s4 = sheetView.findViewById<TextView>(R.id.vibe_suggestion_4)
+
+        listOf(s1, s2, s3, s4).forEach { sugView ->
+            sugView?.setOnClickListener {
+                inputText?.setText((it as TextView).text.toString())
+            }
+        }
+
+        publishBtn?.setOnClickListener {
+            val text = inputText?.text?.toString()?.trim().orEmpty()
+            if (text.isNotBlank()) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        socialRepository.request("v1/me/up-for", "PUT", JSONObject().put("activity", text).put("hours", selectedHours))
+                        com.example.romear.core.designsystem.HelloFeedback.success(requireView(), "Vibe shared with nearby people ⚡")
+                        bottomSheet.dismiss()
+                    } catch (_: Exception) {
+                        com.example.romear.core.designsystem.HelloFeedback.error(requireView(), "Could not update vibe")
+                    }
+                }
+            }
+        }
+
+        clearBtn?.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    socialRepository.request("v1/me/up-for", "PUT", JSONObject().put("activity", JSONObject.NULL))
+                    com.example.romear.core.designsystem.HelloFeedback.info(requireView(), "Vibe cleared")
+                    bottomSheet.dismiss()
+                } catch (_: Exception) {}
+            }
+        }
+
+        bottomSheet.show()
+    }
+
+    private fun showRadarHotspotsSheet() {
+        val bottomSheet = BottomSheetDialog(requireContext())
+        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_radar_hotspots, null)
+        bottomSheet.setContentView(sheetView)
+
+        sheetView.findViewById<View>(R.id.btn_close_radar)?.setOnClickListener {
+            bottomSheet.dismiss()
+        }
+
+        bottomSheet.show()
+    }
+
+    private fun showDiscoveryFilterSheet() {
+        val bottomSheet = BottomSheetDialog(requireContext())
+        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_discovery_filter, null)
+        bottomSheet.setContentView(sheetView)
+
+        val distanceSlider = sheetView.findViewById<com.google.android.material.slider.Slider>(R.id.distanceSlider)
+        val distanceText = sheetView.findViewById<TextView>(R.id.distanceValueText)
+        val ageSlider = sheetView.findViewById<com.google.android.material.slider.RangeSlider>(R.id.ageRangeSlider)
+        val ageText = sheetView.findViewById<TextView>(R.id.ageRangeValueText)
+        val switchVerified = sheetView.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.switchVerifiedOnly)
+        val resetBtn = sheetView.findViewById<View>(R.id.btnResetFilters)
+        val applyBtn = sheetView.findViewById<MaterialButton>(R.id.btnApplyFilters)
+
+        distanceSlider?.addOnChangeListener { _, value, _ ->
+            distanceText?.text = String.format("%.1f km", value)
+        }
+
+        ageSlider?.addOnChangeListener { slider, _, _ ->
+            val vals = slider.values
+            if (vals.size >= 2) {
+                ageText?.text = "${vals[0].toInt()} - ${vals[1].toInt()}"
+            }
+        }
+
+        resetBtn?.setOnClickListener {
+            distanceSlider?.value = 5.0f
+            distanceText?.text = "5.0 km"
+            ageSlider?.setValues(21.0f, 30.0f)
+            ageText?.text = "21 - 30"
+            switchVerified?.isChecked = false
+            com.example.romear.core.designsystem.HelloFeedback.info(requireView(), "Filters reset to default")
+        }
+
+        applyBtn?.setOnClickListener {
+            val dist = distanceSlider?.value ?: 5.0f
+            com.example.romear.core.designsystem.HelloFeedback.success(
+                requireView(),
+                "Filters applied: within ${String.format("%.1f", dist)} km"
+            )
+            viewModel.loadNearby()
+            bottomSheet.dismiss()
+        }
+
+        bottomSheet.show()
     }
 
     private fun showSayHelloDialog(user: DiscoveryUser, context: JSONObject? = null) {
@@ -220,6 +385,18 @@ class DiscoveryFragment : Fragment() {
         val replyPreviewIcon = dialogView.findViewById<ImageView>(R.id.replyPreviewIcon)
         val sendButton = dialogView.findViewById<MaterialButton>(R.id.sendButton)
         val cancelButton = dialogView.findViewById<MaterialButton>(R.id.cancelButton)
+        val dismissBtn = dialogView.findViewById<View>(R.id.btn_dismiss)
+        val titleView = dialogView.findViewById<TextView>(R.id.dialogTitle)
+
+        titleView?.text = "Say Hello to ${user.displayName.split(" ").firstOrNull() ?: user.displayName}"
+
+        val starter1 = dialogView.findViewById<TextView>(R.id.starter1)
+        val starter2 = dialogView.findViewById<TextView>(R.id.starter2)
+        val starter3 = dialogView.findViewById<TextView>(R.id.starter3)
+
+        starter1?.setOnClickListener { messageInput.setText("Love that cafe! ☕") }
+        starter2?.setOnClickListener { messageInput.setText("Up for badminton? 🏸") }
+        starter3?.setOnClickListener { messageInput.setText("I work in tech too! 💡") }
 
         if (context != null) {
             replyPreviewContainer.visibility = View.VISIBLE
@@ -243,6 +420,7 @@ class DiscoveryFragment : Fragment() {
             .setView(dialogView)
             .create()
 
+        dismissBtn?.setOnClickListener { dialog.dismiss() }
         cancelButton.setOnClickListener { dialog.dismiss() }
         sendButton.setOnClickListener {
             HelloMotion.bounce(it) {

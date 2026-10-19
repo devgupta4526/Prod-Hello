@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingBottom="28dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAFE REAL-WORLD MEETUP"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <TextView
+            android:id="@+id/meetTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Suggest a Coffee Meetup"
+            android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Choose a verified, high-footfall public spot. Keeps it safe, casual, and low-pressure."
+            android:textAppearance="@style/TextAppearance.Hello.Caption"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Verified Spots Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="RECOMMENDED PUBLIC VENUES"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/venueChipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="8dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/venue1"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="☕ Third Wave Coffee · Indiranagar" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/venue2"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="☕ Blue Tokai · Koramangala 4th Block" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/venue3"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌳 Cubbon Park · Bandstand" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/venue4"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📚 Blossoms Bookhouse · Church St" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Time Picker Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="WHEN"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/timeChipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="8dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time1"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Today 6:00 PM" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time2"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tomorrow 5:00 PM" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time3"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Saturday 11:00 AM" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time4"
+                style="@style/Widget.Hello.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunday 4:30 PM" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <TextView
+            android:id="@+id/btnViewSafetyChecklist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:padding="6dp"
+            android:text="🛡️ Review IRL Meetup Safety Checklist"
+            android:textAppearance="@style/TextAppearance.Hello.Micro"
+            android:textColor="@color/hello_coral" />
+
+        <!-- Send Invite Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSendMeetupInvite"
+            style="@style/Widget.Hello.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
+            android:text="Send Meetup Invite ☕"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="999dp" />
+    </LinearLayout>
+</LinearLayout>

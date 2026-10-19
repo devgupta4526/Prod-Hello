@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Header Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_chip_neutral"
+            android:gravity="center"
+            android:text="🛡️"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/reportDialogTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Report User"
+                android:textAppearance="@style/TextAppearance.Hello.SectionTitle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Reports are 100% confidential."
+                android:textAppearance="@style/TextAppearance.Hello.Micro" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDismissReport"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close"
+            android:src="@drawable/ic_close"
+            app:tint="@color/hello_text_secondary" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="WHAT'S GOING ON?"
+        android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+    <!-- Radio Options -->
+    <RadioGroup
+        android:id="@+id/reportReasonsGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/radioHarassment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:paddingVertical="6dp"
+            android:text="Harassment or inappropriate messages"
+            android:textColor="@color/hello_text"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/radioSpam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="6dp"
+            android:text="Spam, sales, or commercial solicitation"
+            android:textColor="@color/hello_text"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/radioCatfish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="6dp"
+            android:text="Fake profile, stolen photos, or catfish"
+            android:textColor="@color/hello_text"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/radioUnderage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="6dp"
+            android:text="User appears to be under 18 years old"
+            android:textColor="@color/hello_text"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/radioOther"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="6dp"
+            android:text="Other safety concern"
+            android:textColor="@color/hello_text"
+            android:textSize="14sp" />
+    </RadioGroup>
+
+    <!-- Additional Details Input -->
+    <EditText
+        android:id="@+id/inputReportDetails"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_input_field"
+        android:gravity="top|start"
+        android:hint="Additional details (optional)…"
+        android:padding="12dp"
+        android:textColor="@color/hello_text"
+        android:textColorHint="@color/hello_text_tertiary"
+        android:textSize="13sp" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelReport"
+            style="@style/Widget.Hello.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginEnd="12dp"
+            android:text="Cancel"
+            app:cornerRadius="999dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitReport"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
+            android:text="Submit Report"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="999dp" />
+    </LinearLayout>
+</LinearLayout>

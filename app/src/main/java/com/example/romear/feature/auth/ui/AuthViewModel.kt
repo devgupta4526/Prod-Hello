@@ -53,6 +53,9 @@ class AuthViewModel @Inject constructor(
     var bio: String
         get() = saved["bio"] ?: ""
         set(value) { saved["bio"] = value }
+    var loginMode: Boolean
+        get() = saved["loginMode"] ?: false
+        set(value) { saved["loginMode"] = value }
     var dob: String
         get() = saved["dob"] ?: ""
         set(value) { saved["dob"] = value }
@@ -98,7 +101,7 @@ class AuthViewModel @Inject constructor(
         val account = repository.restore()
         if (account == null) step(OnboardingStep.WELCOME) else route(account)
     }
-    fun begin() { step(OnboardingStep.PHONE) }
+    fun begin(login: Boolean = false) { loginMode = login; step(OnboardingStep.PHONE) }
     fun editPhone() { step(OnboardingStep.PHONE) }
     fun requestCode(appHash: String? = null, resend: Boolean = false) {
         if (!phone.matches(Regex("[6-9][0-9]{9}"))) { mutable.value = mutable.value.copy(error = "invalid_phone"); return }

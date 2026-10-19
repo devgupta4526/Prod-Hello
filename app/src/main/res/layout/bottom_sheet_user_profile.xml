@@ -329,16 +329,17 @@
             style="@style/Widget.Hello.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:backgroundTint="@color/hello_primary"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
             android:text="Say Hello 👋"
-            android:textColor="@color/hello_on_primary"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:cornerRadius="27dp"
+            app:cornerRadius="999dp"
             app:icon="@drawable/ic_send"
             app:iconGravity="textStart"
             app:iconPadding="8dp"
-            app:iconTint="@color/hello_on_primary" />
+            app:iconTint="@color/white" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,5 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/discover_graph" android:icon="@drawable/ic_discover" android:title="@string/social_home" />
+    <item android:id="@+id/discover_graph" android:icon="@drawable/ic_discover" android:title="@string/discover" />
     <item android:id="@+id/happening_graph" android:icon="@drawable/ic_happening" android:title="@string/happening" />
     <item android:id="@+id/inbox_graph" android:icon="@drawable/ic_inbox" android:title="@string/inbox" />
     <item android:id="@+id/tickets_graph" android:icon="@drawable/ic_tickets" android:title="@string/tickets" />

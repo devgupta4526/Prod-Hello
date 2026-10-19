@@ -40,7 +40,9 @@ class DiscoveryAdapter(
             val nameText = if (user.age != null) "${user.displayName}, ${user.age}" else user.displayName
             binding.userName.text = nameText
             val cleanDistance = user.distanceBucket.removePrefix("📍").trim()
-            binding.distanceBucket.text = "📍 $cleanDistance"
+            binding.distanceBucket.text = cleanDistance
+            binding.userSubhead.text = user.sharedInterests.take(2).joinToString(" · ")
+            binding.userSubhead.visibility = if (user.sharedInterests.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
 
             // Hero Photo loading via Coil with smooth crossfade
             val photoUrl = user.photoUrl
@@ -73,7 +75,7 @@ class DiscoveryAdapter(
             // Contextual "Up For" highlight
             if (!user.upFor.isNullOrBlank()) {
                 binding.upForContainer.visibility = android.view.View.VISIBLE
-                binding.upForText.text = "Up for: ${user.upFor}"
+                binding.upForText.text = user.upFor
                 binding.upForContainer.setOnClickListener {
                     HelloMotion.bounce(it) {
                         onContextualHelloClicked?.invoke(user, "VIBE", user.upFor)
@@ -90,12 +92,15 @@ class DiscoveryAdapter(
             val interestsToShow = user.sharedInterests.take(4)
             interestsToShow.forEach { interest ->
                 val chip = Chip(binding.root.context).apply {
-                    text = interest
+                    text = "#${interest.removePrefix("#")}"
                     isClickable = true
                     isCheckable = false
                     textSize = 12f
-                    setChipBackgroundColorResource(R.color.hello_surface_variant)
-                    setTextColor(ContextCompat.getColor(context, R.color.hello_text))
+                    setChipBackgroundColorResource(R.color.bg_surface_pill)
+                    setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+                    chipCornerRadius = 999f
+                    chipStrokeWidth = resources.displayMetrics.density
+                    setChipStrokeColorResource(R.color.border_subtle)
                     setEnsureMinTouchTargetSize(false)
                     setOnClickListener {
                         HelloMotion.bounce(this) {
@@ -109,6 +114,12 @@ class DiscoveryAdapter(
             binding.interestsGroup.visibility =
                 if (interestsToShow.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
 
+            binding.btnLikePhoto.setOnClickListener {
+                HelloMotion.bounce(it) {
+                    onContextualHelloClicked?.invoke(user, "PHOTO", "Liked primary photo")
+                        ?: onSayHelloClicked(user)
+                }
+            }
             binding.root.setOnClickListener {
                 HelloMotion.bounce(it) {
                     onUserClicked(user)

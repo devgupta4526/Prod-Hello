@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.romear.R
 import com.example.romear.core.designsystem.AvatarView
+import com.example.romear.core.designsystem.HelloMotion
 import com.example.romear.core.designsystem.HelloTransitions
 import com.example.romear.databinding.FragmentHappeningBinding
 import com.example.romear.feature.pools.domain.PoolDetail
@@ -69,8 +70,28 @@ class HappeningFragment : Fragment() {
         com.example.romear.core.designsystem.HelloLayouts.adaptiveCards(views.poolsRecyclerView)
         views.poolsRecyclerView.adapter = adapter
 
+        views.btnTopHost.setOnClickListener {
+            HelloMotion.bounce(it) { showCreatePoolDialog() }
+        }
+        views.btnEmptyHost.setOnClickListener {
+            HelloMotion.bounce(it) { showCreatePoolDialog() }
+        }
         views.hostPoolFab.setOnClickListener {
-            showCreatePoolDialog()
+            HelloMotion.bounce(it) { showCreatePoolDialog() }
+        }
+
+        views.categoryChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            val checkedId = checkedIds.firstOrNull() ?: R.id.chipAll
+            val allPools = viewModel.pools.value
+            val filtered = when (checkedId) {
+                R.id.chipCoffee -> allPools.filter { it.activity.contains("coffee", ignoreCase = true) || it.title.contains("coffee", ignoreCase = true) }
+                R.id.chipSports -> allPools.filter { it.activity.contains("sport", ignoreCase = true) || it.activity.contains("badminton", ignoreCase = true) || it.title.contains("badminton", ignoreCase = true) }
+                R.id.chipFood -> allPools.filter { it.activity.contains("food", ignoreCase = true) || it.activity.contains("breakfast", ignoreCase = true) || it.title.contains("food", ignoreCase = true) }
+                R.id.chipGames -> allPools.filter { it.activity.contains("game", ignoreCase = true) || it.activity.contains("tech", ignoreCase = true) || it.title.contains("game", ignoreCase = true) }
+                R.id.chipDrinks -> allPools.filter { it.activity.contains("drink", ignoreCase = true) || it.activity.contains("beer", ignoreCase = true) }
+                else -> allPools
+            }
+            adapter.submitList(filtered)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

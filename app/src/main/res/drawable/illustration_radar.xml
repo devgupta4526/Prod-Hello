@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="240dp"
+    android:viewportWidth="280"
+    android:viewportHeight="240">
+    <!-- Outer concentric ring 1 -->
+    <path
+        android:strokeColor="#1AFF5C39"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 20 A 100,100 0 1,1 139.9, 20 Z" />
+    <!-- Outer concentric ring 2 -->
+    <path
+        android:strokeColor="#338B5CF6"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 48 A 72,72 0 1,1 139.9, 48 Z" />
+    <!-- Middle ring 3 -->
+    <path
+        android:strokeColor="#4DFF5C39"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 76 A 44,44 0 1,1 139.9, 76 Z" />
+    <!-- Center ambient node fill -->
+    <path
+        android:fillColor="#1A202C"
+        android:strokeColor="#FF5C39"
+        android:strokeWidth="2"
+        android:pathData="M 140, 96 A 24,24 0 1,1 139.9, 96 Z" />
+    <!-- Center Waveform Monogram -->
+    <path
+        android:fillColor="#FF5C39"
+        android:pathData="M136,112v16h2v-16h-2z M140,108v24h2v-24h-2z M144,114v12h2v-12h-2z" />
+    <!-- Floating user marker left -->
+    <path
+        android:fillColor="#8B5CF6"
+        android:pathData="M 76, 84 A 6,6 0 1,1 75.9, 84 Z" />
+    <!-- Floating user marker right -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M 204, 150 A 6,6 0 1,1 203.9, 150 Z" />
+</vector>

@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="240dp"
+    android:viewportWidth="280"
+    android:viewportHeight="240">
+    <!-- Concentric privacy shield rings -->
+    <path
+        android:strokeColor="#1A10B981"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 20 A 100,100 0 1,1 139.9, 20 Z" />
+    <path
+        android:strokeColor="#338B5CF6"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 48 A 72,72 0 1,1 139.9, 48 Z" />
+    <path
+        android:strokeColor="#4D10B981"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 76 A 44,44 0 1,1 139.9, 76 Z" />
+    <!-- Center Circle with Shield -->
+    <path
+        android:fillColor="#1A2E28"
+        android:strokeColor="#10B981"
+        android:strokeWidth="2"
+        android:pathData="M 140, 96 A 24,24 0 1,1 139.9, 96 Z" />
+    <!-- Center shield icon -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M140,108l-9,4v6c0,5.55 3.84,10.74 9,12c5.16,-1.26 9,-6.45 9,-12v-6L140,108z M138,124l-4,-4l1.41,-1.41L138,121.17l6.59,-6.59L146,116L138,124z" />
+</vector>

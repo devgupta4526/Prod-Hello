@@ -105,11 +105,11 @@
                 android:paddingVertical="0dp"
                 android:text="@string/ticket_qr_title"
                 android:textSize="13sp"
-                app:cornerRadius="20dp"
+                app:cornerRadius="999dp"
                 app:icon="@drawable/ic_qr"
                 app:iconGravity="textStart"
                 app:iconPadding="6dp"
                 app:iconSize="18dp" />
         </LinearLayout>
     </LinearLayout>
-</com.example.romear.core.designsystem.HelloCardView>
+</com.example.romear.core.designsystem.HelloCardView>

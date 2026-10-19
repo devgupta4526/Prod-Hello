@@ -1,27 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingHorizontal="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="28dp">
+
+        <!-- Sheet Drag Handle -->
+        <View
+            android:layout_width="44dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_bottom_sheet_handle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WHAT'S THE PLAN?"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pool_create_title"
-            android:textColor="@color/hello_text"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="2dp"
+            android:text="Host a Hangout"
+            android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Spontaneous gatherings with verified people in your neighborhood."
+            android:textAppearance="@style/TextAppearance.Hello.Caption" />
+
+        <!-- Title Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Hello.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:hint="@string/pool_title_hint">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -29,10 +54,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapSentences"
-                android:maxLength="80" />
+                android:maxLength="80"
+                android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Activity Input -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Hello.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -43,10 +71,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
-                android:maxLength="40" />
+                android:maxLength="40"
+                android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Capacity Input -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Hello.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -56,13 +87,15 @@
                 android:id="@+id/poolCapacityInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- When & Where Header -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:text="WHEN &amp; WHERE"
             android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
 
@@ -74,19 +107,19 @@
             android:layout_marginTop="8dp"
             android:minHeight="48dp"
             android:text="Choose date and time"
-            app:cornerRadius="16dp"
+            app:cornerRadius="999dp"
             app:icon="@drawable/ic_calendar"
             app:iconGravity="textStart"
             app:iconPadding="10dp"
-            app:iconTint="@color/hello_primary" />
+            app:iconTint="@color/primary_coral" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:labelFor="@id/poolDuration"
-            android:text="How long are you meeting?"
-            android:textColor="@color/hello_text_secondary"
+            android:text="Duration"
+            android:textColor="@color/text_secondary"
             android:textSize="13sp"
             android:textStyle="bold" />
 
@@ -94,9 +127,9 @@
             android:id="@+id/poolDuration"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_composer"
-            android:paddingHorizontal="12dp" />
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_phone_input_card"
+            android:paddingHorizontal="14dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/poolLocationButton"
@@ -106,25 +139,26 @@
             android:layout_marginTop="14dp"
             android:minHeight="48dp"
             android:text="Use my nearby location"
-            app:cornerRadius="16dp"
+            app:cornerRadius="999dp"
             app:icon="@drawable/ic_location"
             app:iconGravity="textStart"
             app:iconPadding="10dp"
-            app:iconTint="@color/hello_primary" />
+            app:iconTint="@color/primary_coral" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:lineSpacingExtra="3dp"
-            android:text="Your approximate area helps people find this group. Agree on a public meeting spot in the group chat. You approve requests to join."
+            android:text="Your approximate radius helps nearby people find this hangout. Specific meeting spot is coordinated in the group chat once approved."
             android:textAppearance="@style/TextAppearance.Hello.Caption" />
 
+        <!-- Actions -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="end"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -134,18 +168,22 @@
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="@string/cancel"
-                android:textColor="@color/hello_text_secondary" />
+                android:textColor="@color/text_tertiary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/submitCreatePoolButton"
                 style="@style/Widget.Hello.Button.Primary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:minHeight="48dp"
-                android:paddingHorizontal="24dp"
-                android:text="@string/pools_host_button"
-                app:cornerRadius="24dp" />
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_gradient_primary"
+                app:backgroundTint="@null"
+                android:text="Publish Hangout ⚡"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="999dp" />
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

@@ -17,13 +17,10 @@ class HelloCardView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     init {
         radius = resources.getDimension(R.dimen.card_radius)
-        val defaultElevation = 2 * resources.displayMetrics.density
-        maxCardElevation = 6 * resources.displayMetrics.density
-        if (cardElevation <= 0f) {
-            cardElevation = defaultElevation
-        }
+        cardElevation = 0f
+        maxCardElevation = 0f
         strokeWidth = (1 * resources.displayMetrics.density).toInt()
-        strokeColor = ContextCompat.getColor(context, R.color.hello_outline_subtle)
+        strokeColor = ContextCompat.getColor(context, R.color.hello_outline)
         setCardBackgroundColor(ContextCompat.getColor(context, R.color.hello_surface))
         isClickable = false
         isFocusable = false

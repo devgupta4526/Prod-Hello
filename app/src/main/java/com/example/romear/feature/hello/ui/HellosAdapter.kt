@@ -14,6 +14,7 @@ class HellosAdapter(
     private val onAcceptClicked: (HelloItem) -> Unit,
     private val onDeclineClicked: (HelloItem) -> Unit,
     private val onWithdrawClicked: (HelloItem) -> Unit,
+    private val onItemClicked: ((HelloItem) -> Unit)? = null,
 ) : ListAdapter<HelloItem, HellosAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,17 +38,21 @@ class HellosAdapter(
             val user = if (isReceived) item.sender else item.receiver
             val displayName = user?.displayName ?: "Someone nearby"
             binding.userName.text = displayName
+            binding.identityName.text = displayName
+            binding.contextLabel.text = item.contextText?.let { "Replied to: $it" } ?: "Sent you a hello"
             binding.avatar.load(user?.photoUrl, displayName)
             
-            binding.helloMessage.text = item.contextText?.let {
-                "💬 Replying to: \"$it\"\n\n${item.message}"
-            } ?: item.message
+            binding.helloMessage.text = item.message
+            binding.root.setOnClickListener { onItemClicked?.invoke(item) }
 
             val isPending = item.status == "PENDING"
             val isAccepted = item.status == "ACCEPTED"
 
             binding.statusBadge.text = when {
-                isPending && isReceived -> "Wants to connect"
+                isPending && isReceived -> runCatching {
+                    val minutes = java.time.Duration.between(java.time.Instant.now(), java.time.Instant.parse(item.expiresAt)).toMinutes().coerceAtLeast(0)
+                    if (minutes == 0L) "EXPIRED" else if (minutes < 60) "⏳ EXPIRES IN ${minutes}M" else "⏳ EXPIRES IN ${minutes / 60}H"
+                }.getOrDefault("NEW HELLO")
                 isPending && !isReceived -> "Waiting for reply"
                 isAccepted -> "Connected"
                 item.status == "DECLINED" && isReceived -> "Declined"
@@ -55,9 +60,7 @@ class HellosAdapter(
                 else -> item.status
             }
 
-            binding.statusBadge.setBackgroundResource(
-                if (isAccepted) com.example.romear.R.drawable.bg_badge_emerald else com.example.romear.R.drawable.bg_badge_peach
-            )
+            binding.statusBadge.background = null
             binding.statusBadge.setTextColor(
                 androidx.core.content.ContextCompat.getColor(
                     binding.root.context,

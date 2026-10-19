@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         val host = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         val controller = host.navController
         binding.bottomNavigation.setupWithNavController(controller)
+        binding.bottomNavigation.isItemActiveIndicatorEnabled = false
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val changed = binding.bottomNavigation.selectedItemId != item.itemId
             val handled = androidx.navigation.ui.NavigationUI.onNavDestinationSelected(item, controller)
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             handled
         }
         val back = onBackPressedDispatcher.addCallback(this, enabled = false) {
-            if (!controller.popBackStack(R.id.homeFragment, false)) {
+            if (!controller.popBackStack(R.id.discoverFragment, false)) {
                 controller.navigate(R.id.discover_graph, null, androidx.navigation.NavOptions.Builder()
                     .setPopUpTo(R.id.main_navigation, false)
                     .setLaunchSingleTop(true)
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             val hideBottomNav = auth || destination.id == R.id.chatFragment
             binding.bottomNavigation.isVisible = !hideBottomNav
             ViewCompat.requestApplyInsets(binding.root)
-            back.isEnabled = !hideBottomNav && destination.id != R.id.homeFragment
+            back.isEnabled = destination.id in setOf(R.id.happeningFragment, R.id.inboxFragment, R.id.ticketsFragment, R.id.profileFragment, R.id.homeFragment)
         }
     }
 }

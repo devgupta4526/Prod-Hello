@@ -2,6 +2,8 @@ package com.example.romear.feature.events.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import coil3.load
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +39,9 @@ class EventsAdapter(
 
         fun bind(event: EventItem) {
             binding.activityArtwork.category = event.category
+            binding.activityArtwork.isVisible = event.coverUrl == null
+            binding.coverPhoto.isVisible = event.coverUrl != null
+            binding.coverPhoto.load(event.coverUrl)
             binding.eventTitle.text = event.title
             binding.categoryBadge.text = event.category.uppercase()
             binding.distanceBucket.text = "📍 ${event.distanceBucket}"
@@ -46,13 +51,13 @@ class EventsAdapter(
             } catch (_: Exception) {
                 ""
             }
-            binding.eventDateVenue.text = "$formattedDate · ${event.venueName}"
+            binding.eventDateVenue.text = "$formattedDate\n${event.venueName}"
 
             val available = event.tiers.filter { it.remaining > 0 }
             val minPrice = available.minOfOrNull { it.priceInPaise } ?: 0
             val priceStr = if (minPrice == 0) "Free" else "₹${minPrice / 100}"
-            binding.priceLabel.text = if(available.isEmpty()) "Sold out" else if(minPrice == 0) "Free entry" else "From $priceStr"
-            binding.bookButton.text = "View experience"
+            binding.priceLabel.text = if(available.isEmpty()) "Sold out" else priceStr
+            binding.bookButton.text = "Explore event details →"
 
             binding.root.setOnClickListener { onEventClicked(event) }
             binding.bookButton.setOnClickListener { onEventClicked(event) }

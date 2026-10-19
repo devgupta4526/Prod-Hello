@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="28dp">
@@ -12,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/hello_text"
+        android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -21,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="@color/hello_primary"
+        android:textColor="@color/primary_coral"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -34,7 +35,7 @@
         android:contentDescription="@string/ticket_qr_title"
         android:padding="20dp"
         android:src="@drawable/ic_qr"
-        app:tint="@color/hello_text" />
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/qrPayloadCode"
@@ -42,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:letterSpacing="0.12"
-        android:textColor="@color/hello_text"
+        android:textColor="@color/white"
         android:textSize="15sp"
         android:textStyle="bold" />
 
@@ -52,15 +53,16 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/ticket_show_at_door"
-        android:textColor="@color/hello_text_secondary"
+        android:textColor="@color/text_secondary"
         android:textSize="13sp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/closeQrButton"
         style="@style/Widget.Hello.Button.Tonal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="20dp"
-        android:minWidth="120dp"
-        android:text="@string/close" />
+        android:minWidth="140dp"
+        android:text="@string/close"
+        app:cornerRadius="999dp" />
 </LinearLayout>

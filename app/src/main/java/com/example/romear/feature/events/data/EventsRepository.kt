@@ -40,6 +40,9 @@ class EventsRepository @Inject constructor(
                     address = obj.optString("address", null),
                     status = obj.getString("status"),
                     distanceBucket = "Nearby",
+                    coverUrl = obj.optString("coverUrl").takeIf { it.startsWith("https://") },
+                    organizerName = obj.optJSONObject("organizer")?.optString("displayName"),
+                    organizerPhotoUrl = obj.optJSONObject("organizer")?.optString("photoUrl")?.takeIf { it.startsWith("https://") },
                     tiers = listOf(
                         TicketTierItem(
                             id = "",
@@ -70,6 +73,7 @@ class EventsRepository @Inject constructor(
                     priceInPaise = t.getInt("pricePaise"),
                     capacity = t.getInt("capacity"),
                     remaining = t.getInt("available"),
+                    maxPerOrder = t.optInt("maxPerOrder", 6),
                 ),
             )
         }
@@ -85,6 +89,9 @@ class EventsRepository @Inject constructor(
             status = obj.getString("status"),
             distanceBucket = "Nearby",
             tiers = tiers,
+            coverUrl = obj.optString("coverUrl").takeIf { it.startsWith("https://") },
+            organizerName = obj.optJSONObject("organizer")?.optString("displayName"),
+            organizerPhotoUrl = obj.optJSONObject("organizer")?.optString("photoUrl")?.takeIf { it.startsWith("https://") },
         )
     }
 

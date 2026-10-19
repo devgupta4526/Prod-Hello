@@ -176,14 +176,15 @@
                     android:id="@+id/viewPoolAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_badge_pill"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
+                    android:background="@drawable/bg_gradient_primary"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="7dp"
                     android:text="Join Pool →"
-                    android:textColor="@color/hello_primary"
+                    android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</com.example.romear.core.designsystem.HelloCardView>
+</com.example.romear.core.designsystem.HelloCardView>
+

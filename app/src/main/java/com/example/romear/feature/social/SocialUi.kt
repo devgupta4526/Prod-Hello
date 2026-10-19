@@ -87,7 +87,17 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
     }
     private fun column() = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; val p = (20 * resources.displayMetrics.density).toInt(); setPadding(p,p,p,p) }
     private fun label(c: LinearLayout, value: String) { c.addView(TextView(context).apply { text = value; textSize = 16f; setPadding(0,12,0,12) }) }
-    private fun button(c: LinearLayout, value: String, action: () -> Unit) { c.addView(MaterialButton(android.view.ContextThemeWrapper(context, com.google.android.material.R.style.Widget_Material3_Button_TextButton), null, 0).apply { text = value; isAllCaps = false; minHeight = dp(48); setOnClickListener { action() } }) }
+    private fun button(c: LinearLayout, value: String, action: () -> Unit) {
+        c.addView(MaterialButton(context, null, com.google.android.material.R.attr.materialButtonTonalStyle).apply {
+            text = value
+            isAllCaps = false
+            minHeight = dp(44)
+            cornerRadius = dp(22)
+            setBackgroundColor(context.getColor(R.color.hello_surface_variant))
+            setTextColor(context.getColor(R.color.hello_text))
+            setOnClickListener { action() }
+        })
+    }
     private fun input(c: LinearLayout, hint: String, value: String = "", max: Int = 240): EditText = EditText(context).apply { this.hint = hint; setText(value); inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE; filters = arrayOf(android.text.InputFilter.LengthFilter(max)); c.addView(this) }
     private fun show(title: String, c: LinearLayout) {
         val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(context)
@@ -144,19 +154,83 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
     }
     fun personality(): Unit = run {
         val data = repo.request("v1/me/personality")
-        val c = column()
-        label(c, "Give someone a thoughtful place to start.")
-        val prompts = objects(data.getJSONArray("prompts")).associate { it.getString("id") to it.getString("answer") }
-        val questions = listOf("joy" to "A small thing that brings me joy", "learn" to "Something I'd love to learn together", "friendship" to "A good friendship looks like")
-        val fields = questions.map { (id, question) -> label(c, question); id to input(c, "Your answer", prompts[id].orEmpty()) }
-        label(c, "My ideal weekend")
-        val weekend = input(c, "Your ideal weekend", data.optString("idealWeekend"), 400)
-        form("More about me", c) {
-            require(fields.all { it.second.text.isNotBlank() } && weekend.text.isNotBlank()) { "Answer all three prompts and your ideal weekend" }
-            repo.request("v1/me/personality", "PUT", JSONObject().put("prompts", JSONArray(fields.map { (id, field) -> JSONObject().put("id", id).put("answer", field.text.toString()) })).put("idealWeekend", weekend.text.toString()))
+        val ui = com.example.romear.core.designsystem.ExperienceViews(context)
+        val content = ui.column()
+        ui.header(content, "MAKE IT PERSONAL", "Pick your conversation starters", "Give people an easy reason to say hello.")
+        val questions = linkedMapOf(
+            "joy" to "A small thing that brings me joy…",
+            "learn" to "Something I’d love to learn together…",
+            "friendship" to "A good friendship looks like…",
+        )
+        val existing = objects(data.getJSONArray("prompts")).associate { it.getString("id") to it.getString("answer") }
+        val fields = mutableListOf<Pair<String, EditText>>()
+        val prompts = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        content.addView(prompts)
+        lateinit var addPrompt: MaterialButton
+        fun addQuestion(id: String) {
+            val panel = ui.column(16).apply { setBackgroundResource(R.drawable.bg_design_card) }
+            ui.add(panel, ui.text("YOUR PROMPT %02d".format(fields.size + 1), 11f, R.color.primary_coral, true), 0)
+            ui.add(panel, ui.text(questions.getValue(id), 16f, R.color.text_primary, true), 8)
+            // Preserve an older, longer answer until the user explicitly edits it.
+            val maximum = maxOf(140, existing[id].orEmpty().length)
+            val field = EditText(context).apply {
+                hint = "Write your answer here…"
+                setText(existing[id].orEmpty())
+                background = null
+                setPadding(0, dp(8), 0, dp(8))
+                textSize = 14f
+                setTextColor(context.getColor(R.color.text_secondary))
+                setHintTextColor(context.getColor(R.color.text_tertiary))
+                inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                filters = arrayOf(android.text.InputFilter.LengthFilter(maximum))
+                minLines = 2
+            }
+            ui.add(panel, field, 0)
+            val counter = ui.text("${field.text.length}/$maximum", 11f, R.color.text_tertiary)
+            ui.add(panel, counter, 0)
+            field.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { counter.text = "${s?.length ?: 0}/$maximum" }
+                override fun afterTextChanged(s: android.text.Editable?) = Unit
+            })
+            fields.add(id to field)
+            ui.add(prompts, panel, 20)
         }
-    }
-    fun upFor(): Unit = run {
+        val initial = if (existing.isEmpty()) questions.keys.take(2) else questions.keys.toList()
+        initial.forEach(::addQuestion)
+        addPrompt = ui.button(content, "Add another prompt (${fields.size}/3)") {
+            questions.keys.firstOrNull { id -> fields.none { it.first == id } }?.let(::addQuestion)
+            addPrompt.text = "Add another prompt (${fields.size}/3)"
+            addPrompt.visibility = if (fields.size < 3) View.VISIBLE else View.GONE
+        }
+        addPrompt.visibility = if (fields.size < 3) View.VISIBLE else View.GONE
+        ui.add(content, ui.text("My ideal weekend", 16f, R.color.text_primary, true), 20)
+        val weekend = input(content, "Your ideal weekend", data.optString("idealWeekend"), 400)
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(context)
+        val root = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL; setBackgroundColor(context.getColor(R.color.bg_canvas)) }
+        root.addView(ScrollView(context).apply { addView(content) }, LinearLayout.LayoutParams(-1, 0, 1f))
+        val actions = ui.column()
+        val saveButton = ui.button(actions, "Save conversation starters", primary = true) { }
+        saveButton.setOnClickListener {
+            run {
+                require(fields.size == 3 && fields.all { it.second.text.isNotBlank() } && weekend.text.isNotBlank()) { "Answer all three prompts and your ideal weekend." }
+                saveButton.isEnabled = false
+                try {
+                    repo.request("v1/me/personality", "PUT", JSONObject()
+                        .put("prompts", JSONArray(fields.map { (id, field) -> JSONObject().put("id", id).put("answer", field.text.toString().trim()) }))
+                        .put("idealWeekend", weekend.text.toString().trim()))
+                    onProfileChanged()
+                    dialog.dismiss()
+                } finally { saveButton.isEnabled = true }
+            }
+        }
+        root.addView(actions)
+        dialog.setContentView(root)
+        track("Conversation starters", dialog)
+        dialog.show()
+        dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.layoutParams?.height = android.view.ViewGroup.LayoutParams.MATCH_PARENT
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+    }    fun upFor(): Unit = run {
         val data = repo.request("v1/me/personality")
         val c = column()
         label(c, if(data.isNull("upFor")) "What would you enjoy doing? This expires automatically." else "Currently up for ${data.getString("upFor")} until ${date(data.getString("upForUntil"))}")
@@ -170,11 +244,32 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
         c.addView(TextView(context).apply { text = title; textSize = 24f; setTypeface(typeface, android.graphics.Typeface.BOLD); setTextColor(context.getColor(R.color.hello_text)); setPadding(0,dp(24),0,dp(12)); androidx.core.view.ViewCompat.setAccessibilityHeading(this,true) })
     }
     private fun card(c: LinearLayout, title: String, detail: String, action: String? = null, click: (() -> Unit)? = null) {
-        val panel = column().apply { background = android.graphics.drawable.GradientDrawable().apply { setColor(context.getColor(R.color.hello_surface)); cornerRadius = dp(20).toFloat(); setStroke(dp(1),context.getColor(R.color.hello_outline_subtle)) } }
-        panel.addView(TextView(context).apply { text = title; textSize = 21f; setTextColor(context.getColor(R.color.hello_text)); setTypeface(typeface,android.graphics.Typeface.BOLD) })
-        label(panel,detail)
-        if(action != null && click != null) button(panel,action,click)
-        c.addView(panel,LinearLayout.LayoutParams(-1,-2).apply { topMargin = dp(12) })
+        val panel = column().apply {
+            background = android.graphics.drawable.GradientDrawable().apply {
+                setColor(context.getColor(R.color.hello_surface))
+                cornerRadius = dp(20).toFloat()
+                setStroke(dp(1), context.getColor(R.color.hello_outline_subtle))
+            }
+        }
+        panel.addView(TextView(context).apply {
+            text = title
+            textSize = 20f
+            setTextColor(context.getColor(R.color.hello_text))
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+        })
+        label(panel, detail)
+        if (action != null && click != null) {
+            panel.addView(MaterialButton(context, null, com.google.android.material.R.attr.materialButtonTonalStyle).apply {
+                text = action
+                isAllCaps = false
+                cornerRadius = dp(22)
+                minHeight = dp(44)
+                setBackgroundColor(context.getColor(R.color.hello_primary))
+                setTextColor(context.getColor(R.color.white))
+                setOnClickListener { click() }
+            })
+        }
+        c.addView(panel, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(12) })
     }
     fun home(container: LinearLayout? = null): Unit = run {
         if(container != null) homeContainer = container

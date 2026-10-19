@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -13,20 +13,24 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.romear.R
+import com.example.romear.core.designsystem.ExperienceViews
+import com.example.romear.core.designsystem.HelloFeedback
 import com.example.romear.core.designsystem.HelloTransitions
 import com.example.romear.databinding.FragmentInboxBinding
+import com.example.romear.feature.hello.domain.ConnectionItem
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class InboxFragment : Fragment() {
-
     private var binding: FragmentInboxBinding? = null
     private val viewModel: InboxViewModel by viewModels()
-
     private lateinit var hellosAdapter: HellosAdapter
     private lateinit var connectionsAdapter: ConnectionsAdapter
 
@@ -36,103 +40,71 @@ class InboxFragment : Fragment() {
         exitTransition = HelloTransitions.tab()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View = FragmentInboxBinding.inflate(inflater, container, false).also { binding = it }.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        FragmentInboxBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val views = requireNotNull(binding)
+        views.headerEyebrow.text = "GOOD THINGS START WITH HELLO"
         views.feedRetry.setOnClickListener { viewModel.loadData() }
-
         hellosAdapter = HellosAdapter(
-            isReceivedBox = { viewModel.currentTab.value == InboxViewModel.Tab.RECEIVED },
-            onAcceptClicked = { hello -> viewModel.acceptHello(hello) },
-            onDeclineClicked = { hello -> viewModel.declineHello(hello) },
-            onWithdrawClicked = { hello -> viewModel.withdrawHello(hello) },
+            isReceivedBox = { viewModel.currentTab.value != InboxViewModel.Tab.SENT },
+            onAcceptClicked = viewModel::acceptHello,
+            onDeclineClicked = viewModel::declineHello,
+            onWithdrawClicked = viewModel::withdrawHello,
+            onItemClicked = ::showWaveReviewSheet,
         )
-
-        connectionsAdapter = ConnectionsAdapter(
-            onConnectionClicked = { connection ->
-                if (connection.conversationId != null) {
-                    findNavController().navigate(
-                        R.id.action_inbox_to_chat,
-                        bundleOf(
-                            "conversationId" to connection.conversationId,
-                            "partnerName" to connection.partner.displayName,
-                            "partnerPhotoUrl" to connection.partner.photoUrl,
-                            "partnerId" to connection.partner.id,
-                        ),
-                    )
-                }
-            },
-        )
-
-        views.inboxRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        views.inboxRecyclerView.adapter = hellosAdapter
-
-        views.inboxTabGroup.check(when (viewModel.currentTab.value) {
-            InboxViewModel.Tab.RECEIVED -> R.id.tabReceived
-            InboxViewModel.Tab.SENT -> R.id.tabSent
-            InboxViewModel.Tab.CONNECTIONS -> R.id.tabConnections
-        })
-        views.inboxRecyclerView.adapter = if (viewModel.currentTab.value == InboxViewModel.Tab.CONNECTIONS) connectionsAdapter else hellosAdapter
-        views.tabReceived.setOnClickListener { com.example.romear.core.designsystem.HelloHaptics.selection(it) }
-        views.tabSent.setOnClickListener { com.example.romear.core.designsystem.HelloHaptics.selection(it) }
-        views.tabConnections.setOnClickListener { com.example.romear.core.designsystem.HelloHaptics.selection(it) }
-
-        views.inboxTabGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            when {
-                checkedIds.contains(R.id.tabReceived) -> {
-                    views.inboxRecyclerView.adapter = hellosAdapter
-                    viewModel.switchTab(InboxViewModel.Tab.RECEIVED)
-                }
-                checkedIds.contains(R.id.tabSent) -> {
-                    views.inboxRecyclerView.adapter = hellosAdapter
-                    viewModel.switchTab(InboxViewModel.Tab.SENT)
-                }
-                checkedIds.contains(R.id.tabConnections) -> {
-                    views.inboxRecyclerView.adapter = connectionsAdapter
-                    viewModel.switchTab(InboxViewModel.Tab.CONNECTIONS)
+        connectionsAdapter = ConnectionsAdapter(::openChat)
+        val conversationsHeading = InboxSectionAdapter { parent ->
+            val ui = ExperienceViews(parent.context)
+            ui.column().apply {
+                setPadding(ui.dp(24), ui.dp(20), ui.dp(24), ui.dp(8))
+                addView(ui.text("Your conversations", 18f, R.color.text_primary, true))
+            }
+        }
+        val footer = InboxSectionAdapter { parent ->
+            val ui = ExperienceViews(parent.context)
+            ui.column().apply {
+                ui.button(this, "Activity & updates") { findNavController().navigate(R.id.activityFragment) }
+                ui.button(this, if (viewModel.currentTab.value == InboxViewModel.Tab.SENT) "Back to inbox" else "Sent hellos") {
+                    viewModel.switchTab(if (viewModel.currentTab.value == InboxViewModel.Tab.SENT) InboxViewModel.Tab.RECEIVED else InboxViewModel.Tab.SENT)
                 }
             }
         }
-
+        val combined = ConcatAdapter(hellosAdapter, conversationsHeading, connectionsAdapter, footer)
+        val sent = ConcatAdapter(hellosAdapter, footer)
+        views.inboxRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        views.inboxRecyclerView.adapter = combined
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     combine(viewModel.loading, viewModel.hellos, viewModel.connections, viewModel.currentTab, viewModel.loadFailed) { _, _, _, _, _ -> Unit }.collect {
-                        val tab = viewModel.currentTab.value
+                        val sentBox = viewModel.currentTab.value == InboxViewModel.Tab.SENT
                         val loading = viewModel.loading.value
                         val failed = viewModel.loadFailed.value
-                        hellosAdapter.submitList(viewModel.hellos.value)
+                        val pending = viewModel.hellos.value.filter { it.status == "PENDING" }
+                        val list = if (sentBox) viewModel.hellos.value else pending
+                        views.inboxRecyclerView.adapter = if (sentBox) sent else combined
+                        // The sender/receiver role changes between boxes even when IDs overlap.
+                        hellosAdapter.submitList(list) { hellosAdapter.notifyDataSetChanged() }
                         connectionsAdapter.submitList(viewModel.connections.value)
-                        val empty = if (tab == InboxViewModel.Tab.CONNECTIONS) viewModel.connections.value.isEmpty() else viewModel.hellos.value.isEmpty()
-                        views.loadingIndicator.isVisible = loading
-                        views.emptyStateView.isVisible = !loading && !failed && empty
+                        conversationsHeading.visible = !sentBox && viewModel.connections.value.isNotEmpty()
+                        footer.notifyItemChanged(0)
+                        views.headerTitle.text = if (sentBox) "Sent hellos." else "Inbox."
+                        views.inboxSummary.text = if (sentBox) "The conversations you’ve started." else "${pending.size} new waves · ${viewModel.connections.value.size} conversations"
+                        views.loadingIndicator.isVisible = loading && list.isEmpty()
+                        // Keep the activity and sent actions accessible even with no conversations.
+                        views.emptyStateView.isVisible = false
                         views.feedError.isVisible = !loading && failed
-                        views.emptyStateTitle.setText(when (tab) {
-                            InboxViewModel.Tab.RECEIVED -> R.string.ui_empty_received
-                            InboxViewModel.Tab.SENT -> R.string.ui_empty_sent
-                            InboxViewModel.Tab.CONNECTIONS -> R.string.ui_empty_connections
-                        })
-                        views.emptyStateBody.setText(when (tab) {
-                            InboxViewModel.Tab.RECEIVED -> R.string.ui_received_body
-                            InboxViewModel.Tab.SENT -> R.string.ui_sent_body
-                            InboxViewModel.Tab.CONNECTIONS -> R.string.ui_connections_body
-                        })
+                        views.inboxRecyclerView.isVisible = !failed || list.isNotEmpty()
                     }
                 }
                 launch {
                     viewModel.events.collect { event ->
                         when (event) {
-                            is InboxViewModel.InboxEvent.Success -> {
-                                com.example.romear.core.designsystem.HelloFeedback.success(views.root, event.message)
-                            }
-                            is InboxViewModel.InboxEvent.Error -> {
-                                com.example.romear.core.designsystem.HelloFeedback.error(views.root, event.error)
-                            }
+                            is InboxViewModel.InboxEvent.OpenChat -> showMatchCelebrationDialog(event.connection)
+                            is InboxViewModel.InboxEvent.Success -> HelloFeedback.success(views.root, event.message)
+                            is InboxViewModel.InboxEvent.Error -> HelloFeedback.error(views.root, event.error)
                         }
                     }
                 }
@@ -140,8 +112,102 @@ class InboxFragment : Fragment() {
         }
     }
 
+    private fun openChat(connection: ConnectionItem) {
+        val conversationId = connection.conversationId ?: return
+        if (findNavController().currentDestination?.id != R.id.inboxFragment) return
+        val args = android.os.Bundle().apply {
+            putString("conversationId", conversationId)
+            putString("partnerName", connection.partner.displayName)
+            putString("partnerPhotoUrl", connection.partner.photoUrl)
+            putString("partnerId", connection.partner.id)
+        }
+        findNavController().navigate(R.id.action_inbox_to_chat, args)
+    }
+
+    private fun showMatchCelebrationDialog(connection: ConnectionItem) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_match_celebration, null)
+        val dialog = BottomSheetDialog(requireContext())
+        dialog.setContentView(dialogView)
+
+        val partnerName = connection.partner.displayName
+        dialogView.findViewById<TextView>(R.id.celebrationTitle)?.text = "It's a Hello! 🎉"
+        dialogView.findViewById<TextView>(R.id.celebrationSubtitle)?.text =
+            "You and $partnerName are now connected. Say hello back to keep the connection warm."
+
+        dialogView.findViewById<View>(R.id.btnCelebrationChat)?.setOnClickListener {
+            dialog.dismiss()
+            openChat(connection)
+        }
+        dialogView.findViewById<View>(R.id.btnKeepBrowsing)?.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun showWaveReviewSheet(item: com.example.romear.feature.hello.domain.HelloItem) {
+        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_wave_review, null)
+        val sheet = BottomSheetDialog(requireContext())
+        sheet.setContentView(sheetView)
+
+        val isReceived = viewModel.currentTab.value != InboxViewModel.Tab.SENT
+        val user = if (isReceived) item.sender else item.receiver
+        val displayName = user?.displayName ?: "Someone nearby"
+
+        sheetView.findViewById<com.example.romear.core.designsystem.AvatarView>(R.id.waveSenderAvatar)?.load(user?.photoUrl, displayName)
+        sheetView.findViewById<TextView>(R.id.waveSenderName)?.text = displayName
+        sheetView.findViewById<TextView>(R.id.waveSenderDistance)?.text = "📍 Nearby · Open to chat"
+
+        val contextSnippet = sheetView.findViewById<TextView>(R.id.waveContextSnippet)
+        if (item.contextText != null) {
+            contextSnippet?.text = item.contextText
+        } else {
+            sheetView.findViewById<View>(R.id.waveContextContainer)?.visibility = View.GONE
+        }
+
+        sheetView.findViewById<TextView>(R.id.waveMessageNote)?.text = item.message.ifBlank { "“Sent you a hello wave 👋”" }
+
+        sheetView.findViewById<View>(R.id.btnCloseWaveReview)?.setOnClickListener { sheet.dismiss() }
+
+        val btnAccept = sheetView.findViewById<View>(R.id.btnAcceptWaveReview)
+        val btnDecline = sheetView.findViewById<View>(R.id.btnDeclineWaveReview)
+
+        if (isReceived && item.status == "PENDING") {
+            btnAccept?.visibility = View.VISIBLE
+            btnDecline?.visibility = View.VISIBLE
+            btnAccept?.setOnClickListener {
+                sheet.dismiss()
+                viewModel.acceptHello(item)
+            }
+            btnDecline?.setOnClickListener {
+                sheet.dismiss()
+                viewModel.declineHello(item)
+            }
+        } else {
+            btnAccept?.visibility = View.GONE
+            btnDecline?.visibility = View.GONE
+        }
+
+        sheet.show()
+    }
+
     override fun onDestroyView() {
+        binding?.inboxRecyclerView?.adapter = null
         binding = null
         super.onDestroyView()
+    }
+}
+
+private class InboxSectionAdapter(private val create: (ViewGroup) -> View) : RecyclerView.Adapter<InboxSectionAdapter.Holder>() {
+    var visible = true
+        set(value) { if (field != value) { field = value; if (value) notifyItemInserted(0) else notifyItemRemoved(0) } }
+    class Holder(val container: android.widget.FrameLayout) : RecyclerView.ViewHolder(container)
+    override fun getItemCount() = if (visible) 1 else 0
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Holder(android.widget.FrameLayout(parent.context).apply {
+        layoutParams = RecyclerView.LayoutParams(-1, -2)
+    })
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        holder.container.removeAllViews()
+        holder.container.addView(create(holder.container))
     }
 }

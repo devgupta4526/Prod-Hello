@@ -21,10 +21,12 @@ class MessageBubbleView @JvmOverloads constructor(
 
     private val messageText = TextView(context).apply {
         setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
+        textSize = 14f
     }
 
     private val statusText = TextView(context).apply {
         setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_LabelSmall)
+        textSize = 10f
     }
 
     // Reaction badge floating at bubble corner (Instagram style)
@@ -161,7 +163,7 @@ class MessageBubbleView @JvmOverloads constructor(
         }
 
         statusText.text = deliveryLabel
-        gravity = if (outgoing) Gravity.END else Gravity.START
+        gravity = Gravity.START
 
         if (!reaction.isNullOrBlank()) {
             reactionBadge.visibility = View.VISIBLE
@@ -170,32 +172,20 @@ class MessageBubbleView @JvmOverloads constructor(
             reactionBadge.visibility = View.GONE
         }
 
-        val radius = 18 * resources.displayMetrics.density
-        val tail = 4 * resources.displayMetrics.density
+        val radius = 20 * resources.displayMetrics.density
         background = GradientDrawable().apply {
             setColor(
                 ContextCompat.getColor(
                     context,
-                    if (outgoing) R.color.hello_primary_container else R.color.hello_surface
+                    if (outgoing) R.color.primary_coral else R.color.bg_surface_2
                 )
             )
-            setStroke(
-                (1 * resources.displayMetrics.density).toInt(),
-                ContextCompat.getColor(
-                    context,
-                    if (outgoing) R.color.hello_primary else R.color.hello_outline_subtle
-                )
-            )
-            cornerRadii = if (outgoing) {
-                floatArrayOf(radius, radius, radius, radius, tail, tail, radius, radius)
-            } else {
-                floatArrayOf(radius, radius, radius, radius, radius, radius, tail, tail)
-            }
+            cornerRadius = radius
         }
 
         messageText.setTextColor(ContextCompat.getColor(context, R.color.hello_text))
         messageText.setLineSpacing(3 * resources.displayMetrics.density, 1f)
-        statusText.setTextColor(ContextCompat.getColor(context, R.color.hello_text_secondary))
+        statusText.setTextColor(ContextCompat.getColor(context, if (outgoing) R.color.white else R.color.text_tertiary))
         statusText.setPadding(0, (4 * resources.displayMetrics.density).toInt(), 0, 0)
     }
 
@@ -203,5 +193,11 @@ class MessageBubbleView @JvmOverloads constructor(
         reactionBadge.visibility = View.VISIBLE
         reactionBadge.text = reactionEmoji
         HelloMotion.bounce(reactionBadge)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val available = MeasureSpec.getSize(widthMeasureSpec)
+        val maxWidth = (292 * resources.displayMetrics.density).toInt()
+        super.onMeasure(MeasureSpec.makeMeasureSpec(minOf(available, maxWidth), MeasureSpec.AT_MOST), heightMeasureSpec)
     }
 }

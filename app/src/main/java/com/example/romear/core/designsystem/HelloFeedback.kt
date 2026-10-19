@@ -10,6 +10,11 @@ object HelloFeedback {
         show(view, message)
     }
 
+    fun info(view: View, message: CharSequence) {
+        HelloHaptics.selection(view)
+        show(view, message)
+    }
+
     fun error(view: View, message: CharSequence) {
         HelloHaptics.error(view)
         show(view, message)

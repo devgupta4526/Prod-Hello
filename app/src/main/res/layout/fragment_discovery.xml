@@ -16,7 +16,7 @@
             android:id="@+id/headerContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_hello_header"
+            android:background="@color/bg_canvas"
             android:elevation="0dp"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/screen_gutter"
@@ -48,21 +48,42 @@
                         android:id="@+id/headerTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="16dp"
                         android:accessibilityHeading="true"
                         android:text="@string/discovery_heading"
                         android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
                 </LinearLayout>
 
-                <!-- Live Pulse Beacon Icon -->
-                <ImageView
-                    android:id="@+id/radarIcon"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/bg_badge_peach"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_discover"
-                    app:tint="@color/hello_primary" />
+                <!-- Top Action Buttons: Hotspots & Filters -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Filter Preferences Button -->
+                    <ImageView
+                        android:id="@+id/filterIcon"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_circle_icon_button"
+                        android:contentDescription="Discovery Filters"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_tune"
+                        app:tint="@color/text_primary" />
+
+                    <!-- Live Radar Hotspots Icon -->
+                    <ImageView
+                        android:id="@+id/radarIcon"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_badge_peach"
+                        android:contentDescription="Radar Hotspots"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_discover"
+                        app:tint="@color/hello_primary" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- "Right Now" / Live Status Stories Bar (Instagram Notes Style) -->
@@ -78,108 +99,25 @@
                 tools:itemCount="5"
                 tools:listitem="@layout/item_live_status_note" />
 
-            <!-- Daily Vibe Check / Local Icebreaker Card (BeReal / Bumble Style) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/vibeCheckBanner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/hello_surface_container"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/hello_outline_subtle"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="10dp">
-
-                    <TextView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/bg_badge_lilac"
-                        android:gravity="center"
-                        android:text="✨"
-                        android:textSize="16sp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/vibeCheckTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="⚡ DAILY ICEBREAKER · 7 PM"
-                            android:textAppearance="@style/TextAppearance.Hello.Eyebrow"
-                            android:textSize="10sp" />
-
-                        <TextView
-                            android:id="@+id/vibeCheckQuestion"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Best late-night food spot in the city?"
-                            android:textColor="@color/hello_text"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Answer →"
-                        android:textColor="@color/hello_primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/bg_surface_1" app:cardCornerRadius="22dp"
+                app:cardElevation="0dp" app:strokeColor="@color/accent_lavender" app:strokeWidth="1dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:id="@+id/vibeCheckTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="⚡ DAILY ICEBREAKER · 7 PM" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:id="@+id/vibeCheckQuestion" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" android:text="Best late-night food spot in the city?"
+                        android:textColor="@color/text_primary" android:textSize="16sp" android:textStyle="bold" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                        android:text="Answer →" android:textAppearance="@style/TextAppearance.Hello.Body" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Quick Action Chips -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/upForButton"
-                    style="@style/Widget.Hello.Button.Tonal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:minHeight="40dp"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="0dp"
-                    android:text="⚡ Set Mood / Up For…"
-                    android:textSize="12sp"
-                    app:cornerRadius="20dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/homeButton"
-                    style="@style/Widget.Hello.Button.Tonal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:minHeight="40dp"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="0dp"
-                    android:text="🗓️ Plans &amp; Activities"
-                    android:textSize="12sp"
-                    app:cornerRadius="20dp" />
-            </LinearLayout>
-
-            <!-- Availability & Ghost Mode Filter Chips -->
+            <com.google.android.material.button.MaterialButton android:id="@+id/upForButton" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/homeButton" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />            <!-- Availability & Ghost Mode Filter Chips -->
             <HorizontalScrollView
                 android:id="@+id/availabilityScroll"
                 android:layout_width="match_parent"
@@ -202,7 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="🟢 Open to meet"
+                        android:text="● Open to meet"
                         app:chipCornerRadius="18dp" />
 
                     <com.google.android.material.chip.Chip
@@ -210,7 +148,7 @@
                         style="@style/Widget.Hello.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🟡 Browsing"
+                        android:text="Browsing"
                         app:chipCornerRadius="18dp" />
 
                     <com.google.android.material.chip.Chip
@@ -218,7 +156,7 @@
                         style="@style/Widget.Hello.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="👻 Ghost Mode"
+                        android:text="Ghost Mode"
                         app:chipCornerRadius="18dp" />
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
@@ -244,7 +182,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingTop="8dp"
-            android:paddingBottom="96dp" />
+            android:paddingBottom="24dp" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/emptyStateView"
@@ -261,20 +199,17 @@
                 android:padding="32dp">
 
                 <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:background="@drawable/bg_empty_orbit"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:importantForAccessibility="no"
-                    android:padding="36dp"
-                    android:src="@drawable/ic_discover"
-                    app:tint="@color/hello_primary" />
+                    android:src="@drawable/illustration_radar" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="24dp"
                     android:text="No one nearby right now"
-                    android:textColor="@color/hello_text"
+                    android:textColor="@color/white"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -283,10 +218,37 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="3dp"
+                    android:lineSpacingExtra="4dp"
                     android:text="People open to saying hello will appear here as they come online in your area."
-                    android:textColor="@color/hello_text_secondary"
+                    android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
+
+                <!-- Action Buttons: Screen 2.8 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExpandRadius"
+                    style="@style/Widget.Hello.Button.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/bg_gradient_primary"
+                    app:backgroundTint="@null"
+                    android:paddingHorizontal="24dp"
+                    android:text="Expand Radius to 10 km"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="999dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShareFriends"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Share Romear with Friends"
+                    android:textColor="@color/primary_coral"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

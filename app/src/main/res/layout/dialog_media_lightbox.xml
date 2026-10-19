@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Close Button -->
+    <ImageButton
+        android:id="@+id/btnCloseLightbox"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_circle_surface"
+        android:contentDescription="Close photo"
+        android:src="@drawable/ic_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <!-- Centered Photo -->
+    <ImageView
+        android:id="@+id/lightboxImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="Full-size photo"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/lightboxCaptionLayout"
+        app:layout_constraintTop_toBottomOf="@id/btnCloseLightbox" />
+
+    <!-- Caption & Metadata Overlay -->
+    <LinearLayout
+        android:id="@+id/lightboxCaptionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#990A0D14"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/lightboxCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Third Wave Coffee, Indiranagar" />
+
+        <TextView
+            android:id="@+id/lightboxSubtext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/hello_text_secondary"
+            android:textSize="12sp"
+            tools:text="Uploaded recently · Tap anywhere to dismiss" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

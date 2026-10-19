@@ -14,57 +14,78 @@
         <item name="colorError">@color/hello_error</item>
         <item name="android:colorBackground">@color/hello_background</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Hello.Sheet</item>
         <item name="materialButtonStyle">@style/Widget.Hello.Button</item>
     </style>
 
     <style name="Theme.Romear" parent="Base.Theme.Romear" />
+    <style name="TextAppearance.Hello.Navigation" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
     <style name="Widget.Hello" parent="" />
 
+    <!-- Figma Pill Primary CTA Button -->
     <style name="Widget.Hello.Button" parent="Widget.Material3.Button">
-        <item name="android:minHeight">@dimen/button_height</item>
-        <item name="android:textSize">@dimen/body_type</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="cornerRadius">24dp</item>
-        <item name="android:paddingHorizontal">20dp</item>
+        <item name="cornerRadius">999dp</item>
+        <item name="android:paddingHorizontal">24dp</item>
         <item name="elevation">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/bg_gradient_primary</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="Widget.Hello.Button.Primary" parent="Widget.Hello.Button" />
 
+    <!-- Figma Pill Secondary / Tonal Button -->
     <style name="Widget.Hello.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minHeight">56dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="cornerRadius">22dp</item>
-        <item name="android:paddingHorizontal">16dp</item>
-        <item name="backgroundTint">@color/hello_surface_variant</item>
+        <item name="cornerRadius">999dp</item>
+        <item name="android:paddingHorizontal">20dp</item>
+        <item name="backgroundTint">@color/hello_surface_pill</item>
         <item name="android:textColor">@color/hello_text</item>
     </style>
 
+    <!-- Figma Pill Outlined Button -->
     <style name="Widget.Hello.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:minHeight">48dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="cornerRadius">22dp</item>
+        <item name="cornerRadius">999dp</item>
         <item name="strokeColor">@color/hello_outline</item>
-        <item name="strokeWidth">1.5dp</item>
+        <item name="strokeWidth">1dp</item>
         <item name="android:textColor">@color/hello_text</item>
     </style>
 
+    <!-- 6-Digit OTP Discrete Cells -->
     <style name="Widget.Hello.OtpCell" parent="">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:layout_height">56dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_margin">@dimen/space_xs</item>
+        <item name="android:layout_margin">4dp</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/otp_cell</item>
-        <item name="android:textAppearance">@style/TextAppearance.Hello.Title</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hello.OtpValue</item>
+    </style>
+
+    <style name="TextAppearance.Hello.OtpValue" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="Widget.Hello.Availability" parent="Widget.Material3.CompoundButton.RadioButton">
@@ -73,80 +94,135 @@
         <item name="android:minHeight">@dimen/button_height</item>
         <item name="android:textSize">@dimen/body_type</item>
         <item name="android:paddingVertical">@dimen/space_sm</item>
+        <item name="android:textColor">@color/hello_text</item>
     </style>
 
+    <!-- Figma Typography Hierarchy -->
     <style name="TextAppearance.Hello.Hero" parent="TextAppearance.Material3.HeadlineLarge">
-        <item name="android:textSize">34sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.025</item>
-        <item name="android:textColor">@color/hello_text</item>
-        <item name="android:lineHeight">42sp</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineHeight">38sp</item>
     </style>
 
     <style name="TextAppearance.Hello.ScreenTitle" parent="TextAppearance.Hello.Hero">
         <item name="android:textSize">28sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.02</item>
-        <item name="android:lineHeight">36sp</item>
-        <item name="android:textColor">@color/hello_text</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.015</item>
+        <item name="android:lineHeight">39sp</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="TextAppearance.Hello.Title" parent="TextAppearance.Material3.HeadlineMedium">
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.015</item>
-        <item name="android:textColor">@color/hello_text</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="TextAppearance.Hello.Body" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:textSize">@dimen/body_type</item>
-        <item name="android:textColor">@color/hello_text_secondary</item>
-        <item name="android:lineHeight">24sp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:lineHeight">19sp</item>
     </style>
 
     <style name="TextAppearance.Hello.Caption" parent="TextAppearance.Material3.BodyMedium">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/hello_text_secondary</item>
-        <item name="android:lineHeight">20sp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:lineHeight">18sp</item>
     </style>
 
     <style name="TextAppearance.Hello.Eyebrow" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:textSize">11sp</item>
-        <item name="android:letterSpacing">0.12</item>
+        <item name="android:letterSpacing">0</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/hello_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primary_coral</item>
     </style>
 
+    <style name="TextAppearance.Hello.CardHeadline" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Hello.Micro" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">10sp</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+    </style>
+
+    <style name="TextAppearance.Hello.BodyBold" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Hello.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Hello.SectionTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+
     <style name="Widget.Hello.BottomNavActiveIndicator" parent="">
-        <item name="android:color">@color/hello_primary_container</item>
+        <item name="android:color">@color/hello_surface_pill</item>
         <item name="android:width">56dp</item>
         <item name="android:height">32dp</item>
     </style>
 
     <style name="Widget.Hello.Filter" parent="Widget.Material3.Chip.Filter">
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="chipCornerRadius">18dp</item>
+        <item name="chipCornerRadius">999dp</item>
         <item name="chipMinHeight">36dp</item>
         <item name="ensureMinTouchTargetSize">true</item>
         <item name="chipBackgroundColor">@color/hello_chip_background</item>
         <item name="android:textColor">@color/hello_chip_text</item>
-        <item name="chipStrokeColor">@color/hello_outline</item>
+        <item name="chipStrokeColor">@color/hello_chip_stroke</item>
+        <item name="checkedIconVisible">false</item>
         <item name="chipStrokeWidth">1dp</item>
     </style>
 
     <style name="ShapeAppearance.Hello.Sheet" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerSizeTopLeft">24dp</item>
-        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
     </style>
 
     <style name="Widget.Hello.Sheet" parent="Widget.Material3.BottomSheet.Modal">
         <item name="shapeAppearance">@style/ShapeAppearance.Hello.Sheet</item>
-        <item name="backgroundTint">@color/hello_surface</item>
+        <item name="backgroundTint">@color/hello_surface_variant</item>
     </style>
 
     <style name="ThemeOverlay.Hello.Sheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Widget.Hello.Sheet</item>
+    </style>
+
+    <!-- Dark Box Input Fields -->
+    <style name="Widget.Hello.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/bg_surface_1</item>
+        <item name="boxStrokeColor">@color/border_subtle</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1.5dp</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="hintTextColor">@color/text_tertiary</item>
+        <item name="android:textColorHint">@color/text_tertiary</item>
     </style>
 </resources>
 

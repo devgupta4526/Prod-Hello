@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="240dp"
+    android:viewportWidth="280"
+    android:viewportHeight="240">
+    <!-- Concentric audio waveform rings -->
+    <path
+        android:strokeColor="#1A8B5CF6"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 20 A 100,100 0 1,1 139.9, 20 Z" />
+    <path
+        android:strokeColor="#33FF5C39"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 48 A 72,72 0 1,1 139.9, 48 Z" />
+    <path
+        android:strokeColor="#4D8B5CF6"
+        android:strokeWidth="1.5"
+        android:pathData="M 140, 76 A 44,44 0 1,1 139.9, 76 Z" />
+    <!-- Center Circle with Microphone/Wave -->
+    <path
+        android:fillColor="#261E3B"
+        android:strokeColor="#8B5CF6"
+        android:strokeWidth="2"
+        android:pathData="M 140, 96 A 24,24 0 1,1 139.9, 96 Z" />
+    <!-- Mic path -->
+    <path
+        android:fillColor="#8B5CF6"
+        android:pathData="M140,119c1.66,0 2.99,-1.34 2.99,-3L143,110c0,-1.66 -1.34,-3 -3,-3s-3,1.34 -3,3v6c0,1.66 1.34,3 3,3z M145.3,116c0,3 -2.54,5.1 -5.3,5.1S134.7,119 134.7,116H133c0,3.41 2.72,6.23 6,6.72V126h2v-3.28c3.28,-0.48 6,-3.3 6,-6.72h-1.7z" />
+</vector>

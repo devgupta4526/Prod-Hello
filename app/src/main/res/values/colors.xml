@@ -1,70 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand Primary: Warm Sunset Terracotta / Coral -->
-    <color name="hello_primary">#D94524</color>
-    <color name="hello_primary_variant">#BF391A</color>
-    <color name="hello_primary_container">#FFEAE3</color>
-    <color name="hello_on_primary_container">#7F1F08</color>
+    <!-- Figma Spec Direct Tokens (SCREENS_DESIGN_SPEC.md) -->
+    <color name="bg_canvas">#0A0D14</color>
+    <color name="bg_surface_1">#121620</color>
+    <color name="bg_surface_2">#1A202C</color>
+    <color name="bg_surface_pill">#242C3D</color>
+    <color name="border_subtle">#2A3346</color>
+    <color name="border_focus">#FF6B4A</color>
+    <color name="primary_coral">#FF5C39</color>
+    <color name="primary_coral_end">#FF7854</color>
+    <color name="accent_lavender">#8B5CF6</color>
+    <color name="accent_emerald">#10B981</color>
+    <color name="accent_amber">#F59E0B</color>
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_tertiary">#64748B</color>
+    <color name="scrim_overlay">#CC0A0D14</color>
+
+    <!-- Brand Primary: Warm Radiant Sunset Coral Gradient -->
+    <color name="hello_primary">#FF5C39</color>
+    <color name="hello_primary_variant">#E04B2A</color>
+    <color name="hello_primary_container">#242C3D</color>
+    <color name="hello_on_primary_container">#FF7854</color>
     <color name="hello_on_primary">#FFFFFF</color>
+    <color name="hello_coral_translucent">#33FF5C39</color>
 
-    <!-- Canvas & Surfaces: Warm Modern Ivory -->
-    <color name="hello_background">#FAF8F5</color>
-    <color name="hello_surface">#FFFFFF</color>
-    <color name="hello_surface_variant">#F2EDE6</color>
-    <color name="hello_surface_container">#F5EFE8</color>
-    <color name="hello_surface_elevated">#FFFFFF</color>
+    <!-- Canvas & Surfaces: Deep Obsidian Dark Mode -->
+    <color name="hello_background">#0A0D14</color>
+    <color name="hello_surface">#121620</color>
+    <color name="hello_surface_variant">#1A202C</color>
+    <color name="hello_surface_container">#161B26</color>
+    <color name="hello_surface_elevated">#232733</color>
+    <color name="hello_surface_pill">#242C3D</color>
+    <color name="hello_card_surface">#121620</color>
 
-    <!-- Typography: High Contrast Crisp Inks -->
-    <color name="hello_text">#191715</color>
-    <color name="hello_text_secondary">#635E56</color>
-    <color name="hello_text_tertiary">#918B82</color>
+    <!-- Typography: High Contrast Crisp Slate & White -->
+    <color name="hello_text">#F8FAFC</color>
+    <color name="hello_text_secondary">#94A3B8</color>
+    <color name="hello_text_tertiary">#64748B</color>
 
     <!-- Borders & Outlines -->
-    <color name="hello_outline">#E3DBD0</color>
-    <color name="hello_outline_subtle">#EFEAE2</color>
-    <color name="hello_header_tint">#F5EEE5</color>
+    <color name="hello_outline">#2A3346</color>
+    <color name="hello_outline_subtle">#1E2533</color>
+    <color name="hello_header_tint">#121620</color>
 
     <!-- Semantic & Accent Accents -->
-    <color name="hello_accent">#E05328</color>
-    <color name="hello_coral">#D94524</color>
-    <color name="hello_sage">#E2ECE0</color>
-    <color name="hello_lilac">#EDE7F6</color>
-    <color name="hello_peach">#FDEEE4</color>
+    <color name="hello_accent">#FF5C39</color>
+    <color name="hello_coral">#FF5C39</color>
+    <color name="hello_sage">#1A2E28</color>
+    <color name="hello_lilac">#261E3B</color>
+    <color name="hello_peach">#33201C</color>
     
     <!-- Success / Open Status -->
-    <color name="hello_success">#059669</color>
-    <color name="hello_emerald">#059669</color>
-    <color name="hello_emerald_container">#D1FAE5</color>
-    <color name="hello_emerald_text">#047857</color>
+    <color name="hello_success">#10B981</color>
+    <color name="hello_emerald">#10B981</color>
+    <color name="hello_emerald_container">#1A2E28</color>
+    <color name="hello_emerald_text">#10B981</color>
 
     <!-- Amber / Browsing Status -->
-    <color name="hello_amber">#D97706</color>
-    <color name="hello_amber_container">#FEF3C7</color>
-    <color name="hello_amber_text">#B45309</color>
+    <color name="hello_amber">#F59E0B</color>
+    <color name="hello_amber_container">#2D2416</color>
+    <color name="hello_amber_text">#F59E0B</color>
 
-    <!-- Indigo / Experiences & Music -->
-    <color name="hello_indigo">#4F46E5</color>
-    <color name="hello_indigo_container">#EEF2FF</color>
-    <color name="hello_indigo_text">#4338CA</color>
+    <!-- Lavender / Creative & Icebreakers -->
+    <color name="hello_indigo">#8B5CF6</color>
+    <color name="hello_indigo_container">#261E3B</color>
+    <color name="hello_indigo_text">#8B5CF6</color>
 
     <!-- Error / Danger -->
-    <color name="hello_error">#DC2626</color>
-    <color name="hello_error_container">#FEE2E2</color>
+    <color name="hello_error">#EF4444</color>
+    <color name="hello_error_container">#2F1B1E</color>
 
     <!-- Standard Basics -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
     <!-- Modern Gradients, Overlays & Badges -->
-    <color name="hello_scrim">#B3000000</color>
-    <color name="hello_scrim_subtle">#66000000</color>
-    <color name="hello_scrim_heavy">#E612100E</color>
-    <color name="hello_gradient_start">#E65100</color>
-    <color name="hello_gradient_end">#D94524</color>
-    <color name="hello_verified_blue">#0284C7</color>
-    <color name="hello_irl_purple">#7C3AED</color>
-    <color name="hello_irl_container">#EDE9FE</color>
-    <color name="hello_live_pulse">#FF5722</color>
-    <color name="hello_card_surface">#FFFFFF</color>
+    <color name="hello_scrim">#CC0A0D14</color>
+    <color name="hello_scrim_subtle">#800A0D14</color>
+    <color name="hello_scrim_heavy">#E60A0D14</color>
+    <color name="hello_gradient_start">#FF5C39</color>
+    <color name="hello_gradient_end">#FF7854</color>
+    <color name="hello_verified_blue">#38BDF8</color>
+    <color name="hello_irl_purple">#8B5CF6</color>
+    <color name="hello_irl_container">#261E3B</color>
+    <color name="hello_live_pulse">#FF5C39</color>
 </resources>
 

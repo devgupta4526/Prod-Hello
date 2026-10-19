@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingBottom="28dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VENUE SPACE AVAILABILITY"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Your Venue Calendar"
+            android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Common Ground Café · October 2026"
+            android:textAppearance="@style/TextAppearance.Hello.Caption" />
+
+        <!-- Interactive Calendar Card -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Weekdays Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="MON" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="TUE" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="WED" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="THU" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="FRI" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="SAT" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="SUN" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+                </LinearLayout>
+
+                <!-- Week 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="19" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="20" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="21" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="22" android:textColor="@color/hello_text_secondary" />
+                    <!-- Day 23 Highlighted -->
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:background="@drawable/bg_circle_surface" android:backgroundTint="@color/hello_coral" android:gravity="center" android:text="23" android:textColor="@color/white" android:textStyle="bold" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="24" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="25" android:textColor="@color/hello_text_secondary" />
+                </LinearLayout>
+
+                <!-- Week 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal">
+
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="26" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="27" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="28" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="29" android:textColor="@color/hello_text_secondary" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="30" android:textColor="@color/hello_text_secondary" />
+                    <!-- Day 31 Highlighted -->
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:background="@drawable/bg_circle_surface" android:backgroundTint="@color/hello_coral" android:gravity="center" android:text="31" android:textColor="@color/white" android:textStyle="bold" />
+                    <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:gravity="center" android:text="01" android:textColor="@color/hello_text_tertiary" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Confirmed Events List -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="BOOKED DATES"
+            android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+        <!-- Event 1 -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="23 Oct · Founders &amp; Creatives Mixer"
+                    android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="7:30–10:00 PM · Indoor Room · Confirmed (30 guests)"
+                    android:textAppearance="@style/TextAppearance.Hello.Micro" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Event 2 -->
+        <com.example.romear.core.designsystem.HelloCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="31 Oct · Acoustic Evening &amp; Coffee"
+                    android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="6:00–9:00 PM · Indoor Room · Quote Accepted (25 guests)"
+                    android:textAppearance="@style/TextAppearance.Hello.Micro" />
+            </LinearLayout>
+        </com.example.romear.core.designsystem.HelloCardView>
+
+        <!-- Block Unavailable Dates Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBlockDates"
+            style="@style/Widget.Hello.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:text="Block Unavailable Dates 🔒"
+            app:cornerRadius="999dp" />
+    </LinearLayout>
+</LinearLayout>

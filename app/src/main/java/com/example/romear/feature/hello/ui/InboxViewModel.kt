@@ -70,6 +70,7 @@ class InboxViewModel @Inject constructor(
             _loadFailed.value = false
             try {
                 _hellos.value = helloRepository.listHellos(box = box)
+                if (box == "received") _connections.value = helloRepository.listConnections()
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
@@ -101,8 +102,14 @@ class InboxViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 helloRepository.acceptHello(hello.id)
-                _events.emit(InboxEvent.Success("Connected! You can now chat."))
+                val connections = helloRepository.listConnections()
+                _connections.value = connections
+                val connection = connections.firstOrNull { it.partner.id == hello.senderId }
+                if (connection?.conversationId != null) _events.emit(InboxEvent.OpenChat(connection))
+                else _events.emit(InboxEvent.Success("Connected! Your conversation will appear in your inbox."))
                 loadData()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
                 _events.emit(InboxEvent.Error(e.message ?: "Failed to accept"))
             }
@@ -132,6 +139,7 @@ class InboxViewModel @Inject constructor(
     }
 
     sealed class InboxEvent {
+        data class OpenChat(val connection: ConnectionItem) : InboxEvent()
         data class Success(val message: String) : InboxEvent()
         data class Error(val error: String) : InboxEvent()
     }
