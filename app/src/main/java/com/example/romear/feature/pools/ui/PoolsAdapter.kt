@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.romear.R
 import com.example.romear.databinding.ItemPoolBinding
 import com.example.romear.feature.pools.domain.PoolItem
 
@@ -29,18 +30,40 @@ class PoolsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pool: PoolItem) {
+            val context = binding.root.context
             binding.activityArtwork.category = pool.activity
             binding.poolTitle.text = pool.title
-            binding.activityBadge.text = pool.activity.uppercase()
+            val emoji = when (pool.activity.lowercase()) {
+                "coffee", "cafe" -> "☕"
+                "badminton", "sports", "tennis", "football", "running" -> "🏃"
+                "food", "dinner", "lunch" -> "🍕"
+                "tech", "coding", "gaming" -> "🎮"
+                "music", "concert" -> "🎵"
+                else -> "⚡"
+            }
+            binding.activityBadge.text = "$emoji ${pool.activity.uppercase()}"
             val spotsLeft = (pool.capacity - pool.memberCount).coerceAtLeast(0)
             binding.capacityBadge.text = if (spotsLeft == 0) "Hangout full" else "$spotsLeft spots left"
+            if (spotsLeft == 0) {
+                binding.capacityBadge.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_tertiary))
+                binding.capacityBadge.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_category_pill)
+            } else {
+                binding.capacityBadge.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.accent_emerald))
+                binding.capacityBadge.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_badge_emerald_pill)
+            }
+
             binding.hostName.text = "Host: ${pool.host.displayName} + ${pool.memberCount.coerceAtLeast(1) - 1} joined"
-            binding.hostAvatar.load(pool.host.photoUrl, pool.host.displayName, sizeDp = 48)
+            binding.hostAvatar.load(pool.host.photoUrl, pool.host.displayName, sizeDp = 38)
 
             val time = runCatching {
-                java.time.Instant.parse(pool.timeWindowStart)
-                    .atZone(java.time.ZoneId.systemDefault())
-                    .format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a"))
+                val start = java.time.Instant.parse(pool.timeWindowStart).atZone(java.time.ZoneId.systemDefault())
+                val now = java.time.ZonedDateTime.now()
+                val diffMinutes = java.time.Duration.between(now, start).toMinutes()
+                when {
+                    diffMinutes in 0..60 -> "Starts in ${diffMinutes}m"
+                    start.toLocalDate() == now.toLocalDate() -> "Today, ${start.format(java.time.format.DateTimeFormatter.ofPattern("h:mm a"))}"
+                    else -> start.format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a"))
+                }
             }.getOrDefault(pool.timeWindowStart)
             binding.poolTime.text = time
             val cleanDistance = pool.distanceBucket.removePrefix("📍").trim()

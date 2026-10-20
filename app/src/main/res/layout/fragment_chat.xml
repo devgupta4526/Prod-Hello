@@ -4,14 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/hello_background">
+    android:background="@color/bg_canvas">
 
+    <!-- Top Navigation Bar (Figma SCREEN 5.1) -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/chatToolbar"
         android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/bg_canvas"
+        android:layout_height="64dp"
+        android:background="@color/bg_surface_1"
         android:elevation="0dp"
+        app:contentInsetStart="12dp"
+        app:contentInsetEnd="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -31,11 +34,26 @@
                 android:src="@drawable/ic_arrow_back"
                 app:tint="@color/white" />
 
-            <com.example.romear.core.designsystem.AvatarView
-                android:id="@+id/partnerAvatar"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="10dp" />
+            <!-- Partner Avatar with Live Online Badge Overlay -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp">
+
+                <com.example.romear.core.designsystem.AvatarView
+                    android:id="@+id/partnerAvatar"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp" />
+
+                <View
+                    android:id="@+id/partnerOnlineDot"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/bg_status_dot_open" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -53,49 +71,59 @@
                     android:textStyle="bold"
                     tools:text="Priya Nair" />
 
-                <TextView
-                    android:id="@+id/partnerStatus"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:text="Online · ~400m away"
-                    android:textColor="@color/accent_emerald"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/partnerStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Online · ~400m away"
+                        android:textColor="@color/accent_emerald"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- Safety Menu Shield Button (Figma Spec) -->
             <ImageButton
                 android:id="@+id/optionsButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
                 android:background="@drawable/bg_circle_icon_button"
                 android:contentDescription="@string/ui_chat_options"
-                android:src="@drawable/ic_more"
-                app:tint="@color/white" />
+                android:src="@drawable/ic_shield_check"
+                app:tint="@color/accent_emerald" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Meetup / Active Plan Context Anchor -->
+    <!-- Top Sticky Context Anchor: Meetup / Spontaneous Connection -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/planButton"
         style="@style/Widget.Hello.Button.Tonal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
+        android:layout_height="42dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp"
-        android:minHeight="44dp"
-        android:text="View meetup invitation"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="⚡ Connected via Spontaneous Hangout · Plan Meetup"
         android:textColor="@color/primary_coral"
-        android:textSize="13sp"
-        app:backgroundTint="@color/hello_surface_container"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/bg_surface_2"
         app:cornerRadius="999dp"
         app:icon="@drawable/ic_bolt"
         app:iconGravity="textStart"
-        app:iconPadding="8dp"
+        app:iconPadding="6dp"
+        app:iconSize="16dp"
         app:iconTint="@color/primary_coral"
-        app:strokeColor="@color/hello_outline_subtle"
+        app:strokeColor="@color/border_subtle"
         app:strokeWidth="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,58 +133,138 @@
         android:id="@+id/loadingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/hello_primary"
+        android:indeterminateTint="@color/primary_coral"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/inputContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/planButton" />
 
-    <TextView
+    <!-- Rich Empty Chat State: Warm Welcome & 1-Tap Icebreaker Chips -->
+    <LinearLayout
         android:id="@+id/emptyChatView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/bg_meetup_card"
         android:gravity="center"
-        android:padding="24dp"
-        android:text="@string/chat_empty"
-        android:textColor="@color/text_secondary"
-        android:textSize="15sp"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="24dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/inputContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/planButton" />
+        app:layout_constraintTop_toBottomOf="@id/planButton"
+        tools:visibility="visible">
 
+        <com.example.romear.core.designsystem.AvatarView
+            android:id="@+id/emptyPartnerAvatar"
+            android:layout_width="68dp"
+            android:layout_height="68dp" />
+
+        <TextView
+            android:id="@+id/emptyChatTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="Say hello to Priya!" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="Connected nearby! Break the ice with a quick 1-tap greeting:"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/chipIcebreaker1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chat_icebreaker_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:text="👋 Hey! Great to connect with you"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/chipIcebreaker2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_chat_icebreaker_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:text="☕ Up for a quick coffee hangout nearby?"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/chipIcebreaker3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_chat_icebreaker_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:text="✨ Loved your profile vibe! How's your day going?"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Message Stream -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
+        android:paddingTop="6dp"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/inputContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/planButton" />
 
-    <!-- Chat Message Composer Bar -->
+    <!-- Chat Message Composer Bar (Figma SCREEN 5.1 Floating Pill) -->
     <LinearLayout
         android:id="@+id/inputContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_phone_input_card"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_chat_composer_pill"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="8dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <!-- Suggest Meetup Action Button -->
-        <ImageView
+        <ImageButton
             android:id="@+id/btnLetsMeet"
             android:layout_width="38dp"
             android:layout_height="38dp"
@@ -167,7 +275,7 @@
             app:tint="@color/primary_coral" />
 
         <!-- 15s Voice Note Action Button -->
-        <ImageView
+        <ImageButton
             android:id="@+id/btnVoiceNote"
             android:layout_width="38dp"
             android:layout_height="38dp"
@@ -187,9 +295,9 @@
             android:background="@null"
             android:hint="@string/chat_hint"
             android:importantForAutofill="no"
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textCapSentences"
             android:maxLines="4"
-            android:minHeight="44dp"
+            android:minHeight="40dp"
             android:paddingHorizontal="8dp"
             android:paddingVertical="8dp"
             android:textColor="@color/white"
@@ -198,14 +306,14 @@
 
         <ImageButton
             android:id="@+id/sendButton"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="6dp"
-            android:background="@drawable/bg_circle_icon_button"
+            android:background="@drawable/bg_chat_send_button"
             android:contentDescription="@string/ui_chat_send"
             android:padding="10dp"
             android:src="@drawable/ic_send"
-            app:tint="@color/primary_coral" />
+            app:tint="@color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

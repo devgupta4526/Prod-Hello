@@ -74,6 +74,25 @@ class ChatFragment : Fragment() {
             }
         }
 
+        // Setup empty state icebreaker greeting card
+        views.emptyPartnerAvatar.load(partnerPhotoUrl, partnerName, sizeDp = 68)
+        views.emptyChatTitle.text = if (partnerName.isNotBlank()) "Say hello to $partnerName!" else "Say hello!"
+        views.chipIcebreaker1.setOnClickListener {
+            val text = views.chipIcebreaker1.text.toString()
+            viewModel.sendMessage(text)
+            com.example.romear.core.designsystem.HelloHaptics.selection(it)
+        }
+        views.chipIcebreaker2.setOnClickListener {
+            val text = views.chipIcebreaker2.text.toString()
+            viewModel.sendMessage(text)
+            com.example.romear.core.designsystem.HelloHaptics.selection(it)
+        }
+        views.chipIcebreaker3.setOnClickListener {
+            val text = views.chipIcebreaker3.text.toString()
+            viewModel.sendMessage(text)
+            com.example.romear.core.designsystem.HelloHaptics.selection(it)
+        }
+
         adapter = MessagesAdapter(
             onInviteClicked = { socialUi.plans(conversationId) },
             onVoiceClicked = { voiceUi.play(it) },

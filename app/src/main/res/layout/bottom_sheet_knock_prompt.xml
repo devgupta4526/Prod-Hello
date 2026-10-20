@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="28dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <!-- Header with Sparkle Icon -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_circle_surface"
+            android:contentDescription="Knock"
+            android:padding="9dp"
+            android:src="@drawable/ic_hand_wave"
+            app:tint="@color/primary_coral" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/knockPromptTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Knock to Join Hangout"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Say a quick hello to the host. Tap a note or type below:"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Quick Preset Note Chips -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/chipKnock1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chat_icebreaker_chip"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="👋 Hey! Count me in, looking forward to this!"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/chipKnock2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_chat_icebreaker_chip"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="⚡ Super excited for this hangout, I'm nearby!"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/chipKnock3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_chat_icebreaker_chip"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="☕ Free during this time, would love to join your group."
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Custom Intro Note Input -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        app:cardBackgroundColor="@color/bg_surface_1"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/border_subtle"
+        app:strokeWidth="1dp">
+
+        <EditText
+            android:id="@+id/inputKnockNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="Add a custom note (optional)…"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textCapSentences"
+            android:minLines="2"
+            android:maxLines="4"
+            android:padding="14dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/text_tertiary"
+            android:textSize="14sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Send Knock CTA Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSubmitKnock"
+        style="@style/Widget.Hello.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_gradient_primary"
+        app:backgroundTint="@null"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="Send Knock ⚡"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:cornerRadius="999dp" />
+
+</LinearLayout>

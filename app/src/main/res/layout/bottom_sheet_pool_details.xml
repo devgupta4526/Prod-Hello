@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="96dp"
+        android:paddingBottom="100dp"
         android:overScrollMode="ifContentScrolls">
 
         <LinearLayout
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Hero Activity Artwork Banner -->
+            <!-- Hero Activity Artwork Banner (Figma SCREEN 3.2) -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="180dp">
@@ -33,7 +33,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/bg_gradient_scrim" />
 
-                <!-- Sheet Handle -->
+                <!-- Sheet Drag Handle -->
                 <View
                     android:layout_width="44dp"
                     android:layout_height="4dp"
@@ -41,7 +41,7 @@
                     android:layout_marginTop="12dp"
                     android:background="@drawable/bg_bottom_sheet_handle" />
 
-                <!-- Badge overlay -->
+                <!-- Category & Title Overlay -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -54,13 +54,13 @@
                         android:id="@+id/poolDetailActivity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_peach"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="5dp"
-                        android:textColor="@color/hello_primary"
-                        android:textSize="12sp"
+                        android:background="@drawable/bg_category_pill"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:textColor="@color/primary_coral"
+                        android:textSize="11sp"
                         android:textStyle="bold"
-                        tools:text="BADMINTON" />
+                        tools:text="🏃 SPORTS &amp; FITNESS" />
 
                     <TextView
                         android:id="@+id/poolDetailTitle"
@@ -70,7 +70,7 @@
                         android:textColor="@color/white"
                         android:textSize="22sp"
                         android:textStyle="bold"
-                        tools:text="Sunday Morning Smash &amp; Coffee" />
+                        tools:text="Sunday Morning Badminton &amp; Coffee" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -82,14 +82,14 @@
                 android:paddingHorizontal="20dp"
                 android:paddingTop="16dp">
 
-                <!-- Capacity & Time / Location Card -->
+                <!-- Key Details Card: Time, Location, Capacity -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/hello_surface_container"
-                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="@color/bg_surface_1"
+                    app:cardCornerRadius="18dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/hello_outline_subtle"
+                    app:strokeColor="@color/border_subtle"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -98,19 +98,188 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <TextView
-                            android:id="@+id/poolDetailCapacity"
+                        <!-- Time & Schedule Row -->
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Time"
+                                android:src="@drawable/ic_calendar"
+                                app:tint="@color/primary_coral" />
+
+                            <TextView
+                                android:id="@+id/poolDetailTime"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="Sun, 10:00 AM – 12:00 PM" />
+                        </LinearLayout>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="10dp"
+                            android:background="@color/border_subtle" />
+
+                        <!-- Location & Distance Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Location"
+                                android:src="@drawable/ic_location"
+                                app:tint="@color/accent_emerald" />
+
+                            <TextView
+                                android:id="@+id/poolDetailLocation"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                tools:text="Koramangala · Within 2 km" />
+                        </LinearLayout>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="10dp"
+                            android:background="@color/border_subtle" />
+
+                        <!-- Capacity / Spots Left Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="Capacity"
+                                android:src="@drawable/ic_group"
+                                app:tint="@color/accent_amber" />
+
+                            <TextView
+                                android:id="@+id/poolDetailCapacity"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                tools:text="3 of 4 joined · 1 spot left" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Host Spotlight Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    app:cardBackgroundColor="@color/bg_surface_1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/border_subtle"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="14dp">
+
+                        <com.example.romear.core.designsystem.AvatarView
+                            android:id="@+id/poolDetailHostAvatar"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/poolDetailHostName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="Hosted by Rahul" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="👑 Hangout Host · ✓ IRL Verified"
+                                android:textColor="@color/accent_emerald"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Vibe & Safety Guidelines Card (Figma Spec) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    app:cardBackgroundColor="@color/bg_surface_2"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/border_subtle"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🛡️ HANGOUT VIBE &amp; SAFETY"
+                            android:textColor="@color/primary_coral"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:lineSpacingExtra="3dp"
-                            android:textColor="@color/hello_text_secondary"
-                            android:textSize="14sp"
-                            tools:text="3 of 4 joined · 1 place left\n📍 Within 2 km · Koramangala\nSun, 10:00 AM – 12:00 PM\nHosted by Maya" />
+                            android:text="• Public venue only — meet safely in open spaces\n• Intimate group size for genuine conversation\n• Please arrive on time or update the host in chat"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Members Section -->
                 <TextView
+                    android:id="@+id/membersHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
@@ -160,6 +329,8 @@
                         app:backgroundTint="@null"
                         android:text="@string/pool_chat"
                         android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
                         app:cornerRadius="999dp"
                         app:icon="@drawable/ic_inbox"
                         app:iconGravity="textStart"
@@ -195,7 +366,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Sticky Knock To Join Action Bar -->
+    <!-- Sticky Knock To Join Action Bar (Non-members) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -210,10 +381,10 @@
             android:id="@+id/knockToJoinButton"
             style="@style/Widget.Hello.Button.Primary"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_gradient_primary"
             app:backgroundTint="@null"
-            android:text="Knock to Join ⚡"
+            android:text="Knock to Join Hangout ⚡"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"

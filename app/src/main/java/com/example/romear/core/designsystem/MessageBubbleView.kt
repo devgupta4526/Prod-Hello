@@ -1,7 +1,6 @@
 package com.example.romear.core.designsystem
 
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -20,49 +19,74 @@ class MessageBubbleView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
 
     private val messageText = TextView(context).apply {
-        setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
-        textSize = 14f
+        textSize = 15f
+        setTextColor(ContextCompat.getColor(context, R.color.white))
+        setLineSpacing(3 * resources.displayMetrics.density, 1f)
     }
 
     private val statusText = TextView(context).apply {
-        setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_LabelSmall)
-        textSize = 10f
+        textSize = 11f
     }
 
-    // Reaction badge floating at bubble corner (Instagram style)
+    // Reaction badge floating at bubble corner (Instagram/iMessage style)
     private val reactionBadge = TextView(context).apply {
         textSize = 12f
         setPadding(
-            (6 * resources.displayMetrics.density).toInt(),
-            (2 * resources.displayMetrics.density).toInt(),
-            (6 * resources.displayMetrics.density).toInt(),
-            (2 * resources.displayMetrics.density).toInt()
+            (8 * resources.displayMetrics.density).toInt(),
+            (3 * resources.displayMetrics.density).toInt(),
+            (8 * resources.displayMetrics.density).toInt(),
+            (3 * resources.displayMetrics.density).toInt()
         )
         background = ContextCompat.getDrawable(context, R.drawable.bg_badge_pill)
         visibility = View.GONE
     }
 
-    // Interactive in-chat activity invite card
+    // Interactive in-chat activity / meetup invite card
     private val inviteCard = MaterialCardView(context).apply {
         radius = 16 * resources.displayMetrics.density
         cardElevation = 0f
         strokeWidth = (1 * resources.displayMetrics.density).toInt()
-        strokeColor = ContextCompat.getColor(context, R.color.hello_outline_subtle)
-        setCardBackgroundColor(ContextCompat.getColor(context, R.color.hello_surface))
+        strokeColor = ContextCompat.getColor(context, R.color.border_subtle)
+        setCardBackgroundColor(ContextCompat.getColor(context, R.color.bg_surface_1))
         visibility = View.GONE
     }
 
-    private val inviteTitle = TextView(context).apply {
-        textSize = 13f
+    private val inviteBadge = TextView(context).apply {
+        text = "⚡ SAFE PUBLIC MEETUP"
+        textSize = 10f
         setTypeface(null, android.graphics.Typeface.BOLD)
-        setTextColor(ContextCompat.getColor(context, R.color.hello_text))
+        setTextColor(ContextCompat.getColor(context, R.color.primary_coral))
+        background = ContextCompat.getDrawable(context, R.drawable.bg_category_pill)
+        setPadding(
+            (8 * resources.displayMetrics.density).toInt(),
+            (3 * resources.displayMetrics.density).toInt(),
+            (8 * resources.displayMetrics.density).toInt(),
+            (3 * resources.displayMetrics.density).toInt()
+        )
+    }
+
+    private val inviteTitle = TextView(context).apply {
+        textSize = 15f
+        setTypeface(null, android.graphics.Typeface.BOLD)
+        setTextColor(ContextCompat.getColor(context, R.color.white))
+        setPadding(0, (6 * resources.displayMetrics.density).toInt(), 0, (2 * resources.displayMetrics.density).toInt())
+    }
+
+    private val inviteSubtitle = TextView(context).apply {
+        text = "Public venue · Tap to view schedule & location"
+        textSize = 12f
+        setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+        setPadding(0, 0, 0, (8 * resources.displayMetrics.density).toInt())
     }
 
     private val inviteButton = MaterialButton(context, null, com.google.android.material.R.attr.materialButtonTonalStyle).apply {
-        text = "View Activity ⚡"
-        cornerRadius = (16 * resources.displayMetrics.density).toInt()
-        minHeight = (36 * resources.displayMetrics.density).toInt()
+        text = "View Meetup Plan →"
+        cornerRadius = (999 * resources.displayMetrics.density).toInt()
+        minHeight = (38 * resources.displayMetrics.density).toInt()
         textSize = 12f
+        setTypeface(null, android.graphics.Typeface.BOLD)
+        setTextColor(ContextCompat.getColor(context, R.color.white))
+        setBackgroundColor(ContextCompat.getColor(context, R.color.bg_surface_pill))
     }
 
     // Voice note preview
@@ -70,20 +94,27 @@ class MessageBubbleView @JvmOverloads constructor(
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         visibility = View.GONE
-        setPadding(0, 0, 0, (4 * resources.displayMetrics.density).toInt())
+        setPadding(0, (2 * resources.displayMetrics.density).toInt(), 0, (4 * resources.displayMetrics.density).toInt())
     }
 
     private val voicePlayIcon = ImageView(context).apply {
         setImageResource(R.drawable.ic_mic)
-        setColorFilter(ContextCompat.getColor(context, R.color.hello_primary))
+        setColorFilter(ContextCompat.getColor(context, R.color.white))
+        background = ContextCompat.getDrawable(context, R.drawable.bg_circle_surface)
+        setPadding(
+            (6 * resources.displayMetrics.density).toInt(),
+            (6 * resources.displayMetrics.density).toInt(),
+            (6 * resources.displayMetrics.density).toInt(),
+            (6 * resources.displayMetrics.density).toInt()
+        )
         layoutParams = LayoutParams(
-            (24 * resources.displayMetrics.density).toInt(),
-            (24 * resources.displayMetrics.density).toInt()
+            (32 * resources.displayMetrics.density).toInt(),
+            (32 * resources.displayMetrics.density).toInt()
         )
     }
 
     private val voiceWaveform = VoiceWaveformView(context).apply {
-        layoutParams = LayoutParams(0, (55 * resources.displayMetrics.density).toInt(), 1f).apply {
+        layoutParams = LayoutParams(0, (44 * resources.displayMetrics.density).toInt(), 1f).apply {
             marginStart = (8 * resources.displayMetrics.density).toInt()
             marginEnd = (8 * resources.displayMetrics.density).toInt()
         }
@@ -92,24 +123,27 @@ class MessageBubbleView @JvmOverloads constructor(
     private val voiceDuration = TextView(context).apply {
         text = "0:12"
         textSize = 11f
-        setTextColor(ContextCompat.getColor(context, R.color.hello_text_secondary))
+        setTextColor(ContextCompat.getColor(context, R.color.white))
     }
 
     init {
         orientation = VERTICAL
-        val padding = resources.getDimensionPixelSize(R.dimen.space_md)
-        setPadding(padding, padding, padding, padding)
+        val padH = (14 * resources.displayMetrics.density).toInt()
+        val padV = (10 * resources.displayMetrics.density).toInt()
+        setPadding(padH, padV, padH, padV)
 
         // Setup Invite card content
         val cardLayout = LinearLayout(context).apply {
             orientation = VERTICAL
             setPadding(
+                (14 * resources.displayMetrics.density).toInt(),
                 (12 * resources.displayMetrics.density).toInt(),
-                (10 * resources.displayMetrics.density).toInt(),
-                (12 * resources.displayMetrics.density).toInt(),
-                (10 * resources.displayMetrics.density).toInt()
+                (14 * resources.displayMetrics.density).toInt(),
+                (12 * resources.displayMetrics.density).toInt()
             )
+            addView(inviteBadge)
             addView(inviteTitle)
+            addView(inviteSubtitle)
             addView(inviteButton)
         }
         inviteCard.addView(cardLayout)
@@ -125,7 +159,8 @@ class MessageBubbleView @JvmOverloads constructor(
 
         val bottomRow = LinearLayout(context).apply {
             orientation = HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
+            gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            setPadding(0, (4 * resources.displayMetrics.density).toInt(), 0, 0)
             addView(statusText)
             addView(reactionBadge)
         }
@@ -147,7 +182,7 @@ class MessageBubbleView @JvmOverloads constructor(
             val parts = rawText.removePrefix("[").removeSuffix("]").split(":")
             val title = parts.getOrNull(2) ?: "Activity Plan"
             inviteCard.visibility = View.VISIBLE
-            inviteTitle.text = "⚡ Plan Invite: $title"
+            inviteTitle.text = title
             inviteButton.setOnClickListener { onInviteClicked?.invoke() }
             messageText.visibility = View.GONE
             voiceContainer.visibility = View.GONE
@@ -169,7 +204,6 @@ class MessageBubbleView @JvmOverloads constructor(
         }
 
         statusText.text = deliveryLabel
-        gravity = Gravity.START
 
         if (!reaction.isNullOrBlank()) {
             reactionBadge.visibility = View.VISIBLE
@@ -178,21 +212,26 @@ class MessageBubbleView @JvmOverloads constructor(
             reactionBadge.visibility = View.GONE
         }
 
-        val radius = 20 * resources.displayMetrics.density
-        background = GradientDrawable().apply {
-            setColor(
-                ContextCompat.getColor(
-                    context,
-                    if (outgoing) R.color.primary_coral else R.color.bg_surface_2
-                )
-            )
-            cornerRadius = radius
-        }
+        // Asymmetric bubble per Figma spec:
+        // Sender: 18dp 18dp 4dp 18dp gradient coral
+        // Receiver: 18dp 18dp 18dp 4dp dark surface
+        background = ContextCompat.getDrawable(
+            context,
+            if (outgoing) R.drawable.bg_chat_bubble_outgoing else R.drawable.bg_chat_bubble_incoming
+        )
 
-        messageText.setTextColor(ContextCompat.getColor(context, R.color.hello_text))
-        messageText.setLineSpacing(3 * resources.displayMetrics.density, 1f)
-        statusText.setTextColor(ContextCompat.getColor(context, if (outgoing) R.color.white else R.color.text_tertiary))
-        statusText.setPadding(0, (4 * resources.displayMetrics.density).toInt(), 0, 0)
+        messageText.setTextColor(ContextCompat.getColor(context, R.color.white))
+        statusText.setTextColor(
+            ContextCompat.getColor(
+                context,
+                if (outgoing) R.color.white else R.color.text_tertiary
+            )
+        )
+        if (outgoing) {
+            statusText.alpha = 0.85f
+        } else {
+            statusText.alpha = 1.0f
+        }
     }
 
     fun setReaction(reactionEmoji: String) {
@@ -203,7 +242,7 @@ class MessageBubbleView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec)
-        val maxWidth = (292 * resources.displayMetrics.density).toInt()
+        val maxWidth = (300 * resources.displayMetrics.density).toInt()
         super.onMeasure(MeasureSpec.makeMeasureSpec(minOf(available, maxWidth), MeasureSpec.AT_MOST), heightMeasureSpec)
     }
 }

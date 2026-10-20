@@ -181,9 +181,14 @@ class HappeningFragment : Fragment() {
         val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_pool_details, null)
         bottomSheet.setContentView(sheetView)
 
+        val artworkHero = sheetView.findViewById<com.example.romear.core.designsystem.ActivityArtworkView>(R.id.poolArtworkHero)
         val titleView = sheetView.findViewById<TextView>(R.id.poolDetailTitle)
         val activityView = sheetView.findViewById<TextView>(R.id.poolDetailActivity)
+        val timeView = sheetView.findViewById<TextView>(R.id.poolDetailTime)
+        val locationView = sheetView.findViewById<TextView>(R.id.poolDetailLocation)
         val capacityView = sheetView.findViewById<TextView>(R.id.poolDetailCapacity)
+        val hostAvatar = sheetView.findViewById<AvatarView>(R.id.poolDetailHostAvatar)
+        val hostNameView = sheetView.findViewById<TextView>(R.id.poolDetailHostName)
         val membersContainer = sheetView.findViewById<LinearLayout>(R.id.membersContainer)
         val knocksHeader = sheetView.findViewById<TextView>(R.id.knocksHeader)
         val knocksContainer = sheetView.findViewById<LinearLayout>(R.id.knocksContainer)
@@ -193,9 +198,15 @@ class HappeningFragment : Fragment() {
         val leaveBtn = sheetView.findViewById<MaterialButton>(R.id.leavePoolButton)
         val closeBtn = sheetView.findViewById<MaterialButton>(R.id.closePoolButton)
 
-        titleView.text = detail.title
-        activityView.text = detail.activity.uppercase()
-        capacityView.text = "${detail.members.size} of ${detail.capacity} joined · ${(detail.capacity - detail.members.size).coerceAtLeast(0)} places left\n${detail.distanceBucket}\n${formatTime(detail.timeWindowStart)} – ${formatTime(detail.timeWindowEnd)}\nHosted by ${detail.host.displayName}"
+        artworkHero?.category = detail.activity
+        titleView?.text = detail.title
+        activityView?.text = detail.activity.uppercase()
+        timeView?.text = "${formatTime(detail.timeWindowStart)} – ${formatTime(detail.timeWindowEnd)}"
+        locationView?.text = detail.distanceBucket.removePrefix("📍").trim()
+        val spotsLeft = (detail.capacity - detail.members.size).coerceAtLeast(0)
+        capacityView?.text = "${detail.members.size} of ${detail.capacity} joined · $spotsLeft places left"
+        hostAvatar?.load(detail.host.photoUrl, detail.host.displayName, sizeDp = 44)
+        hostNameView?.text = "Hosted by ${detail.host.displayName}"
 
         // Populate members
         membersContainer.removeAllViews()
@@ -206,7 +217,7 @@ class HappeningFragment : Fragment() {
             val role = memberRow.findViewById<TextView>(R.id.connectionDate)
             avatar.load(m.user.photoUrl, m.user.displayName, sizeDp = 48)
             name.text = m.user.displayName
-            role.text = if (m.role == "HOST") "Host" else "Member"
+            role.text = if (m.role == "HOST") "👑 Host" else "Joined Member"
             membersContainer.addView(memberRow)
         }
 
@@ -249,7 +260,7 @@ class HappeningFragment : Fragment() {
         if (!detail.isMember && detail.status == "ACTIVE") {
             knockBtn.isVisible = true
             knockBtn.setOnClickListener {
-                showKnockPrompt(detail.id, bottomSheet)
+                showKnockPrompt(detail.id, detail.title, bottomSheet)
             }
         }
 
@@ -284,22 +295,44 @@ class HappeningFragment : Fragment() {
 
     private fun formatTime(value: String): String = runCatching { java.time.Instant.parse(value).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("EEE d MMM, h:mm a")) }.getOrDefault(value)
 
-    private fun showKnockPrompt(poolId: String, parentSheet: BottomSheetDialog) {
-        val input = EditText(requireContext()).apply {
-            hint = getString(R.string.pool_knock_hint)
-            minLines = 2
-            setPadding(32, 24, 32, 24)
+    private fun showKnockPrompt(poolId: String, poolTitle: String, parentSheet: BottomSheetDialog) {
+        val knockSheet = BottomSheetDialog(requireContext())
+        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_knock_prompt, null)
+        knockSheet.setContentView(sheetView)
+
+        val titleView = sheetView.findViewById<TextView>(R.id.knockPromptTitle)
+        val chip1 = sheetView.findViewById<TextView>(R.id.chipKnock1)
+        val chip2 = sheetView.findViewById<TextView>(R.id.chipKnock2)
+        val chip3 = sheetView.findViewById<TextView>(R.id.chipKnock3)
+        val inputNote = sheetView.findViewById<EditText>(R.id.inputKnockNote)
+        val submitBtn = sheetView.findViewById<MaterialButton>(R.id.btnSubmitKnock)
+
+        titleView?.text = "Knock to Join $poolTitle"
+
+        chip1?.setOnClickListener {
+            inputNote?.setText(chip1.text.toString().removePrefix("👋").trim())
+            com.example.romear.core.designsystem.HelloHaptics.selection(it)
         }
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.pool_knock_prompt)
-            .setView(input)
-            .setNegativeButton(R.string.cancel, null)
-            .setPositiveButton(R.string.pool_knock_button) { _, _ ->
-                val intro = input.text?.toString()?.trim().orEmpty()
-                viewModel.knock(poolId, intro)
-                parentSheet.dismiss()
-            }
-            .show()
+        chip2?.setOnClickListener {
+            inputNote?.setText(chip2.text.toString().removePrefix("⚡").trim())
+            com.example.romear.core.designsystem.HelloHaptics.selection(it)
+        }
+        chip3?.setOnClickListener {
+            inputNote?.setText(chip3.text.toString().removePrefix("☕").trim())
+            com.example.romear.core.designsystem.HelloHaptics.selection(it)
+        }
+
+        submitBtn?.setOnClickListener {
+            val userNote = inputNote?.text?.toString()?.trim().orEmpty()
+            val intro = if (userNote.isNotBlank()) userNote else "Hey! Count me in 👋"
+            com.example.romear.core.designsystem.HelloHaptics.success(submitBtn)
+            viewModel.knock(poolId, intro)
+            Toast.makeText(requireContext(), "Knock sent! The host will review your request ⚡", Toast.LENGTH_SHORT).show()
+            knockSheet.dismiss()
+            parentSheet.dismiss()
+        }
+
+        knockSheet.show()
     }
 
     override fun onDestroyView() {

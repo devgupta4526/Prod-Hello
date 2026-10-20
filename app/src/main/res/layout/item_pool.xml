@@ -1,24 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
 <com.example.romear.core.designsystem.HelloCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:layout_marginHorizontal="24dp" android:layout_marginVertical="10dp"
-    app:cardCornerRadius="22dp" app:cardElevation="0dp"
-    app:cardBackgroundColor="@color/bg_surface_1" app:strokeColor="@color/border_subtle" app:strokeWidth="1dp">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
-        <com.example.romear.core.designsystem.ActivityArtworkView android:id="@+id/activityArtwork" android:layout_width="match_parent" android:layout_height="0dp" android:visibility="gone" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-            <TextView android:id="@+id/activityBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
-            <TextView android:id="@+id/poolTime" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="4dp" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="@color/bg_surface_1"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/border_subtle"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <com.example.romear.core.designsystem.ActivityArtworkView
+            android:id="@+id/activityArtwork"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
+        <!-- Top Row: Category Pill & Amber Countdown / Start Time Pill -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/activityBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_category_pill"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/primary_coral"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="🏃 SPORTS &amp; FITNESS" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/poolTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_countdown_pill"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/accent_amber"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="Starts in 45m" />
         </LinearLayout>
-        <TextView android:id="@+id/poolTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
-        <TextView android:id="@+id/distanceBucket" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:textAppearance="@style/TextAppearance.Hello.Body" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal" android:gravity="center_vertical">
-            <com.example.romear.core.designsystem.AvatarView android:id="@+id/hostAvatar" android:layout_width="48dp" android:layout_height="48dp" />
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                <TextView android:id="@+id/hostName" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
-                <TextView android:id="@+id/capacityBadge" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:textAppearance="@style/TextAppearance.Hello.Caption" />
+
+        <!-- Hangout Title -->
+        <TextView
+            android:id="@+id/poolTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Evening Badminton &amp; Chai at Play Arena" />
+
+        <!-- Venue / Distance Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="Location"
+                android:src="@drawable/ic_location"
+                app:tint="@color/text_tertiary" />
+
+            <TextView
+                android:id="@+id/distanceBucket"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                tools:text="Sarjapur Road · Within 1.5 km" />
+        </LinearLayout>
+
+        <!-- Divider Line -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="14dp"
+            android:background="@color/border_subtle" />
+
+        <!-- Host & Attendees Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.example.romear.core.designsystem.AvatarView
+                android:id="@+id/hostAvatar"
+                android:layout_width="38dp"
+                android:layout_height="38dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/hostName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="Host: Rahul + 2 joined" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:text="IRL Verified Member"
+                    android:textColor="@color/accent_emerald"
+                    android:textSize="11sp" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/capacityBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_emerald_pill"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/accent_emerald"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="2 spots left" />
         </LinearLayout>
-        <com.google.android.material.button.MaterialButton android:id="@+id/viewPoolAction" style="@style/Widget.Hello.Button.Tonal" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="8dp" android:insetTop="0dp" android:insetBottom="0dp" android:text="Join Hangout →" app:backgroundTint="@color/bg_surface_pill" app:cornerRadius="999dp" />
+
+        <!-- Join CTA Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewPoolAction"
+            style="@style/Widget.Hello.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Join Hangout →"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="999dp" />
     </LinearLayout>
 </com.example.romear.core.designsystem.HelloCardView>
