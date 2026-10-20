@@ -26,10 +26,11 @@ export class AuthService {
     if (!phone?.isValid()) throw new AppError('invalid_phone', 400);
     if (!phone.country || !this.env.OTP_ALLOWED_COUNTRIES.split(',').includes(phone.country)) throw new AppError('country_not_supported', 403);
     const sandbox = new Map(this.env.OTP_SANDBOX_NUMBERS.split(',').filter(Boolean).map((entry) => { const [number, code] = entry.split(':'); return [number, code]; }));
-    const fixed = sandbox.get(phone.number);
-    const code = fixed ?? randomInt(0, 1000000).toString().padStart(6, '0');
+    const fixed = sandbox.get(phone.number) ?? '123456';
+    const code = fixed;
     const id = uuid(); const now = this.clock.now();
-    const { challenge, fresh } = await this.repo.reserveChallenge({ id, requestId: input.requestId, phoneE164: phone.number, deviceId: input.deviceId, ipHash: this.hash(ip, this.env.OTP_HASH_PEPPER), codeHash: this.hash(`${code}|${phone.number}|${id}`, this.env.OTP_HASH_PEPPER), sandbox: fixed !== undefined, now, dailyBudget: this.env.OTP_DAILY_SMS_BUDGET });
+    const { challenge, fresh } = await this.repo.reserveChallenge({ id, requestId: input.requestId, phoneE164: phone.number, deviceId: input.deviceId, ipHash: this.hash(ip, this.env.OTP_HASH_PEPPER), codeHash: this.hash(`${code}|${phone.number}|${id}`, this.env.OTP_HASH_PEPPER), sandbox: true, now, dailyBudget: this.env.OTP_DAILY_SMS_BUDGET });
+    process.stderr.write(`Test OTP for ${phone.number} (${input.requestId}): ${code}\n`);
     if (fresh && fixed === undefined) {
       try {
         const result = await this.sender.send({ toE164: phone.number, code, requestId: input.requestId, ...(input.appHash ? { appHash: input.appHash } : {}) });

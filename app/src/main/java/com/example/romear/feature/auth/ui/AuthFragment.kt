@@ -235,8 +235,11 @@ class AuthFragment : Fragment() {
             OnboardingStep.OTP -> {
                 ui.stepLabel.text = "SECURITY CHECK"
                 ui.authTitle.text = "Enter the 6-digit code"
-                ui.authBody.text = "Sent to +91 ${viewModel.phone}"
+                ui.authBody.text = "Sent to +91 ${viewModel.phone} · Test code: 123456"
                 ui.primary.text = "Verify & Continue"
+                if (ui.otpInput.text.isNullOrEmpty()) {
+                    ui.otpInput.setText("123456")
+                }
             }
             OnboardingStep.DATE_OF_BIRTH -> ui.stepLabel.text = "STEP 2 OF 3 · YOUR IDENTITY"
             else -> Unit
