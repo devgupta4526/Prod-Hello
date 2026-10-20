@@ -102,12 +102,17 @@ class AuthViewModel @Inject constructor(
         if (account == null) step(OnboardingStep.WELCOME) else route(account)
     }
     fun begin(login: Boolean = false) { loginMode = login; step(OnboardingStep.PHONE) }
-    fun editPhone() { step(OnboardingStep.PHONE) }
+    fun editPhone() {
+        saved.remove<String>("requestId")
+        saved.remove<String>("challengeId")
+        saved.remove<Long>("resendAt")
+        step(OnboardingStep.PHONE)
+    }
     fun requestCode(appHash: String? = null, resend: Boolean = false) {
         if (!phone.matches(Regex("[6-9][0-9]{9}"))) { mutable.value = mutable.value.copy(error = "invalid_phone"); return }
         if (state.value.resendSeconds > 0) return
         perform {
-            val id = if (resend) UUID.randomUUID().toString() else saved.get<String>("requestId") ?: UUID.randomUUID().toString()
+            val id = UUID.randomUUID().toString()
             saved["requestId"] = id
             val challenge = repository.requestOtp(phone, id, appHash)
             saved["challengeId"] = challenge.id

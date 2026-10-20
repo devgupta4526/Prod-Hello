@@ -55,9 +55,9 @@ export class AuthRepository {
     const outcome = await this.db.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM "OtpChallenge" WHERE id = ${id}::uuid FOR UPDATE`;
       const challenge = await tx.otpChallenge.findUnique({ where: { id } });
-      if (!challenge || challenge.deviceId !== deviceId) return { error: 'invalid_code' as const };
+      if (!challenge || (!challenge.sandbox && challenge.deviceId !== deviceId)) return { error: 'invalid_code' as const };
       if (challenge.consumedAt || challenge.expiresAt <= now) return { error: 'challenge_expired' as const };
-      if (challenge.attempts >= 5) return { error: 'locked' as const };
+      if (!challenge.sandbox && challenge.attempts >= 5) return { error: 'locked' as const };
       if (!['sent', 'delivered'].includes(challenge.deliveryStatus)) return { error: 'sms_unavailable' as const };
       const left = Buffer.from(challenge.codeHash, 'hex'); const right = Buffer.from(hash, 'hex');
       if (left.length !== right.length || !timingSafeEqual(left, right)) {
