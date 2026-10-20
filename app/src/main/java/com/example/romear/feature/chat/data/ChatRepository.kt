@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
 import javax.inject.Inject
@@ -19,75 +20,54 @@ class ChatRepository @Inject constructor(
     private val dispatcher: CoroutineDispatcher,
 ) {
     private fun JSONObject.body() = toString().toRequestBody("application/json".toMediaType())
-    private fun ResponseBody.json() = use { JSONObject(it.string()) }
+    private fun ResponseBody.items(): JSONArray = use { JSONArray(it.string()) }
+    private fun JSONObject.optional(key: String) = if (isNull(key)) null else getString(key)
 
     suspend fun getConversations(cursor: String? = null, limit: Int = 20): List<ConversationItem> =
         withContext(dispatcher) {
-            val response = api.getConversations(cursor, limit).json()
-            val items = response.getJSONArray("items")
-            val list = mutableListOf<ConversationItem>()
-            for (i in 0 until items.length()) {
-                val obj = items.getJSONObject(i)
-                val partnerObj = obj.getJSONObject("partner")
-                list.add(
-                    ConversationItem(
-                        id = obj.getString("id"),
-                        partner = ChatPartner(
-                            id = partnerObj.getString("id"),
-                            displayName = partnerObj.getString("displayName"),
-                            photoUrl = if (partnerObj.isNull("photoUrl")) null else partnerObj.getString("photoUrl"),
-                        ),
-                        lastMessageAt = if (obj.isNull("lastMessageAt")) null else obj.getString("lastMessageAt"),
-                        unreadCount = obj.optInt("unreadCount", 0),
+            val items = api.getConversations(cursor, limit).items()
+            List(items.length()) { index ->
+                val item = items.getJSONObject(index)
+                ConversationItem(
+                    id = item.getString("id"),
+                    partner = ChatPartner(
+                        id = item.optional("partnerId").orEmpty(),
+                        displayName = item.getString("title"),
+                        photoUrl = item.optional("photoUrl"),
                     ),
+                    lastMessageAt = item.optJSONObject("lastMessage")?.optional("createdAt"),
+                    unreadCount = item.optInt("unreadCount"),
                 )
             }
-            list
         }
+
+    private fun message(item: JSONObject, currentUserId: String?) = ChatMessage(
+        id = item.getString("id"),
+        conversationId = item.getString("conversationId"),
+        senderId = item.getString("senderId"),
+        body = if (item.isNull("deletedAt")) item.getString("body") else "Message deleted",
+        createdAt = item.getString("createdAt"),
+        isOutgoing = currentUserId == item.getString("senderId"),
+        readAt = null,
+        deliveredAt = item.optional("deliveredAt"),
+    )
 
     suspend fun getMessages(conversationId: String, cursor: String? = null, limit: Int = 50): List<ChatMessage> =
         withContext(dispatcher) {
-            val currentUserId = store.currentUserId()
-            val response = api.getMessages(conversationId, cursor, limit).json()
-            val items = response.getJSONArray("items")
-            val list = mutableListOf<ChatMessage>()
-            for (i in 0 until items.length()) {
-                val obj = items.getJSONObject(i)
-                val senderId = obj.getString("senderId")
-                list.add(
-                    ChatMessage(
-                        id = obj.getString("id"),
-                        conversationId = obj.getString("conversationId"),
-                        senderId = senderId,
-                        body = obj.getString("body"),
-                        createdAt = obj.getString("createdAt"),
-                        isOutgoing = currentUserId != null && currentUserId == senderId,
-                        readAt = if (obj.isNull("readAt")) null else obj.getString("readAt"),
-                    ),
-                )
-            }
-            list
+            val userId = store.currentUserId()
+            val items = api.getMessages(conversationId, cursor, limit).items()
+            List(items.length()) { message(items.getJSONObject(it), userId) }
+                .sortedWith(compareBy<ChatMessage> { it.createdAt }.thenBy { it.id })
         }
 
-    suspend fun sendMessage(conversationId: String, body: String): ChatMessage =
+    suspend fun sendMessage(conversationId: String, body: String, clientMessageId: String = UUID.randomUUID().toString()): ChatMessage =
         withContext(dispatcher) {
-            val currentUserId = store.currentUserId() ?: ""
-            val key = UUID.randomUUID().toString()
-            val json = JSONObject().put("idempotencyKey", key).put("body", body)
-            val obj = api.sendMessage(conversationId, json.body(), key).json()
-            ChatMessage(
-                id = obj.getString("id"),
-                conversationId = obj.getString("conversationId"),
-                senderId = obj.getString("senderId"),
-                body = obj.getString("body"),
-                createdAt = obj.getString("createdAt"),
-                isOutgoing = true,
-                readAt = null,
-            )
+            val request = JSONObject().put("clientMsgId", clientMessageId).put("body", body)
+            val item = api.sendMessage(conversationId, request.body(), clientMessageId).use { JSONObject(it.string()) }
+            message(item, store.currentUserId())
         }
 
-    suspend fun markAsRead(messageId: String): Boolean = withContext(dispatcher) {
-        api.markAsRead(messageId)
-        true
+    suspend fun acknowledge(conversationId: String, lastMessageId: String) = withContext(dispatcher) {
+        api.acknowledge(conversationId, JSONObject().put("lastMessageId", lastMessageId).body()).close()
     }
 }

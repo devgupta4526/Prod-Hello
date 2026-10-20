@@ -101,4 +101,10 @@ export class DiscoveryRepository {
       },
     });
   }
+  async getVoiceBio(targetUserId: string) {
+    return this.db.voiceClip.findFirst({ where: { userId: targetUserId, conversationId: null }, orderBy: { createdAt: "desc" }, select: { id: true, durationMs: true } });
+  }
+  async getIcebreakerAnswer(userId: string, day: string) {
+    return this.db.icebreakerAnswer.findUnique({ where: { day_userId: { day, userId } } });
+  }
 }

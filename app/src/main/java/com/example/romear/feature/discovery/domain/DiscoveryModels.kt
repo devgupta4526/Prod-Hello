@@ -15,6 +15,7 @@ data class DiscoveryUser(
     val marker: FuzzedMarker,
     val sharedInterests: List<String>,
     val upFor: String? = null,
+    val isIrlVerified: Boolean = false,
 )
 
 data class ProfilePrompt(val id: String, val answer: String)

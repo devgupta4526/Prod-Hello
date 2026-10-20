@@ -12,14 +12,14 @@ import retrofit2.http.Query
 interface ChatApi {
     @GET("v1/conversations")
     suspend fun getConversations(
-        @Query("cursor") cursor: String? = null,
+        @Query("before") cursor: String? = null,
         @Query("limit") limit: Int = 20,
     ): ResponseBody
 
     @GET("v1/conversations/{id}/messages")
     suspend fun getMessages(
         @Path("id") conversationId: String,
-        @Query("cursor") cursor: String? = null,
+        @Query("before") cursor: String? = null,
         @Query("limit") limit: Int = 50,
     ): ResponseBody
 
@@ -30,8 +30,9 @@ interface ChatApi {
         @Header("Idempotency-Key") idempotencyKey: String? = null,
     ): ResponseBody
 
-    @POST("v1/messages/{id}/read")
-    suspend fun markAsRead(
-        @Path("id") messageId: String,
+    @POST("v1/conversations/{id}/ack")
+    suspend fun acknowledge(
+        @Path("id") conversationId: String,
+        @Body body: RequestBody,
     ): ResponseBody
 }

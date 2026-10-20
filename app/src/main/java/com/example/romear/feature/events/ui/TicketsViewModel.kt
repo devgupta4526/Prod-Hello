@@ -22,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TicketsViewModel @Inject constructor(
     private val eventsRepository: EventsRepository,
+    private val savedState: androidx.lifecycle.SavedStateHandle,
 ) : ViewModel() {
 
     enum class Tab { EXPLORE, MY_TICKETS }
@@ -73,12 +74,11 @@ class TicketsViewModel @Inject constructor(
             _loadFailed.value = false
             try {
                 val list = eventsRepository.listEvents()
-                _events.value = if (list.isNotEmpty()) list else getDemoEvents()
+                _events.value = list
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
-                _events.value = getDemoEvents()
-                _loadFailed.value = false
+                _loadFailed.value = true
             } finally {
                 if (currentCoroutineContext().isActive) _loading.value = false
             }
@@ -92,119 +92,48 @@ class TicketsViewModel @Inject constructor(
             _loadFailed.value = false
             try {
                 val list = eventsRepository.listMyTickets()
-                _tickets.value = if (list.isNotEmpty()) list else getDemoTickets()
+                _tickets.value = list
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
-                _tickets.value = getDemoTickets()
-                _loadFailed.value = false
+                _loadFailed.value = true
             } finally {
                 if (currentCoroutineContext().isActive) _loading.value = false
             }
         }
     }
 
-    fun bookTicket(eventId: String, tierId: String, quantity: Int, onSuccess: () -> Unit) {
+    private var booking = false
+    fun bookTicket(eventId: String, tierId: String, quantity: Int, onFailure: () -> Unit = {}, onSuccess: () -> Unit) {
+        if (booking) return
+        booking = true
         viewModelScope.launch {
             try {
-                val order = eventsRepository.createOrder(eventId, tierId, quantity)
-                eventsRepository.confirmPayment(order.orderId)
+                val detail = eventsRepository.getEvent(eventId)
+                val tier = detail.tiers.firstOrNull { it.id == tierId } ?: error("Choose an available ticket")
+                require(tier.priceInPaise == 0) { "Paid checkout is not configured for this release. No payment has been taken." }
+                val selection = "$eventId:$tierId:$quantity"
+                val key = if (savedState.get<String>("orderSelection") == selection) savedState.get<String>("orderKey") ?: java.util.UUID.randomUUID().toString() else java.util.UUID.randomUUID().toString()
+                savedState["orderSelection"] = selection
+                savedState["orderKey"] = key
+                val order = eventsRepository.createOrder(eventId, tierId, quantity, key)
+                require(order.status == "PAID") { "Your booking is awaiting confirmation. Please check My Tickets before retrying." }
+                savedState.remove<String>("orderSelection")
+                savedState.remove<String>("orderKey")
                 _uiEvents.emit(TicketsEvent.Success("Ticket booked successfully!"))
                 onSuccess()
                 switchTab(Tab.MY_TICKETS)
-            } catch (e: Exception) {
-                val newTicket = UserTicketItem(
-                    id = "RM-1024",
-                    status = "CONFIRMED",
-                    qrPayload = "ROMEAR:RM-1024:$eventId",
-                    checkedInAt = null,
-                    tierName = "General Admission",
-                    priceInPaise = 49900,
-                    eventTitle = _events.value.find { it.id == eventId }?.title ?: "Founders & Creatives Mixer",
-                    startsAt = "2026-10-23T19:30:00Z",
-                    endsAt = "2026-10-23T22:00:00Z",
-                    venueName = "Common Ground Café, Indiranagar",
-                    address = "12th Main Road, Indiranagar"
-                )
-                _tickets.value = listOf(newTicket) + _tickets.value.filterNot { it.id == "RM-1024" }
-                _uiEvents.emit(TicketsEvent.Success("Ticket booked successfully!"))
-                onSuccess()
-                switchTab(Tab.MY_TICKETS)
-            }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                onFailure()
+                _uiEvents.emit(TicketsEvent.Error(failure.message ?: "Booking failed. Please retry."))
+            } finally { booking = false }
         }
     }
-
-    private fun getDemoEvents(): List<EventItem> = listOf(
-        EventItem(
-            id = "evt_founders_indiranagar",
-            title = "Founders & Creatives Mixer",
-            description = "Spontaneous evening meetup for tech builders, designers, and creative freelancers in Bangalore. Meet someone new, share what you're working on, and grab a flat white.",
-            category = "Social & Mixer",
-            startsAt = "2026-10-23T19:30:00Z",
-            endsAt = "2026-10-23T22:00:00Z",
-            venueName = "Common Ground Café",
-            address = "12th Main Road, Indiranagar",
-            status = "ACTIVE",
-            distanceBucket = "~1.2 km away · Indiranagar",
-            coverUrl = "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&auto=format&fit=crop&q=80",
-            organizerName = "Romear Community",
-            tiers = listOf(
-                com.example.romear.feature.events.domain.TicketTierItem(
-                    id = "tier_ga",
-                    name = "General Admission",
-                    description = "Entry pass + one specialty coffee or beverage included",
-                    priceInPaise = 49900,
-                    capacity = 30,
-                    remaining = 8,
-                    maxPerOrder = 2
-                )
-            )
-        ),
-        EventItem(
-            id = "evt_acoustic_koramangala",
-            title = "Acoustic Evening & Specialty Coffee",
-            description = "Intimate indie acoustic music session featuring local singer-songwriters in a cozy setting. Limited to 25 attendees.",
-            category = "Music & Arts",
-            startsAt = "2026-10-31T18:00:00Z",
-            endsAt = "2026-10-31T21:00:00Z",
-            venueName = "Blue Tokai Coffee",
-            address = "80ft Road, Koramangala 4th Block",
-            status = "ACTIVE",
-            distanceBucket = "~2.4 km away · Koramangala",
-            coverUrl = "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=800&auto=format&fit=crop&q=80",
-            organizerName = "Acoustic Bangalore",
-            tiers = listOf(
-                com.example.romear.feature.events.domain.TicketTierItem(
-                    id = "tier_acoustic",
-                    name = "Acoustic Entry Pass",
-                    description = "Entry + pour-over coffee included",
-                    priceInPaise = 35000,
-                    capacity = 25,
-                    remaining = 4,
-                    maxPerOrder = 2
-                )
-            )
-        )
-    )
-
-    private fun getDemoTickets(): List<UserTicketItem> = listOf(
-        UserTicketItem(
-            id = "RM-1024",
-            status = "CONFIRMED",
-            qrPayload = "ROMEAR:RM-1024:EVENT-FC-IND-2026",
-            checkedInAt = null,
-            tierName = "General Admission",
-            priceInPaise = 49900,
-            eventTitle = "Founders & Creatives Mixer",
-            startsAt = "2026-10-23T19:30:00Z",
-            endsAt = "2026-10-23T22:00:00Z",
-            venueName = "Common Ground Café",
-            address = "12th Main Road, Indiranagar"
-        )
-    )
-
     sealed class TicketsEvent {
         data class Success(val message: String) : TicketsEvent()
         data class Error(val error: String) : TicketsEvent()
     }
 }
+

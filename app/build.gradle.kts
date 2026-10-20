@@ -72,6 +72,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.zxing:core:3.5.3")
     implementation(libs.coil)
     implementation(libs.coil.network)
     implementation(libs.sms.retriever)

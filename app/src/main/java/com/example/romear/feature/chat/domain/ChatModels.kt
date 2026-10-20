@@ -21,4 +21,5 @@ data class ChatMessage(
     val createdAt: String,
     val isOutgoing: Boolean,
     val readAt: String?,
+    val deliveredAt: String? = null,
 )

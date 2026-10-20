@@ -45,6 +45,7 @@ class DiscoveryFragment : Fragment() {
     @Inject lateinit var socialRepository: com.example.romear.feature.social.SocialRepository
     private lateinit var presenceLocation: com.example.romear.core.security.PresenceLocation
     private lateinit var socialUi: com.example.romear.feature.social.SocialUi
+    private lateinit var voiceUi: com.example.romear.feature.social.VoiceUi
 
     private var binding: FragmentDiscoveryBinding? = null
     private val viewModel: DiscoveryViewModel by viewModels()
@@ -61,6 +62,7 @@ class DiscoveryFragment : Fragment() {
             viewModel.setAvailability(availability, location)
         }
         socialUi = com.example.romear.feature.social.SocialUi(this, socialRepository)
+        voiceUi = com.example.romear.feature.social.VoiceUi(this, socialRepository)
         enterTransition = HelloTransitions.tab()
         exitTransition = HelloTransitions.tab()
     }
@@ -210,44 +212,7 @@ class DiscoveryFragment : Fragment() {
         }
     }
 
-    private fun showDailyIcebreakerDialog() {
-        val bottomSheet = BottomSheetDialog(requireContext())
-        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_icebreaker, null)
-        bottomSheet.setContentView(sheetView)
-
-        val input = sheetView.findViewById<EditText>(R.id.icebreaker_answer_input)
-        val postBtn = sheetView.findViewById<MaterialButton>(R.id.btn_post_icebreaker_answer)
-        val reply1 = sheetView.findViewById<View>(R.id.btn_reply_wave_1)
-        val reply2 = sheetView.findViewById<View>(R.id.btn_reply_wave_2)
-
-        postBtn?.setOnClickListener {
-            val answer = input?.text?.toString()?.trim().orEmpty()
-            if (answer.isNotBlank()) {
-                binding?.vibeCheckQuestion?.text = "You posted: \"$answer\" ✓"
-                com.example.romear.core.designsystem.HelloFeedback.success(
-                    requireView(),
-                    "Answer posted! Unlocked 18 nearby responses 🎉"
-                )
-                bottomSheet.dismiss()
-            }
-        }
-
-        reply1?.setOnClickListener {
-            bottomSheet.dismiss()
-            val dummyUser = viewModel.users.value.firstOrNull() ?: return@setOnClickListener
-            val context = JSONObject().put("type", "ICEBREAKER").put("text", "Empire on Church Street at 2 AM")
-            showSayHelloDialog(dummyUser, context)
-        }
-
-        reply2?.setOnClickListener {
-            bottomSheet.dismiss()
-            val dummyUser = viewModel.users.value.getOrNull(1) ?: viewModel.users.value.firstOrNull() ?: return@setOnClickListener
-            val context = JSONObject().put("type", "ICEBREAKER").put("text", "Corner House Death by Chocolate")
-            showSayHelloDialog(dummyUser, context)
-        }
-
-        bottomSheet.show()
-    }
+    private fun showDailyIcebreakerDialog() { socialUi.icebreaker() }
 
     private fun showShareVibeBottomSheet() {
         val bottomSheet = BottomSheetDialog(requireContext())
@@ -343,6 +308,16 @@ class DiscoveryFragment : Fragment() {
         val switchVerified = sheetView.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.switchVerifiedOnly)
         val resetBtn = sheetView.findViewById<View>(R.id.btnResetFilters)
         val applyBtn = sheetView.findViewById<MaterialButton>(R.id.btnApplyFilters)
+        val intentions = sheetView.findViewById<ChipGroup>(R.id.intentionsChipGroup)
+        val interestIds = mapOf(R.id.chipCoffee to "Coffee", R.id.chipActivities to "Sports", R.id.chipWork to "Technology", R.id.chipFood to "Food", R.id.chipDating to "Dating")
+        distanceSlider?.value = viewModel.filterRadius.coerceIn(0.5f, 25f)
+        distanceText?.text = "${viewModel.filterRadius} km"
+        ageSlider?.setValues(viewModel.filterMinAge.toFloat(), viewModel.filterMaxAge.toFloat())
+        ageText?.text = "${viewModel.filterMinAge} - ${viewModel.filterMaxAge}"
+        switchVerified?.isChecked = viewModel.filterVerified
+        val selectedInterests = viewModel.filterInterests.split(",").toSet()
+        interestIds.forEach { (id, value) -> sheetView.findViewById<Chip>(id)?.isChecked = value in selectedInterests }
+        applyBtn?.text = "Apply Filters"
 
         distanceSlider?.addOnChangeListener { _, value, _ ->
             distanceText?.text = String.format("%.1f km", value)
@@ -361,16 +336,15 @@ class DiscoveryFragment : Fragment() {
             ageSlider?.setValues(21.0f, 30.0f)
             ageText?.text = "21 - 30"
             switchVerified?.isChecked = false
+            intentions?.clearCheck()
             com.example.romear.core.designsystem.HelloFeedback.info(requireView(), "Filters reset to default")
         }
 
         applyBtn?.setOnClickListener {
             val dist = distanceSlider?.value ?: 5.0f
-            com.example.romear.core.designsystem.HelloFeedback.success(
-                requireView(),
-                "Filters applied: within ${String.format("%.1f", dist)} km"
-            )
-            viewModel.loadNearby()
+            val ages = ageSlider?.values ?: listOf(21f, 30f)
+            val interests = intentions?.checkedChipIds.orEmpty().mapNotNull { interestIds[it] }.joinToString(",")
+            viewModel.applyFilters(dist, ages.first().toInt(), ages.last().toInt(), switchVerified?.isChecked == true, interests)
             bottomSheet.dismiss()
         }
 
@@ -468,19 +442,8 @@ class DiscoveryFragment : Fragment() {
             heroPhoto.setImageResource(R.drawable.illustration_people)
         }
 
-        // Voice Bio interactive simulation
-        voiceCard.visibility = View.VISIBLE
-        var isPlayingVoice = false
-        voicePlayBtn.setOnClickListener {
-            isPlayingVoice = !isPlayingVoice
-            HelloMotion.bounce(it)
-            if (isPlayingVoice) {
-                voiceBars.text = "▇▅▃▂ ▂▃▅▆▇▆▅▃▂ ▂▃"
-                Toast.makeText(requireContext(), "Playing 15s voice bio 🎙️", Toast.LENGTH_SHORT).show()
-            } else {
-                voiceBars.text = " ▂▃▅▆▇▆▅▃▂ ▂▃▅▇▆▅▃"
-            }
-        }
+        voiceCard.isVisible = false
+        bottomSheet.setOnDismissListener { voiceUi.stopPlayback() }
 
         // Up for intent
         if (!user.upFor.isNullOrBlank()) {
@@ -513,6 +476,8 @@ class DiscoveryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val fullProfile = viewModel.getUserProfile(user.userId)
             if (fullProfile != null) {
+                voiceCard.isVisible = fullProfile.voiceBioUrl != null
+                voicePlayBtn.setOnClickListener { fullProfile.voiceBioUrl?.let { id -> voiceUi.play(id) } }
                 if (fullProfile.phoneVerified) {
                     verifiedBadge.visibility = View.VISIBLE
                 }
@@ -753,7 +718,9 @@ class DiscoveryFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        voiceUi.stopPlayback()
         binding = null
         super.onDestroyView()
     }
 }
+

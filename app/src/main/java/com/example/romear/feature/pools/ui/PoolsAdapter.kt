@@ -33,9 +33,9 @@ class PoolsAdapter(
             binding.poolTitle.text = pool.title
             binding.activityBadge.text = pool.activity.uppercase()
             val spotsLeft = (pool.capacity - pool.memberCount).coerceAtLeast(0)
-            binding.capacityBadge.text = if (spotsLeft == 0) "Pool full (${pool.capacity})" else "${pool.memberCount}/${pool.capacity} joined · $spotsLeft left"
-            binding.hostName.text = "Hosted by ${pool.host.displayName}"
-            binding.hostAvatar.load(pool.host.photoUrl, pool.host.displayName, sizeDp = 34)
+            binding.capacityBadge.text = if (spotsLeft == 0) "Hangout full" else "$spotsLeft spots left"
+            binding.hostName.text = "Host: ${pool.host.displayName} + ${pool.memberCount.coerceAtLeast(1) - 1} joined"
+            binding.hostAvatar.load(pool.host.photoUrl, pool.host.displayName, sizeDp = 48)
 
             val time = runCatching {
                 java.time.Instant.parse(pool.timeWindowStart)
@@ -47,6 +47,8 @@ class PoolsAdapter(
             binding.distanceBucket.text = cleanDistance
 
             binding.root.setOnClickListener { onPoolClicked(pool) }
+            binding.viewPoolAction.text = if (spotsLeft == 0) "View Hangout →" else "Join Hangout →"
+            binding.viewPoolAction.setOnClickListener { onPoolClicked(pool) }
         }
 
     }

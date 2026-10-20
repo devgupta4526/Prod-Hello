@@ -14,12 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 @HiltViewModel
 class DiscoveryViewModel @Inject constructor(
     private val discoveryRepository: DiscoveryRepository,
     private val helloRepository: HelloRepository,
+    private val savedState: androidx.lifecycle.SavedStateHandle,
 ) : ViewModel() {
 
     private val _users = MutableStateFlow<List<DiscoveryUser>>(emptyList())
@@ -36,6 +38,22 @@ class DiscoveryViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<DiscoveryEvent>()
     val events: SharedFlow<DiscoveryEvent> = _events.asSharedFlow()
+    val filterRadius: Float get() = savedState["filterRadius"] ?: 5f
+    val filterMinAge: Int get() = savedState["filterMinAge"] ?: 21
+    val filterMaxAge: Int get() = savedState["filterMaxAge"] ?: 30
+    val filterVerified: Boolean get() = savedState["filterVerified"] ?: false
+    val filterInterests: String get() = savedState["filterInterests"] ?: ""
+    private var loadJob: kotlinx.coroutines.Job? = null
+
+    fun applyFilters(radius: Float, minimumAge: Int, maximumAge: Int, verified: Boolean, interests: String) {
+        savedState["filterRadius"] = radius
+        savedState["filterMinAge"] = minimumAge
+        savedState["filterMaxAge"] = maximumAge
+        savedState["filterVerified"] = verified
+        savedState["filterInterests"] = interests
+        savedState["hasFilters"] = true
+        loadNearby()
+    }
 
     init {
         loadNearby()
@@ -68,26 +86,36 @@ class DiscoveryViewModel @Inject constructor(
     }
 
     fun loadNearby() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _loading.value = true
             _loadFailed.value = false
             try {
-                val list = discoveryRepository.getNearbyUsers()
-                _users.value = if (list.isNotEmpty()) list else getDemoNearbyUsers()
+                val list = discoveryRepository.getNearbyUsers(filterRadius.toDouble(), filterInterests.takeIf { it.isNotBlank() })
+                val hasFilters = savedState.get<Boolean>("hasFilters") == true
+                _users.value = list.filter { user ->
+                    (!hasFilters || (user.age?.let { it in filterMinAge..filterMaxAge } == true)) &&
+                        (!filterVerified || user.isIrlVerified)
+                }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
-                _users.value = getDemoNearbyUsers()
-                _loadFailed.value = false
+                _users.value = emptyList()
+                _loadFailed.value = true
             } finally {
-                _loading.value = false
+                if (kotlinx.coroutines.currentCoroutineContext().isActive) _loading.value = false
             }
         }
     }
 
     suspend fun getUserProfile(userId: String): PublicProfile? {
         return try {
-            discoveryRepository.getUserProfile(userId) ?: getDemoProfile(userId)
+            discoveryRepository.getUserProfile(userId)
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
-            getDemoProfile(userId)
+            _events.emit(DiscoveryEvent.Error(e.message ?: "Could not load this profile"))
+            null
         }
     }
 
@@ -100,78 +128,17 @@ class DiscoveryViewModel @Inject constructor(
                 } else {
                     _events.emit(DiscoveryEvent.HelloSent("Hello sent!"))
                 }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
-                _events.emit(DiscoveryEvent.HelloSent("Wave sent to user! 👋"))
+                _events.emit(DiscoveryEvent.Error(e.message ?: "Your Hello could not be sent. Please retry."))
             }
         }
     }
-
-    private fun getDemoNearbyUsers(): List<DiscoveryUser> = listOf(
-        DiscoveryUser(
-            userId = "user_priya",
-            displayName = "Priya Nair",
-            age = 24,
-            photoUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
-            availability = "OPEN",
-            distanceBucket = "~400m away · Indiranagar",
-            marker = com.example.romear.feature.discovery.domain.FuzzedMarker(12.9716, 77.5946),
-            sharedInterests = listOf("Coffee", "Figma", "Indie Rock", "Badminton"),
-            upFor = "Specialty coffee & cafe work sessions ☕"
-        ),
-        DiscoveryUser(
-            userId = "user_kabir",
-            displayName = "Kabir Sharma",
-            age = 26,
-            photoUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80",
-            availability = "OPEN",
-            distanceBucket = "~750m away · Koramangala",
-            marker = com.example.romear.feature.discovery.domain.FuzzedMarker(12.9352, 77.6245),
-            sharedInterests = listOf("Startups", "Badminton", "Bouldering"),
-            upFor = "Evening badminton games @ Play Arena 🏸"
-        ),
-        DiscoveryUser(
-            userId = "user_ananya",
-            displayName = "Ananya Roy",
-            age = 23,
-            photoUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
-            availability = "BROWSING",
-            distanceBucket = "~1.1 km away · Church Street",
-            marker = com.example.romear.feature.discovery.domain.FuzzedMarker(12.9754, 77.6050),
-            sharedInterests = listOf("Design", "Filter Coffee", "Art Walks"),
-            upFor = "Bookstore browsing & CTR dosa runs 📚"
-        )
-    )
-
-    private fun getDemoProfile(userId: String): PublicProfile = PublicProfile(
-        userId = userId,
-        displayName = if (userId == "user_kabir") "Kabir Sharma" else "Priya Nair",
-        bio = "Product Designer @ FinTech · Indiranagar. Always looking for good cafe spots, indie gigs, and casual badminton matches.",
-        age = if (userId == "user_kabir") 26 else 24,
-        photos = listOf(
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&auto=format&fit=crop&q=80"
-        ),
-        interests = listOf("Coffee", "Figma", "Indie Rock", "Badminton"),
-        availability = "OPEN",
-        prompts = listOf(
-            com.example.romear.feature.discovery.domain.ProfilePrompt(
-                "A small thing that brings me joy…",
-                "Finding a quiet corner at a specialty cafe with a sketchbook and a flat white."
-            ),
-            com.example.romear.feature.discovery.domain.ProfilePrompt(
-                "Best way to ask me out…",
-                "Suggest a filter coffee run or a friendly game of badminton!"
-            )
-        ),
-        idealWeekend = "Coffee crawl in Indiranagar followed by Sunday morning bouldering.",
-        upFor = "Specialty coffee & cafe work sessions ☕",
-        isIrlVerified = true,
-        phoneVerified = true
-    )
 
     sealed class DiscoveryEvent {
         data class HelloSent(val message: String) : DiscoveryEvent()
         data class Error(val error: String) : DiscoveryEvent()
     }
 }
+

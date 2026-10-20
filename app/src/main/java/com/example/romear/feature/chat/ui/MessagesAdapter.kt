@@ -20,7 +20,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 class MessagesAdapter(
-    private val onInviteClicked: ((String) -> Unit)? = null
+    private val onInviteClicked: ((String) -> Unit)? = null,
+    private val onVoiceClicked: ((String) -> Unit)? = null,
 ) : ListAdapter<ChatMessage, MessagesAdapter.ViewHolder>(DiffCallback) {
 
     private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
@@ -74,7 +75,7 @@ class MessagesAdapter(
                 ""
             }
             val delivery = if (message.isOutgoing) {
-                if (message.readAt != null) "$formattedTime ✓✓" else "$formattedTime ✓"
+                if (message.deliveredAt != null) "$formattedTime ✓✓" else "$formattedTime ✓"
             } else {
                 formattedTime
             }
@@ -85,7 +86,8 @@ class MessagesAdapter(
                 deliveryLabel = delivery,
                 outgoing = message.isOutgoing,
                 reaction = savedReaction,
-                onInviteClicked = { onInviteClicked?.invoke(message.body) }
+                onInviteClicked = { onInviteClicked?.invoke(message.body) },
+                onVoiceClicked = onVoiceClicked,
             )
 
             val params = binding.bubbleView.layoutParams as FrameLayout.LayoutParams

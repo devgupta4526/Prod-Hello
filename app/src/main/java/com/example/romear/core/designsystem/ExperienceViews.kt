@@ -22,6 +22,7 @@ class ExperienceViews(private val context: Context) {
         textSize = size
         setTextColor(context.getColor(color))
         includeFontPadding = false
+        setLineSpacing(dp(when { size >= 28f -> 5; size >= 16f -> 4; else -> 3 }).toFloat(), 1f)
         if (bold) setTypeface(typeface, Typeface.BOLD)
     }
 
@@ -56,6 +57,8 @@ class ExperienceViews(private val context: Context) {
             textSize = 14f
             isAllCaps = false
             minHeight = dp(56)
+            minimumHeight = dp(56)
+            setPadding(dp(16), 0, dp(16), 0)
             insetTop = 0
             insetBottom = 0
             cornerRadius = dp(999)

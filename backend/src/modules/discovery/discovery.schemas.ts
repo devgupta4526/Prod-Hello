@@ -10,7 +10,7 @@ export const presenceUpdateSchema = z
   .strict();
 
 export const nearbyQuerySchema = z.object({
-  radiusKm: z.coerce.number().min(1).max(25).optional(),
+  radiusKm: z.coerce.number().min(0.5).max(25).optional(),
   interests: z.string().optional(),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
@@ -46,6 +46,7 @@ export const publicUserProfileSchema = z.object({
   upFor: z.string().nullable(),
   upForUntil: z.string().nullable(),
   phoneVerified: z.boolean(),
+  voiceBio: z.object({ id: z.uuid(), durationMs: z.number() }).nullable(),
   age: z.number().nullable(),
   photos: z.array(
     z.object({

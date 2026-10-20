@@ -82,12 +82,11 @@ class MessageBubbleView @JvmOverloads constructor(
         )
     }
 
-    private val voiceWaveform = TextView(context).apply {
-        text = " ▂▃▅▆▇▆▅▃▂ ▂▃"
-        textSize = 13f
-        letterSpacing = 0.08f
-        setTextColor(ContextCompat.getColor(context, R.color.hello_primary))
-        setPadding((8 * resources.displayMetrics.density).toInt(), 0, (8 * resources.displayMetrics.density).toInt(), 0)
+    private val voiceWaveform = VoiceWaveformView(context).apply {
+        layoutParams = LayoutParams(0, (55 * resources.displayMetrics.density).toInt(), 1f).apply {
+            marginStart = (8 * resources.displayMetrics.density).toInt()
+            marginEnd = (8 * resources.displayMetrics.density).toInt()
+        }
     }
 
     private val voiceDuration = TextView(context).apply {
@@ -138,7 +137,8 @@ class MessageBubbleView @JvmOverloads constructor(
         deliveryLabel: CharSequence,
         outgoing: Boolean,
         reaction: String? = null,
-        onInviteClicked: (() -> Unit)? = null
+        onInviteClicked: (() -> Unit)? = null,
+        onVoiceClicked: ((String) -> Unit)? = null,
     ) {
         val rawText = text.toString()
 
@@ -151,7 +151,13 @@ class MessageBubbleView @JvmOverloads constructor(
             inviteButton.setOnClickListener { onInviteClicked?.invoke() }
             messageText.visibility = View.GONE
             voiceContainer.visibility = View.GONE
-        } else if (rawText.startsWith("[VOICE]")) {
+        } else if (Regex("^\\[VOICE:[0-9a-fA-F-]{36}:[0-9]{3,5}\\]$").matches(rawText)) {
+            val voice = rawText.removePrefix("[VOICE:").removeSuffix("]").split(":")
+            val seconds = (voice[1].toIntOrNull() ?: 0) / 1000
+            voiceDuration.text = "0:%02d".format(seconds)
+            voiceContainer.contentDescription = "Play voice message, $seconds seconds"
+            voiceContainer.isFocusable = true
+            voiceContainer.setOnClickListener { onVoiceClicked?.invoke(voice[0]) }
             voiceContainer.visibility = View.VISIBLE
             inviteCard.visibility = View.GONE
             messageText.visibility = View.GONE

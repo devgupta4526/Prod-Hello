@@ -227,6 +227,24 @@
             </LinearLayout>
         </com.example.romear.core.designsystem.HelloCardView>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_design_card">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Your voice intro" android:textAppearance="@style/TextAppearance.Hello.CardHeadline" />
+            <com.example.romear.core.designsystem.VoiceWaveformView
+                android:layout_width="match_parent" android:layout_height="55dp" android:layout_marginTop="12dp"
+                android:importantForAccessibility="no" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/recordVoiceButton" style="@style/Widget.Hello.Button.Tonal"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Record / re-record 15s intro" />
+        </LinearLayout>
         <!-- Availability Card -->
         <com.example.romear.core.designsystem.HelloCardView
             android:layout_width="match_parent"
@@ -289,6 +307,11 @@
             </LinearLayout>
         </com.example.romear.core.designsystem.HelloCardView>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/supportCasesButton" style="@style/Widget.Hello.Button.Tonal"
+            android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginHorizontal="24dp" android:layout_marginTop="20dp"
+            android:text="Help &amp; Support" />
         <!-- Haptics Feedback Card -->
         <com.example.romear.core.designsystem.HelloCardView
             android:layout_width="match_parent"

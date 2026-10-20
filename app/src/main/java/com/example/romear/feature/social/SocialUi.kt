@@ -424,7 +424,57 @@ class SocialUi(private val fragment: Fragment, private val repo: SocialRepositor
         }; show(circle.getString("name"),c)
     }
     private fun report(id: String) { val c = column(); val reason = input(c,"Reason for report"); form("Report member",c,"Submit") { repo.request("v1/reports","POST",JSONObject().put("targetType","USER").put("targetId",id).put("reason",reason.text.toString())) } }
-    fun plans(conversationId: String): Unit = run {
+    private val meetups by lazy { MeetupUi(fragment, repo, onMemories = ::memories, onReconnect = ::reconnect) }
+    fun plans(conversationId: String) = meetups.open(conversationId)
+    fun suggestPlan(conversationId: String) = meetups.compose(conversationId)
+    fun icebreaker(): Unit = run {
+        val data = repo.request("v1/discovery/icebreaker")
+        val ui = com.example.romear.core.designsystem.ExperienceViews(context)
+        val content = ui.column(24)
+        ui.add(content, ui.text(data.getString("question"), 22f, R.color.text_primary, true), 0)
+        ui.add(content, ui.text("TODAY’S ICEBREAKER", 11f, R.color.primary_coral, true), 20)
+        ui.add(content, ui.text("${data.getInt("totalAnswers")} nearby people answered"), 20)
+        ui.add(content, ui.text("YOUR ANSWER", 11f), 20)
+        val answer = EditText(context).apply {
+            hint = "Share your favourite spot…"
+            setText(if (data.isNull("answer")) "" else data.getString("answer"))
+            textSize = 16f
+            setTextColor(context.getColor(R.color.text_primary))
+            setHintTextColor(context.getColor(R.color.text_tertiary))
+            setBackgroundResource(R.drawable.bg_input_field)
+            setPadding(dp(16), dp(16), dp(16), dp(16))
+            filters = arrayOf(android.text.InputFilter.LengthFilter(280))
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        }
+        ui.add(content, answer, 8)
+        lateinit var post: MaterialButton
+        post = ui.button(content, if (data.isNull("answer")) "Post answer" else "Update answer", true) {
+            if (answer.text.isBlank()) answer.error = "Write your answer first"
+            else {
+                post.isEnabled = false
+                run { try {
+                    repo.request("v1/discovery/icebreaker", "PUT", JSONObject().put("day", data.getString("day")).put("answer", answer.text.toString().trim()))
+                    icebreaker()
+                } finally { post.isEnabled = true } }
+            }
+        }
+        val responses = data.getJSONArray("items")
+        if (data.isNull("answer")) ui.card(content, title = "Start with your answer", body = "Post to see what nearby people shared.")
+        else if (responses.length() == 0) ui.card(content, title = "You started the conversation", body = "Nearby answers will appear here as people join in.")
+        for (index in 0 until responses.length()) {
+            val response = responses.getJSONObject(index)
+            val card = ui.card(content, title = "${response.getString("displayName")} · ${response.getString("distanceBucket")}", body = response.getString("answer"))
+            ui.button(card, "👋 Say Hello") {
+                hello(response.getString("userId"), JSONObject().put("type", "ICEBREAKER").put("id", data.getString("day")).put("text", response.getString("answer")))
+            }
+        }
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(context)
+        dialog.setContentView(ScrollView(context).apply { addView(content) })
+        track("Daily icebreaker", dialog)
+        dialog.show()
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+    }
+    private fun legacyPlans(conversationId: String): Unit = run {
         val data = repo.request("v1/conversations/$conversationId/plans"); val userId = data.getString("userId"); val c = column()
         button(c,"Suggest a plan") { createPlan(conversationId) }
         val items = objects(data.getJSONArray("items")); if(items.isEmpty()) label(c,"Choose something to do together and a public place to meet.")

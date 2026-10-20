@@ -22,6 +22,26 @@ export function socialRoutes(app: FastifyInstance, db: Database, clock: Clock, d
     if (!u || u.status !== "ACTIVE" || !u.adultVerifiedAt || !u.guidelinesAcceptedAt) throw new AppError("forbidden", 403);
     return u.id;
   }
+  function icebreakerDay() {
+    return new Date(clock.now().getTime() + 19800000).toISOString().slice(0, 10);
+  }
+  r.get("/v1/discovery/icebreaker", { config }, async req => {
+    const userId = viewer(req);
+    const day = icebreakerDay();
+    const mine = await db.icebreakerAnswer.findUnique({ where: { day_userId: { day, userId } } });
+    const nearby = (await discovery.getNearby(userId, { limit: 50 })).items;
+    const answers = await db.icebreakerAnswer.findMany({ where: { day, userId: { in: nearby.map(person => person.userId) } }, take: 50 });
+    return { day, question: "What’s the best late-night food spot in the city?", expiresAt: new Date(Date.parse(`${day}T00:00:00+05:30`) + 86400000).toISOString(), answer: mine?.answer ?? null, totalAnswers: answers.length, items: mine ? answers.flatMap(answer => {
+      const person = nearby.find(person => person.userId === answer.userId);
+      return person ? [{ userId: answer.userId, displayName: person.displayName, distanceBucket: person.distanceBucket, answer: answer.answer }] : [];
+    }) : [] };
+  });
+  r.put("/v1/discovery/icebreaker", { config, schema: { body: z.object({ day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), answer: z.string().trim().min(1).max(280) }).strict() } }, async req => {
+    const userId = viewer(req);
+    if (req.body.day !== icebreakerDay()) throw new AppError("context_unavailable", 409);
+    await db.icebreakerAnswer.upsert({ where: { day_userId: { day: req.body.day, userId } }, create: { day: req.body.day, userId, answer: req.body.answer }, update: { answer: req.body.answer } });
+    return { ok: true };
+  });
   async function members(conversationId: string, userId: string) {
     const c = await chat.getConversationForUser(conversationId, userId);
     const ids = c.connection ? [c.connection.userLowId, c.connection.userHighId] : (c.pool?.members.map(m => m.userId) ?? []);
@@ -68,7 +88,49 @@ export function socialRoutes(app: FastifyInstance, db: Database, clock: Clock, d
     if (participantIds.some(id => blocked.has(id))) throw new AppError("not_found", 404);
     const times = req.body.timeOptions.map(t => new Date(t));
     if (times.some(t => t <= clock.now() || t.getTime() > clock.now().getTime() + 90 * 86400000)) throw new AppError("invalid_plan_time", 400);
-    return db.socialPlan.create({ data: { id: uuid(), participantIds, conversationId: req.params.id, creatorId: userId, activity: req.body.activity, durationMinutes: req.body.durationMinutes, venue: req.body.venue, timeOptions: times } });
+    return db.$transaction(async tx => {
+      const plan = await tx.socialPlan.create({ data: { id: uuid(), participantIds, conversationId: req.params.id, creatorId: userId, activity: req.body.activity, durationMinutes: req.body.durationMinutes, venue: req.body.venue, timeOptions: times, votes: { create: { userId, option: 0 } } } });
+      for (const recipient of participantIds.filter(id => id !== userId)) await tx.notification.create({ data: { id: uuid(), userId: recipient, type: "PLAN_PROPOSED", dedupeKey: `plan-proposed:${plan.id}`, payload: { planId: plan.id, conversationId: plan.conversationId, title: req.body.activity, message: req.body.venue } } });
+      return plan;
+    });
+  });
+  r.post("/v1/plans/:id/respond", { config, schema: { params: idParams, body: z.object({ response: z.enum(["ACCEPT", "DECLINE"]), option: z.number().int().min(0).max(2).default(0), expectedTime: z.iso.datetime(), note: z.string().trim().max(240).default("") }).strict() } }, async req => {
+    const userId = viewer(req); const { p, participants } = await planAccess(req.params.id, userId);
+    return db.$transaction(async tx => {
+      await tx.$queryRaw`SELECT id FROM "SocialPlan" WHERE id = ${p.id}::uuid FOR UPDATE`;
+      const current = await tx.socialPlan.findUniqueOrThrow({ where: { id: p.id }, include: { votes: true } });
+      const time = current.timeOptions[req.body.option];
+      if (!time || time.toISOString() !== req.body.expectedTime || time <= clock.now()) throw new AppError("plan_closed", 409);
+      if (current.status === "CONFIRMED" && req.body.response === "ACCEPT") return { status: "CONFIRMED" };
+      if (current.status !== "PROPOSED") throw new AppError("plan_closed", 409);
+      if (req.body.response === "DECLINE") {
+        await tx.socialPlan.update({ where: { id: p.id }, data: { status: "DECLINED", confirmedTime: null } });
+      } else {
+        await tx.planVote.upsert({ where: { planId_userId: { planId: p.id, userId } }, create: { planId: p.id, userId, option: req.body.option }, update: { option: req.body.option } });
+      }
+      const allAccepted = req.body.response === "ACCEPT" && participants.length >= 2 && participants.every(id => id === userId || current.votes.some(v => v.userId === id && v.option === req.body.option));
+      const status = req.body.response === "DECLINE" ? "DECLINED" : allAccepted ? "CONFIRMED" : "PROPOSED";
+      if (allAccepted) await tx.socialPlan.update({ where: { id: p.id }, data: { status, confirmedTime: time, participantIds: participants } });
+      if (status !== "PROPOSED") for (const recipient of participants) await tx.notification.upsert({
+        where: { userId_dedupeKey: { userId: recipient, dedupeKey: `plan-${status.toLowerCase()}:${p.id}:${time.toISOString()}` } },
+        create: { id: uuid(), userId: recipient, type: `PLAN_${status}`, dedupeKey: `plan-${status.toLowerCase()}:${p.id}:${time.toISOString()}`, payload: { planId: p.id, conversationId: p.conversationId, title: status === "CONFIRMED" ? "It’s a plan." : "Invitation declined.", message: req.body.note || current.activity } }, update: {},
+      });
+      return { status };
+    });
+  });
+  r.post("/v1/plans/:id/reschedule", { config, schema: { params: idParams, body: z.object({ time: z.iso.datetime(), expectedTime: z.iso.datetime(), note: z.string().trim().max(240).default("") }).strict() } }, async req => {
+    const userId = viewer(req); const { p, participants } = await planAccess(req.params.id, userId);
+    const time = new Date(req.body.time);
+    if (time <= clock.now() || time.getTime() > clock.now().getTime() + 90 * 86400000) throw new AppError("invalid_plan_time", 400);
+    return db.$transaction(async tx => {
+      await tx.$queryRaw`SELECT id FROM "SocialPlan" WHERE id = ${p.id}::uuid FOR UPDATE`;
+      const current = await tx.socialPlan.findUniqueOrThrow({ where: { id: p.id } });
+      if (!["PROPOSED", "CONFIRMED"].includes(current.status) || (current.confirmedTime ?? current.timeOptions[0])?.toISOString() !== req.body.expectedTime) throw new AppError("plan_closed", 409);
+      await tx.planVote.deleteMany({ where: { planId: p.id } });
+      await tx.socialPlan.update({ where: { id: p.id }, data: { timeOptions: [time], status: "PROPOSED", confirmedTime: null, votes: { create: { userId, option: 0 } } } });
+      for (const recipient of participants.filter(id => id !== userId)) await tx.notification.create({ data: { id: uuid(), userId: recipient, type: "PLAN_RESCHEDULED", dedupeKey: `plan-rescheduled:${uuid()}`, payload: { planId: p.id, conversationId: p.conversationId, title: "New time proposed.", message: req.body.note || time.toISOString() } } });
+      return { status: "PROPOSED" };
+    });
   });
   r.put("/v1/plans/:id/vote", { config, schema: { params: idParams, body: z.object({ option: z.number().int().min(0).max(2) }).strict() } }, async req => {
     const userId = viewer(req); const { p } = await planAccess(req.params.id, userId);
@@ -101,9 +163,11 @@ export function socialRoutes(app: FastifyInstance, db: Database, clock: Clock, d
   });
   r.post("/v1/plans/:id/cancel", { config, schema: { params: idParams } }, async req => {
     const userId = viewer(req); const { p } = await planAccess(req.params.id, userId);
-    if (p.creatorId !== userId) throw new AppError("forbidden", 403);
     await db.$transaction(async tx => {
       await tx.$queryRaw`SELECT id FROM "SocialPlan" WHERE id = ${p.id}::uuid FOR UPDATE`;
+        const current = await tx.socialPlan.findUniqueOrThrow({ where: { id: p.id } });
+        if (current.status === "CANCELLED") return;
+        if (!["PROPOSED", "CONFIRMED"].includes(current.status)) throw new AppError("plan_closed", 409);
       await tx.socialPlan.update({ where: { id: p.id }, data: { status: "CANCELLED" } });
       for (const recipient of p.participantIds) await tx.notification.upsert({
         where: { userId_dedupeKey: { userId: recipient, dedupeKey: `plan-cancelled:${p.id}` } },

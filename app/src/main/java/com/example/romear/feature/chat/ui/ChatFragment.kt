@@ -33,6 +33,7 @@ class ChatFragment : Fragment() {
 
     @javax.inject.Inject lateinit var socialRepository: com.example.romear.feature.social.SocialRepository
     private lateinit var socialUi: com.example.romear.feature.social.SocialUi
+    private lateinit var voiceUi: com.example.romear.feature.social.VoiceUi
 
     private var binding: FragmentChatBinding? = null
     private val viewModel: ChatViewModel by viewModels()
@@ -45,6 +46,7 @@ class ChatFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         socialUi = com.example.romear.feature.social.SocialUi(this, socialRepository)
+        voiceUi = com.example.romear.feature.social.VoiceUi(this, socialRepository)
         enterTransition = HelloTransitions.forward()
         exitTransition = HelloTransitions.backward()
     }
@@ -72,7 +74,10 @@ class ChatFragment : Fragment() {
             }
         }
 
-        adapter = MessagesAdapter()
+        adapter = MessagesAdapter(
+            onInviteClicked = { socialUi.plans(conversationId) },
+            onVoiceClicked = { voiceUi.play(it) },
+        )
         val layoutManager = LinearLayoutManager(requireContext()).apply {
             stackFromEnd = true
         }
@@ -93,13 +98,12 @@ class ChatFragment : Fragment() {
         }
 
         views.btnLetsMeet.setOnClickListener {
-            HelloMotion.bounce(it) { showLetsMeetSheet() }
+            HelloMotion.bounce(it) { socialUi.suggestPlan(conversationId) }
         }
 
         views.btnVoiceNote.setOnClickListener {
             HelloMotion.bounce(it) {
-                viewModel.sendMessage("[VOICE]")
-                HelloFeedback.info(requireView(), "15s Voice note sent 🎙️")
+                voiceUi.record(conversationId) { viewModel.loadMessages(silent = true) }
             }
         }
 
@@ -111,6 +115,12 @@ class ChatFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    while (true) {
+                        viewModel.loadMessages(silent = true)
+                        kotlinx.coroutines.delay(5_000)
+                    }
+                }
                 launch {
                     viewModel.draft.collect { draft ->
                         if (views.messageInput.text.toString() != draft) {
@@ -132,8 +142,10 @@ class ChatFragment : Fragment() {
                 }
                 launch {
                     viewModel.messages.collect { messages ->
+                        val atBottom = layoutManager.findLastVisibleItemPosition() >= adapter.itemCount - 2
+                        val lastId = adapter.currentList.lastOrNull()?.id
                         adapter.submitList(messages) {
-                            if (messages.isNotEmpty()) {
+                            if (messages.isNotEmpty() && lastId != messages.last().id && (atBottom || messages.last().isOutgoing)) {
                                 views.messagesRecyclerView.scrollToPosition(messages.size - 1)
                             }
                         }
@@ -236,36 +248,12 @@ class ChatFragment : Fragment() {
         bottomSheet.show()
     }
 
-    private fun showLetsMeetSheet() {
-        val bottomSheet = BottomSheetDialog(requireContext())
-        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_lets_meet, null)
-        bottomSheet.setContentView(sheetView)
-
-        val venueGroup = sheetView.findViewById<ChipGroup>(R.id.venueChipGroup)
-        val timeGroup = sheetView.findViewById<ChipGroup>(R.id.timeChipGroup)
-        val sendBtn = sheetView.findViewById<View>(R.id.btnSendMeetupInvite)
-        val safetyLink = sheetView.findViewById<View>(R.id.btnViewSafetyChecklist)
-
-        safetyLink?.setOnClickListener {
-            showMeetupSafetyChecklist()
-        }
-
-        sendBtn?.setOnClickListener {
-            val selectedVenueChip = venueGroup?.findViewById<Chip>(venueGroup.checkedChipId)
-            val selectedTimeChip = timeGroup?.findViewById<Chip>(timeGroup.checkedChipId)
-            val venue = selectedVenueChip?.text?.toString()?.replace("☕ ", "") ?: "Third Wave Coffee"
-            val time = selectedTimeChip?.text?.toString() ?: "Today 6:00 PM"
-
-            viewModel.sendMessage("[ACTIVITY:COFFEE:$venue - $time]")
-            HelloFeedback.success(requireView(), "Meetup invite sent! ☕")
-            bottomSheet.dismiss()
-        }
-
-        bottomSheet.show()
-    }
+    private fun showLetsMeetSheet() { socialUi.suggestPlan(arguments?.getString("conversationId").orEmpty()) }
 
     override fun onDestroyView() {
+        voiceUi.stopPlayback()
         binding = null
         super.onDestroyView()
     }
 }
+

@@ -233,6 +233,7 @@ export class DiscoveryService {
       upFor: user.profile.upForUntil && user.profile.upForUntil > this.clock.now() ? user.profile.upFor : null,
       upForUntil: user.profile.upForUntil && user.profile.upForUntil > this.clock.now() ? user.profile.upForUntil.toISOString() : null,
       phoneVerified: !!user.phoneVerifiedAt,
+      voiceBio: await this.repo.getVoiceBio(user.id),
       age,
       photos: user.photos.map((p) => ({
         id: p.id,

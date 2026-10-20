@@ -18,7 +18,7 @@ interface DiscoveryApi {
 
     @GET("v1/discovery/nearby")
     suspend fun getNearbyUsers(
-        @Query("radiusKm") radiusKm: Int? = null,
+        @Query("radiusKm") radiusKm: Double? = null,
         @Query("interests") interests: String? = null,
         @Query("cursor") cursor: String? = null,
         @Query("limit") limit: Int = 20,

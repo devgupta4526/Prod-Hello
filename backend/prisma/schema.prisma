@@ -90,6 +90,9 @@ enum LedgerType {
 }
 
 model User {
+  icebreakerAnswers IcebreakerAnswer[]
+  voiceClips VoiceClip[]
+  supportCases SupportCase[]
   socialPlans SocialPlan[]
   planVotes PlanVote[]
   hostedCircles InterestCircle[]
@@ -143,6 +146,51 @@ model User {
   appeals                   Appeal[]
   dataExports               DataExport[]
   idempotencyKeys           IdempotencyKey[]
+}
+
+model IcebreakerAnswer {
+  day String
+  userId String @db.Uuid
+  answer String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([day, userId])
+}
+
+model VoiceClip {
+  id String @id @db.Uuid
+  userId String @db.Uuid
+  conversationId String? @db.Uuid
+  audio Bytes
+  durationMs Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, createdAt])
+}
+
+model SupportCase {
+  id String @id @db.Uuid
+  userId String @db.Uuid
+  ticketId String? @db.Uuid
+  issue String
+  status String @default("OPEN")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+  @@index([userId, createdAt])
+}
+
+model SupportMessage {
+  id String @id @db.Uuid
+  caseId String @db.Uuid
+  authorId String @db.Uuid
+  fromSupport Boolean @default(false)
+  body String
+  attachment Bytes?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  supportCase SupportCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  @@index([caseId, createdAt])
 }
 
 model OtpChallenge {

@@ -39,6 +39,7 @@ class DiscoveryAdapter(
         fun bind(user: DiscoveryUser) {
             val nameText = if (user.age != null) "${user.displayName}, ${user.age}" else user.displayName
             binding.userName.text = nameText
+            binding.irlVerifiedPill.visibility = if (user.isIrlVerified) android.view.View.VISIBLE else android.view.View.GONE
             val cleanDistance = user.distanceBucket.removePrefix("📍").trim()
             binding.distanceBucket.text = cleanDistance
             binding.userSubhead.text = user.sharedInterests.take(2).joinToString(" · ")

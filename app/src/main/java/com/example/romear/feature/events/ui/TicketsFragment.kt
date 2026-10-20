@@ -34,6 +34,8 @@ import kotlinx.coroutines.flow.combine
 
 @AndroidEntryPoint
 class TicketsFragment : Fragment() {
+    @javax.inject.Inject lateinit var socialRepository: com.example.romear.feature.social.SocialRepository
+    private lateinit var supportUi: com.example.romear.feature.social.SupportUi
 
     private var binding: FragmentTicketsBinding? = null
     private val viewModel: TicketsViewModel by viewModels()
@@ -45,6 +47,7 @@ class TicketsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportUi = com.example.romear.feature.social.SupportUi(this, socialRepository)
         enterTransition = HelloTransitions.tab()
         exitTransition = HelloTransitions.tab()
     }
@@ -287,7 +290,7 @@ class TicketsFragment : Fragment() {
         sheetView.findViewById<TextView>(R.id.checkoutTotalAmount)?.text = totalFormatted
 
         val submitBtn = sheetView.findViewById<MaterialButton>(R.id.btnSubmitPayment)
-        submitBtn?.text = "Pay $totalFormatted & Confirm Ticket ⚡"
+        submitBtn?.text = if (total == 0L) "Confirm free ticket" else "Pay $totalFormatted & Confirm Ticket"
 
         val upiContainer = sheetView.findViewById<View>(R.id.upiInputContainer)
         val radioGroup = sheetView.findViewById<RadioGroup>(R.id.paymentMethodRadioGroup)
@@ -297,7 +300,7 @@ class TicketsFragment : Fragment() {
 
         submitBtn?.setOnClickListener {
             submitBtn.isEnabled = false
-            viewModel.bookTicket(event.id, tierId, quantity) {
+            viewModel.bookTicket(event.id, tierId, quantity, onFailure = { submitBtn.isEnabled = true }) {
                 sheet.dismiss()
                 HelloFeedback.success(requireView(), "Ticket confirmed! See you there 🎟️")
             }
@@ -313,7 +316,9 @@ class TicketsFragment : Fragment() {
 
         sheetView.findViewById<TextView>(R.id.bookingDetailTitle)?.text = ticket.eventTitle
         sheetView.findViewById<TextView>(R.id.bookingDetailTimeVenue)?.text = "Booking Reference · ${ticket.id.take(8).uppercase()}"
-        sheetView.findViewById<TextView>(R.id.bookingTierInfo)?.text = "1 × ${ticket.tierName} · Confirmed"
+        sheetView.findViewById<TextView>(R.id.bookingTierInfo)?.text = "1 × ${ticket.tierName} · ${ticket.status.lowercase().replaceFirstChar { it.uppercase() }}"
+        sheetView.findViewById<View>(R.id.btnCancelBooking)?.isVisible = ticket.status == "CONFIRMED" && ticket.checkedInAt == null
+        sheetView.findViewById<View>(R.id.btnViewQrPass)?.isEnabled = ticket.status == "CONFIRMED"
 
         sheetView.findViewById<View>(R.id.btnViewQrPass)?.setOnClickListener {
             sheet.dismiss()
@@ -343,8 +348,18 @@ class TicketsFragment : Fragment() {
         }
 
         sheetView.findViewById<View>(R.id.btnConfirmCancellation)?.setOnClickListener {
-            sheet.dismiss()
-            showRefundStatusSheet(ticket)
+            val cancel = it
+            cancel.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    socialRepository.request("v1/tickets/${ticket.id}/cancel", "POST")
+                    sheet.dismiss()
+                    viewModel.loadData()
+                    HelloFeedback.success(requireView(), "Booking cancelled. No payment was taken for this free ticket.")
+                } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+                catch (failure: Exception) { HelloFeedback.error(sheetView, failure.message ?: "Couldn’t cancel this booking. Please retry.") }
+                finally { cancel.isEnabled = true }
+            }
         }
 
         sheet.show()
@@ -395,19 +410,7 @@ class TicketsFragment : Fragment() {
     }
 
     private fun showSupportSheet(ticket: UserTicketItem) {
-        val sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_support, null)
-        val sheet = BottomSheetDialog(requireContext())
-        sheet.setContentView(sheetView)
-
-        sheetView.findViewById<TextView>(R.id.supportBookingTitle)?.text = ticket.eventTitle
-        sheetView.findViewById<TextView>(R.id.supportBookingRef)?.text = "BOOKING ${ticket.id.take(8).uppercase()}"
-
-        sheetView.findViewById<View>(R.id.btnSubmitSupport)?.setOnClickListener {
-            sheet.dismiss()
-            HelloFeedback.success(requireView(), "Support ticket CS-1042 opened. We'll update you in Activity.")
-        }
-
-        sheet.show()
+        supportUi.create(ticket)
     }
 
     private fun showTicketQrDialog(ticket: UserTicketItem) {
@@ -420,6 +423,23 @@ class TicketsFragment : Fragment() {
         title.text = ticket.eventTitle
         tier.text = ticket.tierName
         code.text = ticket.qrPayload
+        val qrImage = dialogView.findViewById<android.widget.ImageView>(R.id.qrImage)
+        try {
+            val matrix = com.google.zxing.qrcode.QRCodeWriter().encode(
+                ticket.qrPayload,
+                com.google.zxing.BarcodeFormat.QR_CODE,
+                720,
+                720,
+                mapOf(com.google.zxing.EncodeHintType.MARGIN to 4, com.google.zxing.EncodeHintType.CHARACTER_SET to "UTF-8"),
+            )
+            val pixels = IntArray(matrix.width * matrix.height) { index ->
+                if (matrix[index % matrix.width, index / matrix.width]) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+            }
+            qrImage.setImageBitmap(android.graphics.Bitmap.createBitmap(pixels, matrix.width, matrix.height, android.graphics.Bitmap.Config.ARGB_8888))
+        } catch (_: Exception) {
+            qrImage.isVisible = false
+            code.text = "QR unavailable. Booking reference: ${ticket.id}"
+        }
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)

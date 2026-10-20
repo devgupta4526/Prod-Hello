@@ -89,10 +89,12 @@ class ActivityFragment : Fragment() {
     private val model: ActivityViewModel by viewModels()
     @Inject lateinit var repository: SocialRepository
     private lateinit var social: SocialUi
+    private lateinit var support: SupportUi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         social = SocialUi(this, repository)
+        support = SupportUi(this, repository)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -115,6 +117,12 @@ class ActivityFragment : Fragment() {
         listOf("All", "People", "Plans").forEach { label ->
             filters.addView(Chip(requireContext(), null, com.google.android.material.R.attr.chipStyle).apply {
                 id = View.generateViewId(); text = label; isCheckable = true; isChecked = state.filter == label
+                textSize = 12f
+                setChipBackgroundColorResource(R.color.hello_chip_background)
+                setChipStrokeColorResource(R.color.hello_chip_stroke)
+                chipStrokeWidth = resources.displayMetrics.density
+                setTextColor(requireContext().getColorStateList(R.color.hello_chip_text))
+                isCheckedIconVisible = false
                 setOnClickListener { model.filter(label) }
             })
         }
@@ -129,6 +137,7 @@ class ActivityFragment : Fragment() {
             ui.card(content, eyebrow, title, payload.optString("message").ifBlank { payload.optString("body") }) {
                 model.read(item)
                 when {
+                    payload.optString("caseId").isNotBlank() -> support.conversation(payload.getString("caseId"))
                     payload.optString("conversationId").isNotBlank() -> social.plans(payload.getString("conversationId"))
                     isPeople(type) -> findNavController().navigate(R.id.inbox_graph)
                     type.contains("EVENT") || type.contains("TICKET") || type.contains("BOOKING") || type.contains("ORDER") -> findNavController().navigate(R.id.tickets_graph)

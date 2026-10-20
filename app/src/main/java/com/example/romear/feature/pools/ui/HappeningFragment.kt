@@ -104,7 +104,7 @@ class HappeningFragment : Fragment() {
                         views.loadingIndicator.isVisible = loading
                         views.emptyStateView.isVisible = !loading && !failed && pools.isEmpty()
                         views.feedError.isVisible = !loading && failed
-                        views.hostPoolFab.isVisible = !failed
+                        views.hostPoolFab.isVisible = false
                     }
                 }
                 launch {

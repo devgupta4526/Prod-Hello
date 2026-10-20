@@ -48,9 +48,23 @@ export class HelloService {
       const profile = await this.discoveryRepo.getPublicProfile(receiverId);
       if (!profile || profile.status !== "ACTIVE") throw new AppError("not_found", 404);
       if (replyContext.type === "PHOTO") {
-        const photo = profile.photos.find(p => p.id === replyContext.id);
+        const photo = replyContext.id === "current" ? profile.photos[0] : profile.photos.find(p => p.id === replyContext.id);
         if (!photo) throw new AppError("context_unavailable", 409);
         context = { type: "PHOTO", id: photo.id, text: `Photo ${String(photo.position + 1)}` };
+      } else if (replyContext.type === "ICEBREAKER") {
+        const day = new Date(now.getTime() + 19800000).toISOString().slice(0, 10);
+        const answer = await this.discoveryRepo.getIcebreakerAnswer(receiverId, day);
+        const mine = await this.discoveryRepo.getIcebreakerAnswer(senderId, day);
+        if (replyContext.id !== day || !answer || !mine) throw new AppError("context_unavailable", 409);
+        context = { type: "ICEBREAKER", id: day, text: answer.answer };
+      } else if (replyContext.type === "INTEREST") {
+        const interest = profile.profile?.interests.find(value => value.toLowerCase() === replyContext.text?.toLowerCase());
+        if (!interest) throw new AppError("context_unavailable", 409);
+        context = { type: "INTEREST", id: interest, text: interest };
+      } else if (replyContext.type === "VIBE" || replyContext.type === "NOTE") {
+        const target = profile.profile;
+        if (!target?.upFor || !target.upForUntil || target.upForUntil <= now) throw new AppError("context_unavailable", 409);
+        context = { type: "VIBE", id: "current", text: target.upFor };
       } else {
         const prompts = profile.profile?.prompts;
         const prompt = Array.isArray(prompts) ? prompts.find(p => p && typeof p === "object" && !Array.isArray(p) && p.id === replyContext.id) : null;

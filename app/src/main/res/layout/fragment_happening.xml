@@ -17,7 +17,7 @@
             android:id="@+id/headerContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_hello_header"
+            android:background="@color/bg_canvas"
             android:elevation="0dp"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/screen_gutter"
@@ -49,27 +49,12 @@
                         android:id="@+id/headerTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="20dp"
                         android:accessibilityHeading="true"
                         android:text="Happening Today."
                         android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" />
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnTopHost"
-                    style="@style/Widget.Hello.Button.Primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_gradient_primary"
-                    app:backgroundTint="@null"
-                    android:minWidth="0dp"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="0dp"
-                    android:text="+ Host"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="999dp" />
             </LinearLayout>
 
             <TextView
@@ -77,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Spontaneous plans and group activities happening nearby in Bangalore."
+                android:visibility="gone"
                 android:textAppearance="@style/TextAppearance.Hello.Caption"
                 android:lineSpacingExtra="2dp" />
 
@@ -141,6 +127,18 @@
                         android:text="🍺 Drinks" />
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTopHost"
+                style="@style/Widget.Hello.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:background="@drawable/bg_gradient_primary"
+                app:backgroundTint="@null"
+                android:text="+ Host a Hangout"
+                app:cornerRadius="999dp" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -95,12 +95,12 @@ class EventsRepository @Inject constructor(
         )
     }
 
-    suspend fun createOrder(eventId: String, tierId: String, quantity: Int): CreateOrderResult =
+    suspend fun createOrder(eventId: String, tierId: String, quantity: Int, requestId: String = UUID.randomUUID().toString()): CreateOrderResult =
         withContext(dispatcher) {
             val json = JSONObject()
                 .put("tierId", tierId)
                 .put("quantity", quantity)
-                .put("requestId", UUID.randomUUID().toString())
+                .put("requestId", requestId)
             val response = api.createOrder(eventId, json.body()).json()
             CreateOrderResult(
                 orderId = response.getString("orderId"),
@@ -108,15 +108,6 @@ class EventsRepository @Inject constructor(
                 totalPaise = response.getInt("amountPaise"),
                 expiresAt = response.optString("reservedUntil", ""),
             )
-        }
-
-    suspend fun confirmPayment(orderId: String, paymentId: String = "pay_" + UUID.randomUUID().toString()): Boolean =
-        withContext(dispatcher) {
-            val json = JSONObject()
-                .put("razorpayPaymentId", paymentId)
-                .put("razorpaySignature", "sig_" + UUID.randomUUID().toString())
-            api.confirmPayment(orderId, json.body())
-            true
         }
 
     suspend fun listMyTickets(): List<UserTicketItem> = withContext(dispatcher) {

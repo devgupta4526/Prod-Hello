@@ -36,6 +36,8 @@ class ProfileFragment : Fragment() {
     @javax.inject.Inject lateinit var socialRepository: com.example.romear.feature.social.SocialRepository
     private lateinit var presenceLocation: com.example.romear.core.security.PresenceLocation
     private lateinit var socialUi: com.example.romear.feature.social.SocialUi
+    private lateinit var voiceUi: com.example.romear.feature.social.VoiceUi
+    private lateinit var supportUi: com.example.romear.feature.social.SupportUi
 
     private var binding: FragmentProfileBinding? = null
     private val viewModel: ProfileViewModel by viewModels()
@@ -47,6 +49,8 @@ class ProfileFragment : Fragment() {
         super.onCreate(savedInstanceState)
         presenceLocation = com.example.romear.core.security.PresenceLocation(this) { availability, location -> viewModel.updateAvailability(availability, location) }
         socialUi = com.example.romear.feature.social.SocialUi(this, socialRepository) { viewModel.loadData() }
+        voiceUi = com.example.romear.feature.social.VoiceUi(this, socialRepository)
+        supportUi = com.example.romear.feature.social.SupportUi(this, socialRepository)
         enterTransition = HelloTransitions.tab()
         exitTransition = HelloTransitions.tab()
     }
@@ -59,6 +63,8 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val views = requireNotNull(binding)
+        views.recordVoiceButton.setOnClickListener { voiceUi.record() }
+        views.supportCasesButton.setOnClickListener { supportUi.list() }
 
         views.editBasicsButton.setOnClickListener { socialUi.editBasics() }
         views.galleryButton.setOnClickListener { socialUi.gallery() }

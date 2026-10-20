@@ -28,6 +28,8 @@ import { helloRoutes } from "./modules/hello/hello.routes.js";
 import { ChatRepository } from "./modules/chat/chat.repo.js";
 import { ChatService } from "./modules/chat/chat.service.js";
 import { chatRoutes } from "./modules/chat/chat.routes.js";
+import { supportRoutes } from "./modules/social/support.routes.js";
+import { voiceRoutes } from "./modules/chat/voice.routes.js";
 import { PoolsRepository } from "./modules/pools/pools.repo.js";
 import { PoolsService } from "./modules/pools/pools.service.js";
 import { poolsRoutes } from "./modules/pools/pools.routes.js";
@@ -265,6 +267,8 @@ export async function buildApp(
   discoveryRoutes(app, discoveryService);
   helloRoutes(app, helloService);
   chatRoutes(app, chatService);
+  supportRoutes(app, database);
+  voiceRoutes(app, database, chatService, discoveryService);
   poolsRoutes(app, poolsService);
   eventsRoutes(app, eventsService);
   ordersRoutes(app, ordersService);

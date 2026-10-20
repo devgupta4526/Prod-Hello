@@ -34,7 +34,7 @@ class DiscoveryRepository @Inject constructor(
         true
     }
 
-    suspend fun getNearbyUsers(radiusKm: Int? = null, interests: String? = null): List<DiscoveryUser> =
+    suspend fun getNearbyUsers(radiusKm: Double? = null, interests: String? = null): List<DiscoveryUser> =
         withContext(dispatcher) {
             val response = api.getNearbyUsers(radiusKm, interests).json()
             val items = response.getJSONArray("items")
@@ -62,6 +62,7 @@ class DiscoveryRepository @Inject constructor(
                         ),
                         sharedInterests = shared,
                         upFor = if(obj.isNull("upFor")) null else obj.getString("upFor"),
+                        isIrlVerified = obj.optBoolean("isIrlVerified"),
                     ),
                 )
             }
@@ -93,6 +94,7 @@ class DiscoveryRepository @Inject constructor(
             upFor = if(obj.isNull("upFor")) null else obj.getString("upFor"),
             upForUntil = if(obj.isNull("upForUntil")) null else obj.getString("upForUntil"),
             phoneVerified = obj.optBoolean("phoneVerified"),
+            voiceBioUrl = obj.optJSONObject("voiceBio")?.optString("id")?.takeIf { it.isNotBlank() },
             interests = interests,
             availability = if (obj.isNull("availability")) null else obj.getString("availability"),
         )

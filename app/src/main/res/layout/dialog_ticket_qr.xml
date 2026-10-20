@@ -28,14 +28,13 @@
 
     <ImageView
         android:id="@+id/qrImage"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/bg_qr_frame"
+        android:background="@android:color/white"
         android:contentDescription="@string/ticket_qr_title"
-        android:padding="20dp"
-        android:src="@drawable/ic_qr"
-        app:tint="@color/white" />
+        android:padding="8dp"
+        android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/qrPayloadCode"

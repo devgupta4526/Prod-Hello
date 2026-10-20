@@ -32,6 +32,11 @@ class SocialRepository @Inject constructor(@Named("authenticated") retrofit: Ret
             val message = when(code) {
                 "agreement_required" -> "Everyone participating must choose the same time before you confirm."
                 "plan_closed" -> "This plan has changed or its time has passed. Refresh and try again."
+                "invalid_plan_time" -> "Choose a future time within the next 90 days."
+                "support_closed" -> "This support case has been closed. Open Help & Support to review it."
+                "invalid_audio" -> "This recording could not be read. Please record it again."
+                "ticket_not_cancellable" -> "This ticket is already used, cancelled, or the event has started. Contact support for help."
+                "refund_provider_unavailable" -> "Paid cancellation needs the payment provider. Your booking is unchanged. Contact support for help."
                 "plan_not_finished" -> "You can choose to meet again after the plan's scheduled end."
                 "plan_not_started" -> "Memories open when your confirmed plan starts."
                 "circle_full" -> "This circle is full. Try another circle."
@@ -50,4 +55,5 @@ class SocialRepository @Inject constructor(@Named("authenticated") retrofit: Ret
         }
     }
     suspend fun image(id: String): ByteArray = withContext(Dispatchers.IO) { api.get("v1/memories/$id/image").use { it.bytes() } }
+    suspend fun binary(path: String): ByteArray = withContext(Dispatchers.IO) { api.get(path).use { it.bytes() } }
 }
