@@ -68,7 +68,17 @@ class ChatFragment : Fragment() {
         val contextBanner = arguments?.getString("contextTitle")
 
         views.partnerName.text = partnerName
-        if (!contextBanner.isNullOrBlank()) {
+        if (conversationId.contains("pool")) {
+            views.partnerStatus.text = "👥 Nagpur Hangout Group Chat"
+            views.partnerStatus.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.accent_emerald))
+            views.partnerOnlineDot.isVisible = true
+            views.planButton.text = "📍 Venue & Details"
+            views.planButton.setOnClickListener { findNavController().navigateUp() }
+            views.emptyChatTitle.text = "Hangout Group Chat 🎉"
+            views.chipIcebreaker1.text = "Hey everyone! 👋"
+            views.chipIcebreaker2.text = "See you all at the venue!"
+            views.chipIcebreaker3.text = "I'm on my way! 🏃"
+        } else if (!contextBanner.isNullOrBlank()) {
             views.planButton.text = "$contextBanner · Plan Meetup"
         }
         views.partnerAvatar.load(partnerPhotoUrl, partnerName, sizeDp = 42)
@@ -80,7 +90,9 @@ class ChatFragment : Fragment() {
 
         // Setup empty state icebreaker greeting card
         views.emptyPartnerAvatar.load(partnerPhotoUrl, partnerName, sizeDp = 68)
-        views.emptyChatTitle.text = if (partnerName.isNotBlank()) "Say hello to $partnerName!" else "Say hello!"
+        if (!conversationId.contains("pool")) {
+            views.emptyChatTitle.text = if (partnerName.isNotBlank()) "Say hello to $partnerName!" else "Say hello!"
+        }
         views.chipIcebreaker1.setOnClickListener {
             val text = views.chipIcebreaker1.text.toString()
             viewModel.sendMessage(text)

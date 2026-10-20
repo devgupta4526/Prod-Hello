@@ -47,6 +47,16 @@ class InboxFragment : Fragment() {
         val views = requireNotNull(binding)
         views.headerEyebrow.text = "GOOD THINGS START WITH HELLO"
         views.feedRetry.setOnClickListener { viewModel.loadData() }
+        views.btnActivity.setOnClickListener {
+            findNavController().navigate(R.id.activityFragment)
+        }
+        views.inboxTabGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (checkedIds.contains(views.tabSent.id)) {
+                viewModel.switchTab(InboxViewModel.Tab.SENT)
+            } else {
+                viewModel.switchTab(InboxViewModel.Tab.RECEIVED)
+            }
+        }
         hellosAdapter = HellosAdapter(
             isReceivedBox = { viewModel.currentTab.value != InboxViewModel.Tab.SENT },
             onAcceptClicked = viewModel::acceptHello,
@@ -58,21 +68,12 @@ class InboxFragment : Fragment() {
         val conversationsHeading = InboxSectionAdapter { parent ->
             val ui = ExperienceViews(parent.context)
             ui.column().apply {
-                setPadding(ui.dp(24), ui.dp(20), ui.dp(24), ui.dp(8))
+                setPadding(ui.dp(24), ui.dp(16), ui.dp(24), ui.dp(8))
                 addView(ui.text("Your conversations", 18f, R.color.text_primary, true))
             }
         }
-        val footer = InboxSectionAdapter { parent ->
-            val ui = ExperienceViews(parent.context)
-            ui.column().apply {
-                ui.button(this, "Activity & updates") { findNavController().navigate(R.id.activityFragment) }
-                ui.button(this, if (viewModel.currentTab.value == InboxViewModel.Tab.SENT) "Back to inbox" else "Sent hellos") {
-                    viewModel.switchTab(if (viewModel.currentTab.value == InboxViewModel.Tab.SENT) InboxViewModel.Tab.RECEIVED else InboxViewModel.Tab.SENT)
-                }
-            }
-        }
-        val combined = ConcatAdapter(hellosAdapter, conversationsHeading, connectionsAdapter, footer)
-        val sent = ConcatAdapter(hellosAdapter, footer)
+        val combined = ConcatAdapter(hellosAdapter, conversationsHeading, connectionsAdapter)
+        val sent = ConcatAdapter(hellosAdapter)
         views.inboxRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         views.inboxRecyclerView.adapter = combined
         viewLifecycleOwner.lifecycleScope.launch {
@@ -85,18 +86,20 @@ class InboxFragment : Fragment() {
                         val pending = viewModel.hellos.value.filter { it.status == "PENDING" }
                         val list = if (sentBox) viewModel.hellos.value else pending
                         views.inboxRecyclerView.adapter = if (sentBox) sent else combined
-                        // The sender/receiver role changes between boxes even when IDs overlap.
+                        // Sync tab chip if needed
+                        if (sentBox && !views.tabSent.isChecked) views.tabSent.isChecked = true
+                        else if (!sentBox && !views.tabReceived.isChecked) views.tabReceived.isChecked = true
+
                         hellosAdapter.submitList(list) { hellosAdapter.notifyDataSetChanged() }
                         connectionsAdapter.submitList(viewModel.connections.value)
                         conversationsHeading.visible = !sentBox && viewModel.connections.value.isNotEmpty()
-                        footer.notifyItemChanged(0)
                         views.headerTitle.text = if (sentBox) "Sent hellos." else "Inbox."
                         views.inboxSummary.text = if (sentBox) "The conversations you’ve started." else "${pending.size} new waves · ${viewModel.connections.value.size} conversations"
                         views.loadingIndicator.isVisible = loading && list.isEmpty()
-                        // Keep the activity and sent actions accessible even with no conversations.
-                        views.emptyStateView.isVisible = false
+                        val isEmpty = if (sentBox) list.isEmpty() else (list.isEmpty() && viewModel.connections.value.isEmpty())
+                        views.emptyStateView.isVisible = !loading && !failed && isEmpty
                         views.feedError.isVisible = !loading && failed
-                        views.inboxRecyclerView.isVisible = !failed || list.isNotEmpty()
+                        views.inboxRecyclerView.isVisible = !failed && !isEmpty
                     }
                 }
                 launch {

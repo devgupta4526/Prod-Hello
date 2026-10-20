@@ -60,8 +60,12 @@ class ChatViewModel @Inject constructor(
                 val merged = (_messages.value.filter { existing -> list.none { it.id == existing.id } } + list)
                     .distinctBy { it.id }.sortedWith(compareBy<ChatMessage> { it.createdAt }.thenBy { it.id })
                 _messages.value = merged
-                if (merged.isEmpty() && convId.startsWith("demo")) {
-                    _messages.value = getDemoSeedMessages(convId)
+                if (merged.isEmpty()) {
+                    if (convId.contains("pool")) {
+                        _messages.value = getPoolGroupSeedMessages(convId)
+                    } else if (convId.startsWith("demo")) {
+                        _messages.value = getDemoSeedMessages(convId)
+                    }
                 }
                 list.lastOrNull { !it.isOutgoing }?.let { latest ->
                     if (acknowledgedId != latest.id) {
@@ -72,8 +76,12 @@ class ChatViewModel @Inject constructor(
             } catch (cancelled: kotlinx.coroutines.CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
-                if (_messages.value.isEmpty() && convId.startsWith("demo")) {
-                    _messages.value = getDemoSeedMessages(convId)
+                if (_messages.value.isEmpty()) {
+                    if (convId.contains("pool")) {
+                        _messages.value = getPoolGroupSeedMessages(convId)
+                    } else if (convId.startsWith("demo")) {
+                        _messages.value = getDemoSeedMessages(convId)
+                    }
                 } else if (!silent) {
                     _error.emit(e.message ?: "Failed to load messages")
                 }
@@ -82,6 +90,42 @@ class ChatViewModel @Inject constructor(
                 refreshing = false
             }
         }
+    }
+
+    private fun getPoolGroupSeedMessages(convId: String): List<ChatMessage> {
+        val now = java.time.Instant.now()
+        return listOf(
+            ChatMessage(
+                id = "pool_msg_1",
+                conversationId = convId,
+                senderId = "host-rahul",
+                body = "Hey everyone! 👋 Welcome to our Nagpur hangout! Looking forward to meeting you all.",
+                createdAt = now.minusSeconds(900).toString(),
+                isOutgoing = false,
+                readAt = null,
+                deliveredAt = now.minusSeconds(890).toString()
+            ),
+            ChatMessage(
+                id = "pool_msg_2",
+                conversationId = convId,
+                senderId = "member-priya",
+                body = "Super excited! I'll be there 10 mins early at the venue 🏸☕",
+                createdAt = now.minusSeconds(450).toString(),
+                isOutgoing = false,
+                readAt = null,
+                deliveredAt = now.minusSeconds(440).toString()
+            ),
+            ChatMessage(
+                id = "pool_msg_3",
+                conversationId = convId,
+                senderId = "member-aarav",
+                body = "Same here! Let's definitely grab food together afterwards 🙌",
+                createdAt = now.minusSeconds(120).toString(),
+                isOutgoing = false,
+                readAt = null,
+                deliveredAt = now.minusSeconds(110).toString()
+            )
+        )
     }
 
     private fun getDemoSeedMessages(convId: String): List<ChatMessage> {
@@ -142,21 +186,30 @@ class ChatViewModel @Inject constructor(
         if (draft.value.trim() == body.trim()) updateDraft("")
         viewModelScope.launch { _sent.emit(Unit) }
 
-        if (convId.startsWith("demo")) {
+        if (convId.startsWith("demo") || convId.contains("pool")) {
             _sending.value = false
-            // Simulate realistic reply from Priya Nair after 1.5s
             viewModelScope.launch {
                 kotlinx.coroutines.delay(1400)
-                val replyText = when {
-                    normalized.contains("coffee", ignoreCase = true) -> "Sounds fantastic! I'll walk over in 5 mins ☕✨"
-                    normalized.contains("meet", ignoreCase = true) || normalized.contains("plan", ignoreCase = true) -> "Let's definitely do it! I'm right around the corner."
-                    normalized.contains("hey", ignoreCase = true) || normalized.contains("hello", ignoreCase = true) -> "Hey there! Great to connect with you too! 👋"
-                    else -> "Sounds great! Let's connect right by the cafe entrance."
+                val isPool = convId.contains("pool")
+                val replyText = if (isPool) {
+                    when {
+                        normalized.contains("reach", ignoreCase = true) || normalized.contains("here", ignoreCase = true) -> "Great! We are gathered right near the main entrance."
+                        normalized.contains("time", ignoreCase = true) || normalized.contains("when", ignoreCase = true) -> "Starting right on time, see everyone there!"
+                        normalized.contains("hi", ignoreCase = true) || normalized.contains("hey", ignoreCase = true) -> "Hey! Welcome to the group! 👋"
+                        else -> "Awesome! Looking forward to seeing you there 🙌"
+                    }
+                } else {
+                    when {
+                        normalized.contains("coffee", ignoreCase = true) -> "Sounds fantastic! I'll walk over in 5 mins ☕✨"
+                        normalized.contains("meet", ignoreCase = true) || normalized.contains("plan", ignoreCase = true) -> "Let's definitely do it! I'm right around the corner."
+                        normalized.contains("hey", ignoreCase = true) || normalized.contains("hello", ignoreCase = true) -> "Hey there! Great to connect with you too! 👋"
+                        else -> "Sounds great! Let's connect right by the cafe entrance."
+                    }
                 }
                 val reply = ChatMessage(
                     id = "msg_reply_" + System.currentTimeMillis(),
                     conversationId = convId,
-                    senderId = "partner",
+                    senderId = if (isPool) "host-rahul" else "partner",
                     body = replyText,
                     createdAt = java.time.Instant.now().toString(),
                     isOutgoing = false,

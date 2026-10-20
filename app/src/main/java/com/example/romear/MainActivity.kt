@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         }
         controller.addOnDestinationChangedListener { _, destination, _ ->
             val auth = destination.id == R.id.welcomeFragment || destination.id == R.id.authFragment
-            val hideBottomNav = auth || destination.id == R.id.chatFragment
+            val hideBottomNav = auth || destination.id == R.id.chatFragment || destination.id == R.id.poolDetailFragment || destination.id == R.id.activityFragment
             binding.bottomNavigation.isVisible = !hideBottomNav
             ViewCompat.requestApplyInsets(binding.root)
             back.isEnabled = destination.id in setOf(R.id.happeningFragment, R.id.inboxFragment, R.id.ticketsFragment, R.id.profileFragment, R.id.homeFragment)

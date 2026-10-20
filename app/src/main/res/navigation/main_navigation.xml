@@ -49,6 +49,9 @@
             <action
                 android:id="@+id/action_happening_to_chat"
                 app:destination="@id/chatFragment" />
+            <action
+                android:id="@+id/action_happening_to_poolDetail"
+                app:destination="@id/poolDetailFragment" />
         </fragment>
     </navigation>
 
@@ -108,5 +111,17 @@
     <fragment android:id="@+id/activityFragment"
         android:name="com.example.romear.feature.social.ActivityFragment"
         android:label="Your activity" />
+
+    <fragment
+        android:id="@+id/poolDetailFragment"
+        android:name="com.example.romear.feature.pools.ui.PoolDetailFragment"
+        android:label="Hangout Details">
+        <argument
+            android:name="poolId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_poolDetail_to_chat"
+            app:destination="@id/chatFragment" />
+    </fragment>
 
 </navigation>

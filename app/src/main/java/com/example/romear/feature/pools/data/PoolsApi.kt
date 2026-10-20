@@ -27,6 +27,11 @@ interface PoolsApi {
         @Body body: RequestBody,
     ): ResponseBody
 
+    @POST("v1/pools/{id}/join")
+    suspend fun joinPool(
+        @Path("id") id: String,
+    ): ResponseBody
+
     @GET("v1/pools/{id}/knocks")
     suspend fun listKnocks(@Path("id") id: String): ResponseBody
 

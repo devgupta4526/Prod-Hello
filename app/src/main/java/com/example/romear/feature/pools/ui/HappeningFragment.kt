@@ -59,12 +59,11 @@ class HappeningFragment : Fragment() {
         views.feedRetry.setOnClickListener { viewModel.loadPools() }
 
         adapter = PoolsAdapter { pool ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                val detail = viewModel.getPoolDetail(pool.id)
-                if (detail != null) {
-                    showPoolDetailsBottomSheet(detail)
-                }
-            }
+            com.example.romear.core.designsystem.HelloHaptics.selection(views.root)
+            findNavController().navigate(
+                R.id.action_happening_to_poolDetail,
+                androidx.core.os.bundleOf("poolId" to pool.id)
+            )
         }
 
         com.example.romear.core.designsystem.HelloLayouts.adaptiveCards(views.poolsRecyclerView)

@@ -37,14 +37,23 @@ class ConnectionsAdapter(
 
         fun bind(item: ConnectionItem) {
             binding.partnerName.text = item.partner.displayName
-            binding.avatar.load(item.partner.photoUrl, item.partner.displayName)
+            binding.avatar.load(item.partner.photoUrl, item.partner.displayName, sizeDp = 52)
 
             val formattedDate = try {
-                "Connected " + dateFormatter.format(Instant.parse(item.createdAt))
+                dateFormatter.format(Instant.parse(item.createdAt))
             } catch (_: Exception) {
-                "Connected"
+                "Recent"
             }
-            binding.connectionDate.text = formattedDate
+
+            if (item.id.startsWith("demo")) {
+                binding.connectionDate.text = "Awesome! Up for a quick filter coffee hangout?"
+                binding.timestampText.text = "2m ago"
+                binding.unreadBadge.visibility = android.view.View.VISIBLE
+            } else {
+                binding.connectionDate.text = "Tap to open chat"
+                binding.timestampText.text = formattedDate
+                binding.unreadBadge.visibility = android.view.View.GONE
+            }
 
             binding.root.setOnClickListener { onConnectionClicked(item) }
         }

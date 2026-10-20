@@ -102,6 +102,20 @@ class HappeningViewModel @Inject constructor(
         }
     }
 
+    fun joinPool(poolId: String, onDone: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            try {
+                poolsRepository.joinPool(poolId)
+                _events.emit(HappeningEvent.Success("Joined the hangout! 🎉"))
+                onDone(true)
+                loadPools()
+            } catch (e: Exception) {
+                _events.emit(HappeningEvent.Error(e.message ?: "Failed to join pool"))
+                onDone(false)
+            }
+        }
+    }
+
     fun knock(poolId: String, intro: String) {
         viewModelScope.launch {
             try {

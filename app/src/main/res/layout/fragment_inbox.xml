@@ -1,15 +1,97 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/hello_background">
-  <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/hello_background" android:elevation="0dp" android:stateListAnimator="@null">
-    <LinearLayout android:id="@+id/headerContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/bg_canvas" android:elevation="0dp" android:orientation="vertical" android:paddingHorizontal="@dimen/screen_gutter" android:paddingTop="28dp" android:paddingBottom="12dp" app:layout_scrollFlags="scroll|enterAlways">
-      <TextView android:id="@+id/headerEyebrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ui_inbox_eyebrow" android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
-      <TextView android:id="@+id/headerTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Inbox." android:textAppearance="@style/TextAppearance.Hello.ScreenTitle" android:accessibilityHeading="true" />
-      <TextView android:id="@+id/inboxSummary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/ui_inbox_body" android:textAppearance="@style/TextAppearance.Hello.Caption" android:lineSpacingExtra="2dp" />
-      <com.google.android.material.chip.ChipGroup android:visibility="gone" android:id="@+id/inboxTabGroup" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:chipSpacingHorizontal="8dp" app:singleSelection="true" app:selectionRequired="true">
-        <com.google.android.material.chip.Chip android:id="@+id/tabReceived" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="Received" android:textSize="14sp" app:chipCornerRadius="16dp" />
-        <com.google.android.material.chip.Chip android:id="@+id/tabSent" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sent" android:textSize="14sp" app:chipCornerRadius="16dp" />
-        <com.google.android.material.chip.Chip android:id="@+id/tabConnections" style="@style/Widget.Hello.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connections" android:textSize="14sp" app:chipCornerRadius="16dp" />
-      </com.google.android.material.chip.ChipGroup>
-    </LinearLayout>
+  <com.google.android.material.appbar.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/hello_background"
+      android:elevation="0dp"
+      android:stateListAnimator="@null">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingHorizontal="20dp"
+          android:paddingTop="16dp"
+          android:paddingBottom="8dp">
+
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:orientation="horizontal">
+
+              <LinearLayout
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="1"
+                  android:orientation="vertical">
+
+                  <TextView
+                      android:id="@+id/headerEyebrow"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/ui_inbox_eyebrow"
+                      android:textAppearance="@style/TextAppearance.Hello.Eyebrow" />
+
+                  <TextView
+                      android:id="@+id/headerTitle"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="2dp"
+                      android:text="Inbox."
+                      android:textAppearance="@style/TextAppearance.Hello.ScreenTitle"
+                      android:accessibilityHeading="true" />
+              </LinearLayout>
+
+              <ImageButton
+                  android:id="@+id/btnActivity"
+                  android:layout_width="40dp"
+                  android:layout_height="40dp"
+                  android:background="@drawable/bg_circle_icon_button"
+                  android:contentDescription="Activity and Updates"
+                  android:padding="10dp"
+                  android:src="@drawable/ic_bolt"
+                  app:tint="@color/primary_coral" />
+          </LinearLayout>
+
+          <TextView
+              android:id="@+id/inboxSummary"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:text="@string/ui_inbox_body"
+              android:textAppearance="@style/TextAppearance.Hello.Caption"
+              android:lineSpacingExtra="2dp" />
+
+          <com.google.android.material.chip.ChipGroup
+              android:id="@+id/inboxTabGroup"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="12dp"
+              app:chipSpacingHorizontal="8dp"
+              app:singleSelection="true"
+              app:selectionRequired="true">
+
+              <com.google.android.material.chip.Chip
+                  android:id="@+id/tabReceived"
+                  style="@style/Widget.Hello.Filter"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:checked="true"
+                  android:text="💬 Chats"
+                  android:textSize="13sp"
+                  app:chipCornerRadius="16dp" />
+
+              <com.google.android.material.chip.Chip
+                  android:id="@+id/tabSent"
+                  style="@style/Widget.Hello.Filter"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="👋 Sent Hellos"
+                  android:textSize="13sp"
+                  app:chipCornerRadius="16dp" />
+          </com.google.android.material.chip.ChipGroup>
+      </LinearLayout>
   </com.google.android.material.appbar.AppBarLayout>
   <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior">
     <ProgressBar android:id="@+id/loadingIndicator" android:layout_width="wrap_content" android:layout_height="wrap_content" android:indeterminateTint="@color/hello_primary" android:visibility="gone" android:layout_gravity="center" />
