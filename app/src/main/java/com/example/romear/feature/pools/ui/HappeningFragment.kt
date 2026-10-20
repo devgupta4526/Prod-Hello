@@ -291,6 +291,8 @@ class HappeningFragment : Fragment() {
         }
 
         bottomSheet.show()
+        bottomSheet.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+        bottomSheet.behavior.skipCollapsed = true
     }
 
     private fun formatTime(value: String): String = runCatching { java.time.Instant.parse(value).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("EEE d MMM, h:mm a")) }.getOrDefault(value)

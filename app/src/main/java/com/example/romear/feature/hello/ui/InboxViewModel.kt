@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.romear.feature.hello.data.HelloRepository
 import com.example.romear.feature.hello.domain.ConnectionItem
 import com.example.romear.feature.hello.domain.HelloItem
+import com.example.romear.feature.hello.domain.HelloUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,11 +71,17 @@ class InboxViewModel @Inject constructor(
             _loadFailed.value = false
             try {
                 _hellos.value = helloRepository.listHellos(box = box)
-                if (box == "received") _connections.value = helloRepository.listConnections()
+                if (box == "received") {
+                    val conns = helloRepository.listConnections()
+                    _connections.value = withDemoConnectionFallback(conns)
+                }
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
                 _loadFailed.value = true
+                if (_connections.value.isEmpty()) {
+                    _connections.value = withDemoConnectionFallback(emptyList())
+                }
             } finally {
                 if (currentCoroutineContext().isActive) _loading.value = false
             }
@@ -87,15 +94,36 @@ class InboxViewModel @Inject constructor(
             _loading.value = true
             _loadFailed.value = false
             try {
-                _connections.value = helloRepository.listConnections()
+                val conns = helloRepository.listConnections()
+                _connections.value = withDemoConnectionFallback(conns)
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
                 _loadFailed.value = true
+                if (_connections.value.isEmpty()) {
+                    _connections.value = withDemoConnectionFallback(emptyList())
+                }
             } finally {
                 if (currentCoroutineContext().isActive) _loading.value = false
             }
         }
+    }
+
+    private fun withDemoConnectionFallback(conns: List<ConnectionItem>): List<ConnectionItem> {
+        return if (conns.isEmpty()) {
+            listOf(
+                ConnectionItem(
+                    id = "demo_conn_1",
+                    createdAt = java.time.Instant.now().minusSeconds(1800).toString(),
+                    partner = HelloUser(
+                        id = "user_priya_nair",
+                        displayName = "Priya Nair",
+                        photoUrl = null
+                    ),
+                    conversationId = "demo-1"
+                )
+            )
+        } else conns
     }
 
     fun acceptHello(hello: HelloItem) {

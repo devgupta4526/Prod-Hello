@@ -60,14 +60,18 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val views = requireNotNull(binding)
 
-        val conversationId = arguments?.getString("conversationId").orEmpty()
+        val conversationId = arguments?.getString("conversationId").orEmpty().ifBlank { "demo-1" }
         views.planButton.setOnClickListener { socialUi.plans(conversationId) }
-        val partnerName = arguments?.getString("partnerName").orEmpty()
+        val partnerName = arguments?.getString("partnerName").orEmpty().ifBlank { "Priya Nair" }
         val partnerPhotoUrl = arguments?.getString("partnerPhotoUrl")
         val partnerId = arguments?.getString("partnerId").orEmpty()
+        val contextBanner = arguments?.getString("contextTitle")
 
         views.partnerName.text = partnerName
-        views.partnerAvatar.load(partnerPhotoUrl, partnerName)
+        if (!contextBanner.isNullOrBlank()) {
+            views.planButton.text = "$contextBanner · Plan Meetup"
+        }
+        views.partnerAvatar.load(partnerPhotoUrl, partnerName, sizeDp = 42)
         views.partnerAvatar.setOnClickListener {
             partnerPhotoUrl?.let { url ->
                 com.example.romear.core.designsystem.HelloLightbox.show(requireContext(), url, partnerName, "Profile Photo")
@@ -104,7 +108,9 @@ class ChatFragment : Fragment() {
         views.messagesRecyclerView.adapter = adapter
 
         views.backButton.setOnClickListener {
-            findNavController().popBackStack()
+            if (!findNavController().popBackStack()) {
+                findNavController().navigate(R.id.inboxFragment)
+            }
         }
 
         views.messageInput.setText(viewModel.draft.value)
@@ -155,12 +161,9 @@ class ChatFragment : Fragment() {
                 }
                 launch { viewModel.sent.collect { com.example.romear.core.designsystem.HelloHaptics.success(views.sendButton) } }
                 launch {
-                    viewModel.loading.collect { loading ->
-                        views.loadingIndicator.isVisible = loading && adapter.itemCount == 0
-                    }
-                }
-                launch {
-                    viewModel.messages.collect { messages ->
+                    kotlinx.coroutines.flow.combine(viewModel.messages, viewModel.loading) { messages, loading ->
+                        Pair(messages, loading)
+                    }.collect { (messages, loading) ->
                         val atBottom = layoutManager.findLastVisibleItemPosition() >= adapter.itemCount - 2
                         val lastId = adapter.currentList.lastOrNull()?.id
                         adapter.submitList(messages) {
@@ -168,7 +171,10 @@ class ChatFragment : Fragment() {
                                 views.messagesRecyclerView.scrollToPosition(messages.size - 1)
                             }
                         }
-                        views.emptyChatView.isVisible = messages.isEmpty() && !viewModel.loading.value
+                        val isEmpty = messages.isEmpty() && !loading
+                        views.emptyChatView.isVisible = isEmpty
+                        views.messagesRecyclerView.isVisible = messages.isNotEmpty()
+                        views.loadingIndicator.isVisible = loading && messages.isEmpty()
                     }
                 }
                 launch {

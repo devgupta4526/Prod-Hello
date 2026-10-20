@@ -321,23 +321,6 @@
                     android:visibility="gone">
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/poolChatButton"
-                        style="@style/Widget.Hello.Button.Primary"
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:background="@drawable/bg_gradient_primary"
-                        app:backgroundTint="@null"
-                        android:text="@string/pool_chat"
-                        android:textColor="@color/white"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        app:cornerRadius="999dp"
-                        app:icon="@drawable/ic_inbox"
-                        app:iconGravity="textStart"
-                        app:iconPadding="8dp"
-                        app:iconTint="@color/white" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/leavePoolButton"
                         style="@style/Widget.Hello.Button.Outlined"
                         android:layout_width="match_parent"
@@ -366,8 +349,9 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Sticky Knock To Join Action Bar (Non-members) -->
+    <!-- Sticky Action Bar (Knock to Join OR Open Group Chat) -->
     <LinearLayout
+        android:id="@+id/stickyActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -389,6 +373,24 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="999dp"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/poolChatButton"
+            style="@style/Widget.Hello.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_gradient_primary"
+            app:backgroundTint="@null"
+            android:text="Open Hangout Chat 💬"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="999dp"
+            app:icon="@drawable/ic_inbox"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@color/white"
             android:visibility="gone" />
     </LinearLayout>
 
